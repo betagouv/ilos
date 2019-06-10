@@ -6,6 +6,10 @@
   },
   "license": "Apache-2.0",
   "author": "Nicolas Mérigot <nicolas@belenio.fr>",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/betagouv/ilos.git"
+  }, 
   "scripts": {
     "build": "yarn build-ts && yarn lint",
     "build-ts": "tsc",

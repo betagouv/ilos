@@ -2,7 +2,10 @@
   "name": "ilos",
   "version": "0.0.1",
   "description": "RPC microframework written in Typescript",
-  "repository": "git@github.com:betagouv/ilos.git",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/betagouv/ilos.git"
+  },
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
