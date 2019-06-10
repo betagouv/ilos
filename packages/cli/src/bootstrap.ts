@@ -1,11 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
-import { Kernel } from './Kernel';
-import { CliTransport } from './transports/CliTransport';
-import { HttpTransport } from './transports/HttpTransport';
-import { QueueTransport } from './transports/QueueTransport';
-import { TransportInterface } from './interfaces';
+import { Parents, Transports, Interfaces } from '@ilos/core';
+
+class Kernel extends Parents.Kernel {}
 
 export function setEnvironment():void {
   process.env.APP_ROOT_PATH = process.cwd();
@@ -44,18 +42,8 @@ export function getBootstrapFile():string {
   return bootstrapPath;
 }
 
-export async function start(bootstrapPath: string, argv: string[]): Promise<TransportInterface> {
+export async function start(bootstrapPath: string, argv: string[], defaultBootstrap): Promise<Interfaces.TransportInterface> {
   const [_node, _script, command, ...opts] = argv;
-
-  const defaultBootstrap = {
-    kernel() { return new Kernel(); },
-    serviceProviders: [],
-    transport: {
-      http(k) { return new HttpTransport(k); },
-      queue(k) { return new QueueTransport(k); },
-      cli(k) { return new CliTransport(k); },
-    },
-  };
 
   let transport;
   const currentBootstrap = await import(bootstrapPath);
@@ -66,33 +54,24 @@ export async function start(bootstrapPath: string, argv: string[]): Promise<Tran
   for (const serviceProvider of serviceProviders) {
     await kernel.registerServiceProvider(serviceProvider);
   }
+  transport = ('transport' in currentBootstrap && command in currentBootstrap.transport) ? 
+    currentBootstrap.transport.cli(kernel) : defaultBootstrap.transport.cli(kernel);
 
-  switch (command) {
-    case 'http':
-      console.log('Starting http interface');
-      transport = ('transport' in currentBootstrap && 'http' in currentBootstrap.transport) ?
-      currentBootstrap.transport.http(kernel) : defaultBootstrap.transport.http(kernel);
-      await transport.up(opts);
-      break;
-    case 'queue':
-      console.log('Starting queue interface');
-      transport = ('transport' in currentBootstrap && 'queue' in currentBootstrap.transport) ?
-      currentBootstrap.transport.queue(kernel) : defaultBootstrap.transport.queue(kernel);
-      await transport.up(opts);
-      break;
-    default:
-      console.log('Starting cli interface');
-      transport = ('transport' in currentBootstrap && 'cli' in currentBootstrap.transport) ?
-      currentBootstrap.transport.cli(kernel) : defaultBootstrap.transport.cli(kernel);
-      await transport.up(argv);
-      break;
-  }
-
+  await transport.up(opts);
+  
   return transport;
 }
 
-export async function boot(argv: string[]) {
+export async function boot(argv: string[], defaultBootstrap = {
+  kernel() { return new Kernel(); },
+  serviceProviders: [],
+  transport: {
+    http(k) { return new Transports.HttpTransport(k); },
+    queue(k) { return new Transports.QueueTransport(k); },
+    cli(k) { return new Transports.CliTransport(k); },
+  },
+}) {
   setEnvironment();
   const bootstrapPath = getBootstrapFile();
-  return start(bootstrapPath, argv);
+  return start(bootstrapPath, argv, defaultBootstrap);
 }
