@@ -1,9 +1,9 @@
 import { Queue } from 'bull';
+import { ContainerInterface } from '@ilos/container';
 
 import { TransportInterface } from '../interfaces/TransportInterface';
 import { KernelInterface } from '../interfaces/KernelInterface';
 import { bullFactory } from '../helpers/bullFactory';
-import { ContainerInterface } from '../container';
 
 
 /**

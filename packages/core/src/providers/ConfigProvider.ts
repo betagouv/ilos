@@ -3,10 +3,10 @@ import vm from 'vm';
 import path from 'path';
 import jsYaml from 'js-yaml';
 import { camelCase, get, set, has } from 'lodash';
+import { provider } from '@ilos/container';
 
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 import { EnvProvider } from './EnvProvider';
-import { provider } from '../container';
 
 /**
  * Config provider

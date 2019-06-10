@@ -1,6 +1,7 @@
+import { ContainerInterface, ContainerModuleConfigurator } from '@ilos/container';
+
 import { ServiceProviderInterface } from './ServiceProviderInterface';
 import { RPCCallType, RPCResponseType, ResultType, ContextType, ParamsType } from '../types';
-import { ContainerInterface, ContainerModuleConfigurator } from '../container';
 
 export interface KernelInterface extends ServiceProviderInterface {
 

@@ -1,7 +1,7 @@
 import { Command } from 'commander';
+import { provider } from '@ilos/container';
 
 import { ProviderInterface } from '../interfaces/ProviderInterface';
-import { provider } from '../container';
 
 /**
  * Commander provider

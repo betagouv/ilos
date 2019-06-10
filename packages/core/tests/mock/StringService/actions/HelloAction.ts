@@ -1,9 +1,10 @@
+import { handler } from '@ilos/container';
+
 import { Action } from '../../../../src//parents/Action';
 import { ParamsType } from '../../../../src//types/ParamsType';
 import { ContextType } from '../../../../src//types/ContextType';
 import { ResultType } from '../../../../src//types/ResultType';
 import { InvalidParamsException } from '../../../../src//exceptions/InvalidParamsException';
-import { handler } from '../../../../src/container';
 
 @handler({
   service: 'string',

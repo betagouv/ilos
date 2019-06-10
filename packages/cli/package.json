@@ -21,6 +21,8 @@
     "watch": "tsc -w",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json"
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
     "cli": "./dist/Cli.js"
   },

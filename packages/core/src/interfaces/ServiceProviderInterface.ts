@@ -1,4 +1,4 @@
-import { ContainerInterface } from '../container';
+import { ContainerInterface } from '@ilos/container';
 
 import { ProviderInterface } from './ProviderInterface';
 import { NewableType } from '../types/NewableType';

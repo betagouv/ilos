@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
+import { handler } from '@ilos/container';
 
 import { CallType } from '../types/CallType';
 import { HandlerInterface } from '../interfaces/HandlerInterface';
-import { handler } from '../container';
 import { NewableType } from '../types/NewableType';
 
 import { ResultType } from '../types/ResultType';

@@ -2,12 +2,12 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import axios from 'axios';
+import { injectable } from '@ilos/container';
 
 import { HttpTransport } from '../src/transports/HttpTransport';
 import { Kernel } from '../src/parents/Kernel';
 import { httpHandlerFactory } from '../src/serviceHandlers/HttpHandler';
 import { TransportInterface } from '../src/interfaces/TransportInterface';
-import { injectable } from '../src/container';
 
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';

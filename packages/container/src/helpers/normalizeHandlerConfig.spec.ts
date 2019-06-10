@@ -1,7 +1,7 @@
 import { describe } from 'mocha';
 import { expect, assert } from 'chai';
+import { Exceptions } from '@ilos/core';
 
-import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
 import { getConfigBySignature, getSignatureByConfig } from './normalizeHandlerConfig';
 
 describe('Helpers: resolve method', () => {
@@ -22,19 +22,19 @@ describe('Helpers: resolve method', () => {
   it('from string works raise error', () => {
     assert.throw(
       () => getConfigBySignature(':method'),
-      MethodNotFoundException,
+      Exceptions.MethodNotFoundException,
       'Method not found',
     ); // Invalid method string (:method)
 
     assert.throw(
       () => getConfigBySignature('service:'),
-      MethodNotFoundException,
+      Exceptions.MethodNotFoundException,
       'Method not found',
     ); // Invalid method string (service:)
 
     assert.throw(
       () => getConfigBySignature('service:0.0.1'),
-      MethodNotFoundException,
+      Exceptions.MethodNotFoundException,
       'Method not found',
     ); // Invalid method string (service:0.0.1)
   });
@@ -52,12 +52,12 @@ describe('Helpers: resolve method', () => {
   it('from object works raise error', () => {
     assert.throw(
       () => getSignatureByConfig({ service: 'service', method: '' }),
-      MethodNotFoundException,
+      Exceptions.MethodNotFoundException,
       'Method not found', // Invalid method object (service:service, method:, version:undefined)
     );
     assert.throw(
       () => getSignatureByConfig({ service: '', method: 'method' }),
-      MethodNotFoundException,
+      Exceptions.MethodNotFoundException,
       'Method not found', // Invalid method object (service:, method:method, version:undefined)
       );
   });

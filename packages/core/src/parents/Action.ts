@@ -1,10 +1,10 @@
+import { ContainerInterface } from '@ilos/container';
 import { CallType } from '../types/CallType';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
 import { HandlerInterface } from '../interfaces/HandlerInterface';
 import { compose } from '../helpers/compose';
-import { ContainerInterface } from '../container';
 import { FunctionMiddlewareInterface, MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 
 

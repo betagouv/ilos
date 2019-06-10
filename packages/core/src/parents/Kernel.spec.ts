@@ -2,6 +2,7 @@
 import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { handler, provider } from '@ilos/container';
 
 import { HandlerInterface } from '../interfaces/HandlerInterface';
 import { NewableType } from '../types/NewableType';
@@ -14,7 +15,6 @@ import { Action } from './Action';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
-import { handler, provider } from '../container';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;

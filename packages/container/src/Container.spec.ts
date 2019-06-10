@@ -2,10 +2,9 @@
 import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { Types, Interfaces } from '@ilos/core';
 
-import { CallType } from '../types/CallType';
 import { Container, handler, lib, provider, inject } from '.';
-import { HandlerInterface } from '../interfaces/HandlerInterface';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -21,13 +20,13 @@ describe('Container', () => {
       service: 'test',
       method: 'hello',
     })
-    class Test implements HandlerInterface {
+    class Test implements Interfaces.HandlerInterface {
       public readonly middlewares = [];
       constructor(public hello: Hello) {}
       boot() {
         //
       }
-      async call(call: CallType) {
+      async call(call: Types.CallType) {
         return;
       }
     }
@@ -66,13 +65,13 @@ describe('Container', () => {
       service: 'test',
       method: 'hello',
     })
-    class Test implements HandlerInterface {
+    class Test implements Interfaces.HandlerInterface {
       public readonly middlewares = [];
       constructor(public hello: Hello) {}
       boot() {
         //
       }
-      async call(call: CallType) {
+      async call(call: Types.CallType) {
         return;
       }
     }

@@ -1,9 +1,10 @@
+import { command } from '@ilos/container';
+
 import { KernelInterfaceResolver } from '../interfaces/KernelInterface';
 
 import { Command } from '../parents/Command';
 import { CommandOptionType } from '../types/CommandOptionType';
 import { ResultType } from '../types/ResultType';
-import { command } from '../container';
 
 /**
  * Command that make an RPC call

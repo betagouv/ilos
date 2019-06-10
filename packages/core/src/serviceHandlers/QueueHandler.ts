@@ -1,7 +1,7 @@
 import { Job, Queue } from 'bull';
+import { handler } from '@ilos/container';
 
 import { HandlerInterface } from '../interfaces/HandlerInterface';
-import { handler } from '../container';
 import { CallType } from '../types/CallType';
 import { NewableType } from '../types/NewableType';
 

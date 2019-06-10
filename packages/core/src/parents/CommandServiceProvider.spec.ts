@@ -2,9 +2,9 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { command } from '@ilos/container';
 
 import { ResultType } from '../types/ResultType';
-import { command } from '../container';
 import { CommandProvider } from '../providers/CommandProvider';
 
 import { CommandServiceProvider } from './CommandServiceProvider';

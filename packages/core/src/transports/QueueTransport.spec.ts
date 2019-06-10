@@ -2,6 +2,7 @@
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
+import { handler } from '@ilos/container';
 
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
@@ -14,7 +15,6 @@ import * as Bull from '../helpers/bullFactory';
 import { QueueTransport } from './QueueTransport';
 import { Kernel } from '../parents/Kernel';
 import { Action } from '../parents/Action';
-import { handler } from '../container';
 
 const sandbox = sinon.createSandbox();
 

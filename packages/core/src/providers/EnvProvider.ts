@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
-
-import { provider } from '../container';
+import { provider } from '@ilos/container';
 
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 

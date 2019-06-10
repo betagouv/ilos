@@ -4,11 +4,10 @@ import {
   ContainerModule as InversifyContainerModule,
   interfaces,
 } from 'inversify';
+import { Interfaces, Types } from '@ilos/core';
 
-import { HandlerInterface } from '../interfaces/HandlerInterface';
-import { NewableType } from '../types/NewableType';
 import { HandlerConfig } from './ContainerInterfaces';
-import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
+import { normalizeHandlerConfig } from './helpers/normalizeHandlerConfig';
 
 export class Container extends InversifyContainer {
   protected handlersRegistry: HandlerConfig[] = [];
@@ -41,10 +40,10 @@ export class Container extends InversifyContainer {
   /**
    * Get a particular handler
    * @param {HandlerConfig} config
-   * @returns {HandlerInterface}
+   * @returns {Interfaces.HandlerInterface}
    * @memberof Container
    */
-  getHandler(config: HandlerConfig): HandlerInterface {
+  getHandler(config: HandlerConfig): Interfaces.HandlerInterface {
     const normalizedHandlerConfig = normalizeHandlerConfig(config);
     if (!('local' in normalizedHandlerConfig) || normalizedHandlerConfig.local === undefined) {
       normalizedHandlerConfig.local = true;
@@ -77,10 +76,10 @@ export class Container extends InversifyContainer {
    * Get a particular handler or undefined if not known
    * @protected
    * @param {HandlerConfig} config
-   * @returns {(HandlerInterface | undefined)}
+   * @returns {(Interfaces.HandlerInterface | undefined)}
    * @memberof Container
    */
-  protected getHandlerFinal(config: HandlerConfig): HandlerInterface | undefined {
+  protected getHandlerFinal(config: HandlerConfig): Interfaces.HandlerInterface | undefined {
     const { containerSignature } = normalizeHandlerConfig(config);
     if (!containerSignature) {
       throw new Error('Oups');
@@ -112,16 +111,16 @@ export class Container extends InversifyContainer {
       throw new Error('Oups');
     }
     this.handlersRegistry.push(normalizedHandlerConfig);
-    this.bind<HandlerInterface>(normalizedHandlerConfig.containerSignature).toConstantValue(resolvedHandler);
+    this.bind<Interfaces.HandlerInterface>(normalizedHandlerConfig.containerSignature).toConstantValue(resolvedHandler);
   }
 
 
   /**
    * Set an handler
-   * @param {NewableType<HandlerInterface>} handler
+   * @param {Types.NewableType<Interfaces.HandlerInterface>} handler
    * @memberof Container
    */
-  setHandler(handler: NewableType<HandlerInterface>): HandlerInterface {
+  setHandler(handler: Types.NewableType<Interfaces.HandlerInterface>): Interfaces.HandlerInterface {
     const service = Reflect.getMetadata('rpc:service', handler);
     const method = Reflect.getMetadata('rpc:method', handler);
     const version = Reflect.getMetadata('rpc:version', handler);
@@ -129,7 +128,7 @@ export class Container extends InversifyContainer {
     const queue = Reflect.getMetadata('rpc:queue', handler);
 
     const handlerConfig = normalizeHandlerConfig({ service, method, version, local, queue });
-    const resolvedHandler = this.get<HandlerInterface>(<any>handler);
+    const resolvedHandler = this.get<Interfaces.HandlerInterface>(<any>handler);
     // TODO: throw error if not found
     // TODO: throw error if duplicate
 

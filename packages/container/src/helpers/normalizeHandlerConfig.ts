@@ -1,6 +1,6 @@
-import { HandlerConfig } from '../container';
+import { HandlerConfig } from '..';
 
-import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
+import { Exceptions } from '@ilos/core';
 
 const regexp = new RegExp('^([a-z]*)@?([\.0-9]*|latest):([a-zA-Z]*|\\*)$');
 // const fullregexp = new RegExp('^(?:HandlerInterface\/)?([a-z]*)@?([\.0-9]*|latest):([a-z]*|\\*)\/?(local)?\/?(queue)?$');
@@ -17,7 +17,7 @@ export function getConfigBySignature(method: string): { service: string, method:
       version: v ? v : 'latest',
     };
   } catch (e) {
-    throw new MethodNotFoundException(`Invalid method string (${method})`);
+    throw new Exceptions.MethodNotFoundException(`Invalid method string (${method})`);
   }
 }
 
@@ -28,7 +28,7 @@ export function getSignatureByConfig(method: { service: string, method: string, 
       method.service.length === 0 ||
       method.method.length === 0
     ) {
-    throw new MethodNotFoundException(
+    throw new Exceptions.MethodNotFoundException(
       `Invalid method object (service:${method.service}, method:${method.method}, version:${method.version})`,
     );
   }

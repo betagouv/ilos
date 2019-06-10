@@ -1,5 +1,5 @@
 {
-  "name": "@ilos/core",
+  "name": "@ilos/container",
   "version": "0.0.1",
   "publishConfig": {
     "access": "public"
@@ -10,6 +10,8 @@
     "type": "git",
     "url": "https://github.com/betagouv/ilos.git"
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "yarn build-ts && yarn lint",
     "build-ts": "tsc",
@@ -21,8 +23,6 @@
     "watch": "tsc -w",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json"
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "mocha": {
     "require": [
       "ts-node/register",
@@ -78,12 +78,10 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/container": "~0",
-    "axios": "^0.18.0",
-    "bull": "^3.7.0",
-    "commander": "^2.20.0",
-    "dotenv": "^7.0.0",
-    "js-yaml": "^3.13.1",
-    "lodash": "^4.17.11"
+    "inversify": "^5.0.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "peerDependencies": {
+    "@ilos/core": "~0"
   }
 }

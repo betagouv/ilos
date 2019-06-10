@@ -1,9 +1,10 @@
+import { middleware } from '@ilos/container';
+
 import { ForbiddenException } from '../exceptions/ForbiddenException';
 import { InvalidParamsException } from '../exceptions/InvalidParamsException';
 import { reduceRoles } from '../helpers/reducers/reduceRoles';
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { ParamsType, ResultType, ContextType } from '../types';
-import { middleware } from '../container';
 
 
 /**

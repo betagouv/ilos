@@ -1,6 +1,7 @@
+import { ContainerInterface } from '@ilos/container';
+
 import { CallType } from '../types/CallType';
 import { ResultType } from '../types/ResultType';
-import { ContainerInterface } from '../container';
 
 export interface HandlerInterface {
   readonly middlewares?: (string|[string, any])[];

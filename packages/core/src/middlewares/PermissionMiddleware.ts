@@ -1,7 +1,8 @@
+import { middleware } from '@ilos/container';
+
 import { InvalidParamsException, ForbiddenException } from '../exceptions';
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { ParamsType, ResultType, ContextType } from '../types';
-import { middleware } from '../container';
 
 /**
  * Can middleware check permission in context and may throw a ForbiddenException

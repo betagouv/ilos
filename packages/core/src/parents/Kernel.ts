@@ -1,8 +1,8 @@
+import { ContainerInterface } from '@ilos/container';
+
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
 import { ResultType } from '../types/ResultType';
-import { ContainerInterface } from '../container';
-import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
 
 import { KernelInterface, KernelInterfaceResolver } from '../interfaces/KernelInterface';
 import { RPCCallType } from '../types/RPCCallType';
@@ -77,7 +77,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
     try {
       const handler = this.getContainer().getHandler(config);
       if (!handler) {
-        throw new MethodNotFoundException(`Unknown method or service ${config.service}:${config.method}`);
+        throw new MethodNotFoundException(`Unknown method or service ${config.signature}`);
       }
       return handler.call(call);
     } catch (e) {
@@ -95,8 +95,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async call(method: string, params: ParamsType, context: ContextType): Promise<ResultType> {
-    const handlerConfig = normalizeHandlerConfig({ signature: method });
-    return this.getHandlerAndCall(handlerConfig, { method, params, context });
+    return this.getHandlerAndCall({ signature: method }, { method, params, context });
   }
 
 
@@ -109,8 +108,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async notify(method: string, params: ParamsType, context: ContextType): Promise<void> {
-    const handlerConfig = normalizeHandlerConfig({ signature: method, queue: true });
-    return this.getHandlerAndCall(handlerConfig, { method, params, context });
+    return this.getHandlerAndCall({ signature: method, queue: true }, { method, params, context });
   }
 
 

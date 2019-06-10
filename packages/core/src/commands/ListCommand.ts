@@ -1,8 +1,8 @@
-import { KernelInterfaceResolver } from '../interfaces/KernelInterface';
+import { command } from '@ilos/container';
 
+import { KernelInterfaceResolver } from '../interfaces/KernelInterface';
 import { Command } from '../parents/Command';
 import { CommandOptionType } from '../types/CommandOptionType';
-import { command } from '../container';
 
 /**
  * Command that list RPC methods

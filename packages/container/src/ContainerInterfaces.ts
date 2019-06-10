@@ -1,9 +1,7 @@
 /* tslint:disable:no-empty-interface */
 
 import { interfaces } from 'inversify';
-
-import { HandlerInterface } from '../interfaces/HandlerInterface';
-import { NewableType } from '../types/NewableType';
+import { Types, Interfaces } from '@ilos/core';
 
 export type HandlerConfig = {
   service?: string,
@@ -16,8 +14,8 @@ export type HandlerConfig = {
 };
 
 export interface ContainerInterface extends interfaces.Container {
-  setHandler(handler: NewableType<HandlerInterface>): HandlerInterface;
-  getHandler(config: HandlerConfig): HandlerInterface;
+  setHandler(handler: Types.NewableType<Interfaces.HandlerInterface>): Interfaces.HandlerInterface;
+  getHandler(config: HandlerConfig): Interfaces.HandlerInterface;
   getHandlers(): HandlerConfig[];
 }
 

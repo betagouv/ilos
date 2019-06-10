@@ -7,7 +7,7 @@ import {
   Unbind,
   IsBound,
   Rebind,
-} from '../container';
+} from '@ilos/container';
 
 import { HandlerInterface } from '../interfaces/HandlerInterface';
 
