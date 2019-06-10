@@ -1,4 +1,3 @@
-export { CommandInterface } from './CommandInterface';
 export { HandlerInterface } from './HandlerInterface';
 export { KernelInterface, KernelInterfaceResolver } from './KernelInterface';
 export { MiddlewareInterface, FunctionMiddlewareInterface } from './MiddlewareInterface';

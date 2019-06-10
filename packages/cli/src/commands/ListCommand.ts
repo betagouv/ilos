@@ -1,6 +1,6 @@
 import { command } from '@ilos/container';
+import { Interfaces } from '@ilos/core';
 
-import { KernelInterfaceResolver } from '../interfaces/KernelInterface';
 import { Command } from '../parents/Command';
 import { CommandOptionType } from '../types/CommandOptionType';
 
@@ -17,7 +17,7 @@ export class ListCommand extends Command {
   public readonly options: CommandOptionType[] = [];
 
   constructor(
-    private kernel: KernelInterfaceResolver,
+    private kernel: Interfaces.KernelInterfaceResolver,
   ) {
     super();
   }

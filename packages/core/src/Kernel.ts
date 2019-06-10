@@ -1,10 +1,11 @@
+/*
 import { Kernel as ParentKernel } from './parents/Kernel';
 import { EnvProvider } from './providers/EnvProvider';
 import { ConfigProvider } from './providers/ConfigProvider';
 import { CommandProvider } from './providers/CommandProvider';
-import { CommandServiceProvider } from './parents/CommandServiceProvider';
-import { CallCommand } from './commands/CallCommand';
-import { ListCommand } from './commands/ListCommand';
+import { CommandServiceProvider } from '../../cli/src/parents/CommandServiceProvider';
+import { CallCommand } from '../../cli/src/commands/CallCommand';
+import { ListCommand } from '../../cli/src/commands/ListCommand';
 
 class BaseCommandServiceProvider extends CommandServiceProvider {
   commands = [
@@ -24,3 +25,4 @@ export class Kernel extends ParentKernel {
     BaseCommandServiceProvider,
   ];
 }
+*/

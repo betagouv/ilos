@@ -1,9 +1,8 @@
 import fs from 'fs';
 import path from 'path';
+import { Parents, Interfaces } from '@ilos/core';
 
-import { Parents, Transports, Interfaces } from '@ilos/core';
-
-class Kernel extends Parents.Kernel {}
+import { CliTransport } from './transports/CliTransport';
 
 export function setEnvironment():void {
   process.env.APP_ROOT_PATH = process.cwd();
@@ -63,12 +62,12 @@ export async function start(bootstrapPath: string, argv: string[], defaultBootst
 }
 
 export async function boot(argv: string[], defaultBootstrap = {
-  kernel() { return new Kernel(); },
+  kernel() {
+    return class extends Parents.Kernel {}
+  },
   serviceProviders: [],
   transport: {
-    http(k) { return new Transports.HttpTransport(k); },
-    queue(k) { return new Transports.QueueTransport(k); },
-    cli(k) { return new Transports.CliTransport(k); },
+    cli(k) { return new CliTransport(k); },
   },
 }) {
   setEnvironment();

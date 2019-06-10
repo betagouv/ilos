@@ -1,4 +1,5 @@
-import { ResultType } from '../types/ResultType';
+import { Types } from '@ilos/core';
+
 import { CommandOptionType } from '../types/CommandOptionType';
 
 export interface CommandInterface {
@@ -32,5 +33,5 @@ export interface CommandInterface {
    * @returns {Promise<ResultType>}
    * @memberof CommandInterface
    */
-  call(...args: any[]): Promise<ResultType>;
+  call(...args: any[]): Promise<Types.ResultType>;
 }

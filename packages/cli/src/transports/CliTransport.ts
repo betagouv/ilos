@@ -1,5 +1,4 @@
-import { TransportInterface } from '../interfaces/TransportInterface';
-import { KernelInterface } from '../interfaces/KernelInterface';
+import { Interfaces } from '@ilos/core';
 import { CommandProvider } from '../providers/CommandProvider';
 
 
@@ -9,14 +8,14 @@ import { CommandProvider } from '../providers/CommandProvider';
  * @class CliTransport
  * @implements {TransportInterface}
  */
-export class CliTransport implements TransportInterface {
-  kernel: KernelInterface;
+export class CliTransport implements Interfaces.TransportInterface {
+  kernel: Interfaces.KernelInterface;
 
-  constructor(kernel: KernelInterface) {
+  constructor(kernel: Interfaces.KernelInterface) {
     this.kernel = kernel;
   }
 
-  getKernel():KernelInterface {
+  getKernel():Interfaces.KernelInterface {
     return this.kernel;
   }
 

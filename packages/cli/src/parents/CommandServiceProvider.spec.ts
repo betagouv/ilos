@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { command } from '@ilos/container';
 
-import { ResultType } from '../types/ResultType';
+import { ResultType } from '@ilos/core/src/types/ResultType';
 import { CommandProvider } from '../providers/CommandProvider';
 
 import { CommandServiceProvider } from './CommandServiceProvider';

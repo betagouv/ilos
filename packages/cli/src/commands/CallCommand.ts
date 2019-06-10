@@ -1,10 +1,7 @@
 import { command } from '@ilos/container';
-
-import { KernelInterfaceResolver } from '../interfaces/KernelInterface';
+import { Interfaces, Types } from '@ilos/core';
 
 import { Command } from '../parents/Command';
-import { CommandOptionType } from '../types/CommandOptionType';
-import { ResultType } from '../types/ResultType';
 
 /**
  * Command that make an RPC call
@@ -16,7 +13,7 @@ import { ResultType } from '../types/ResultType';
 export class CallCommand extends Command {
   public readonly signature: string = 'call <method>';
   public readonly description: string = 'Make an RPC call';
-  public readonly options: CommandOptionType[] = [
+  public readonly options: Types.CommandOptionType[] = [
     {
       signature: '-p, --params <params>',
       description: 'Set call parameters',
@@ -30,12 +27,12 @@ export class CallCommand extends Command {
   ];
 
   constructor(
-    private kernel: KernelInterfaceResolver,
+    private kernel: Interfaces.KernelInterfaceResolver,
   ) {
     super();
   }
 
-  public async call(method, options?):Promise<ResultType> {
+  public async call(method, options?):Promise<Types.ResultType> {
     try {
       const call = {
         method,

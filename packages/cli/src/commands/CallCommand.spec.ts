@@ -1,15 +1,15 @@
 // tslint:disable no-invalid-this
 import { describe } from 'mocha';
 import chai from 'chai';
+import { Parents } from '@ilos/core';
 import chaiAsPromised from 'chai-as-promised';
 
 import { CallCommand } from './CallCommand';
-import { Kernel } from '../parents/Kernel';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
-class FakeKernel extends Kernel {
+class FakeKernel extends Parents.Kernel {
   async boot() { return; }
   async handle(call) {
     if (call.method === 'nope') {

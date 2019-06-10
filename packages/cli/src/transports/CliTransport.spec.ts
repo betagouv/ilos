@@ -3,11 +3,10 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { command } from '@ilos/container';
+import { Parents, Types } from '@ilos/core';
 
-import { Kernel } from '../parents/Kernel';
 import { CommandServiceProvider } from '../parents/CommandServiceProvider';
 import { Command } from '../parents/Command';
-import { ResultType } from '../types/ResultType';
 import { CommandProvider } from '../providers/CommandProvider';
 
 import { CliTransport } from './CliTransport';
@@ -22,7 +21,7 @@ class BasicCommand extends Command {
     },
   ];
 
-  public async call(name, options?):Promise<ResultType> {
+  public async call(name, options?):Promise<Types.ResultType> {
     if (options && 'hi' in options) {
       return `Hi ${name}`;
     }
@@ -33,7 +32,7 @@ class BasicServiceCommandProvider extends CommandServiceProvider {
   public readonly commands = [BasicCommand];
 }
 
-class BasicKernel extends Kernel {
+class BasicKernel extends Parents.Kernel {
   alias = [
     CommandProvider,
   ];
