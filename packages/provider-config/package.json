@@ -14,7 +14,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-"test": "mocha src/**/*.spec.ts",
+    "test": "mocha src/**/*.spec.ts",
     "test:integration": "mocha tests/**/*.spec.ts",
     "coverage-ci": "nyc --all --reporter=lcov mocha src/**/*.spec.ts tests/**/*.spec.ts",
     "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts tests/**/*.spec.ts",
@@ -82,7 +82,7 @@
   },
   "peerDependencies": {
     "@ilos/core": "~0",
-    "@ilos/types": "~0",
-    "@ilos/provider-env": "~0"
+    "@ilos/provider-env": "~0",
+    "@ilos/types": "~0"
   }
 }

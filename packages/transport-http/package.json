@@ -69,8 +69,6 @@
     "tslint-import-group-ordering": "^2.1.1",
     "typescript": "^3.4.3"
   },
-  "dependencies": {
-  },
   "peerDependencies": {
     "@ilos/core": "~0"
   }

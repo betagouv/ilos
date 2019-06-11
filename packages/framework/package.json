@@ -79,11 +79,11 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/core": "~0",
-    "@ilos/cli": "~0",
-    "@ilos/provider-env": "~0",
-    "@ilos/provider-config": "~0",
-    "@ilos/transport-http": "~0",
-    "@ilos/transport-redis": "~0"
+    "@ilos/cli": "^0.0.1",
+    "@ilos/core": "^0.0.2",
+    "@ilos/provider-config": "^0.0.1",
+    "@ilos/provider-env": "^0.0.1",
+    "@ilos/transport-http": "^0.0.1",
+    "@ilos/transport-redis": "^0.0.1"
   }
 }
