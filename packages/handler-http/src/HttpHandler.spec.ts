@@ -4,7 +4,7 @@ import nock from 'nock';
 import chaiNock from 'chai-nock';
 import chaiAsPromised from 'chai-as-promised';
 
-import { httpHandlerFactory } from './HttpHandler';
+import { httpHandlerFactory } from './helpers/httpHandlerFactory';
 
 chai.use(chaiNock);
 chai.use(chaiAsPromised);

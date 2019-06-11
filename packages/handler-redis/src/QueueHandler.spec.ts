@@ -7,14 +7,14 @@ import { EnvProviderInterfaceResolver } from '@ilos/provider-env';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import * as Bull from './helpers/bullFactory';
-import { queueHandlerFactory } from './QueueHandler';
+import { queueHandlerFactory } from './helpers/queueHandlerFactory';
 
 chai.use(chaiAsPromised);
 
 const { expect, assert } = chai;
 
 class FakeEnvProvider extends EnvProviderInterfaceResolver {
-  boot() {
+  async boot() {
     return;
   }
 
@@ -32,7 +32,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   }
 }
 const envProvider = new FakeEnvProvider();
-const configProvider = new FakeConfigProvider(envProvider);
+const configProvider = new FakeConfigProvider();
 
 const sandbox = sinon.createSandbox();
 

@@ -57,7 +57,7 @@ export class Bootstrap {
   static async start(bootstrapPath: string, argv: string[], bootstrap?: BootstrapType): Promise<Interfaces.TransportInterface> {
     let fallbackBootstrap: BootstrapType = bootstrap;
     if (!fallbackBootstrap) {
-      fallbackBootstrap = this.defaultBootstrap;
+      fallbackBootstrap = Bootstrap.defaultBootstrap;
     }
 
     const [_node, _script, command, ...opts] = argv;
@@ -66,7 +66,8 @@ export class Bootstrap {
     const currentBootstrap = await import(bootstrapPath);
     const kernel = ('kernel' in currentBootstrap) ? currentBootstrap.kernel() : fallbackBootstrap.kernel();
     await kernel.boot();
-    const serviceProviders = ('serviceProviders' in currentBootstrap) ? currentBootstrap.serviceProviders : fallbackBootstrap.serviceProviders;
+    const serviceProviders = ('serviceProviders' in currentBootstrap) ?
+      currentBootstrap.serviceProviders : fallbackBootstrap.serviceProviders;
   
     for (const serviceProvider of serviceProviders) {
       await kernel.registerServiceProvider(serviceProvider);
@@ -80,8 +81,8 @@ export class Bootstrap {
   }
 
   static async boot(argv: string[], fallbackBootstrap?: BootstrapType) {
-    this.setEnvironment();
-    const bootstrapPath = this.getBootstrapFile();
-    return this.start(bootstrapPath, argv, fallbackBootstrap);
+    Bootstrap.setEnvironment();
+    const bootstrapPath = Bootstrap.getBootstrapFile();
+    return Bootstrap.start(bootstrapPath, argv, fallbackBootstrap);
   }
 }

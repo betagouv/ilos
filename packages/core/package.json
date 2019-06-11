@@ -11,8 +11,7 @@
     "url": "https://github.com/betagouv/ilos.git"
   },
   "scripts": {
-    "build": "yarn build-ts && yarn lint",
-    "build-ts": "tsc",
+    "build": "tsc",
     "test": "mocha src/**/*.spec.ts",
     "test:integration": "mocha tests/**/*.spec.ts",
     "coverage-ci": "nyc --all --reporter=lcov mocha src/**/*.spec.ts tests/**/*.spec.ts",

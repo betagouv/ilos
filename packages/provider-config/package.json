@@ -13,9 +13,8 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "yarn build-ts && yarn lint",
-    "build-ts": "tsc",
-    "test": "mocha src/**/*.spec.ts",
+    "build": "tsc",
+"test": "mocha src/**/*.spec.ts",
     "test:integration": "mocha tests/**/*.spec.ts",
     "coverage-ci": "nyc --all --reporter=lcov mocha src/**/*.spec.ts tests/**/*.spec.ts",
     "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts tests/**/*.spec.ts",
@@ -78,9 +77,13 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "js-yaml": "^3.13.1"
+    "js-yaml": "^3.13.1",
+    "lodash": "^4.17.11"
   },
   "peerDependencies": {
-    "@ilos/core": "~0"
+    "@ilos/core": "~0",
+    "@ilos/container": "~0",
+    "@ilos/types": "~0",
+    "@ilos/provider-env": "~0"
   }
 }

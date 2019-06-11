@@ -7,7 +7,7 @@ import { EnvProviderInterfaceResolver } from '@ilos/provider-env';
 import { ConfigProvider } from './ConfigProvider';
 
 class FakeEnvProvider extends EnvProviderInterfaceResolver {
-  boot() {
+  async boot() {
     return;
   }
 

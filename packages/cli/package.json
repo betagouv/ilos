@@ -11,8 +11,7 @@
     "url": "https://github.com/betagouv/ilos.git"
   },
   "scripts": {
-    "build": "yarn build-ts && yarn lint",
-    "build-ts": "tsc",
+    "build": "tsc",
     "test": "mocha src/**/*.spec.ts",
     "test:integration": "mocha tests/**/*.spec.ts",
     "coverage-ci": "nyc --all --reporter=lcov mocha src/**/*.spec.ts tests/**/*.spec.ts",
@@ -80,9 +79,11 @@
     "tslint-import-group-ordering": "^2.1.1",
     "typescript": "^3.4.3"
   },
+  "dependencies": {
+    "commander": "^2.20.0"
+  },
   "peerDependencies": {
     "@ilos/core": "~0",
-    "@ilos/container": "~0",
-    "commander": "^2.20.0"
+    "@ilos/container": "~0"
   }
 }
