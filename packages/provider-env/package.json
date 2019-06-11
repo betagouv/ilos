@@ -80,7 +80,6 @@
     "dotenv": "^7.0.0"
   },
   "peerDependencies": {
-    "@ilos/core": "~0",
-    "@ilos/container": "~0",
+    "@ilos/core": "~0"
   }
 }

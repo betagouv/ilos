@@ -4,8 +4,8 @@ import {
   ContainerModule as InversifyContainerModule,
   interfaces,
 } from 'inversify';
-import { Interfaces, Types } from '@ilos/core';
 
+import { Interfaces, Types } from '..';
 import { HandlerConfig } from './ContainerInterfaces';
 import { normalizeHandlerConfig } from './helpers/normalizeHandlerConfig';
 

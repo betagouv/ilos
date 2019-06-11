@@ -3,7 +3,7 @@ import vm from 'vm';
 import path from 'path';
 import jsYaml from 'js-yaml';
 import { camelCase, get, set, has } from 'lodash';
-import { provider } from '@ilos/container';
+import { Container } from '@ilos/core';
 import { EnvProviderInterfaceResolver } from '@ilos/provider-env';
 
 import { ConfigProviderInterface } from './ConfigProviderInterfaces';
@@ -15,7 +15,7 @@ import { ConfigProviderInterface } from './ConfigProviderInterfaces';
  * @class ConfigProvider
  * @implements {ConfigProviderInterface}
  */
-@provider()
+@Container.provider()
 export class ConfigProvider implements ConfigProviderInterface {
   protected config: object = {};
   private configPaths: Set<string> = new Set();

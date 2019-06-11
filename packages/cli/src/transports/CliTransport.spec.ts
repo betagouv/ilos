@@ -2,8 +2,7 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { command } from '@ilos/container';
-import { Parents, Types } from '@ilos/core';
+import { Parents, Container, Types } from '@ilos/core';
 
 import { CommandServiceProvider } from '../parents/CommandServiceProvider';
 import { Command } from '../parents/Command';
@@ -11,7 +10,7 @@ import { CommandProvider } from '../providers/CommandProvider';
 
 import { CliTransport } from './CliTransport';
 
-@command()
+@Container.command()
 class BasicCommand extends Command {
   public readonly signature: string = 'hello <name>';
   public readonly options = [

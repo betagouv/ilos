@@ -1,10 +1,9 @@
-import { Types, Interfaces } from '@ilos/core';
-import { handler } from '@ilos/container';
+import { Container, Types, Interfaces } from '@ilos/core';
 
 import { QueueHandler } from '../QueueHandler';
 
 export function queueHandlerFactory(service: string, version?: string): Types.NewableType<Interfaces.HandlerInterface> {
-  @handler({
+  @Container.handler({
     service,
     version,
     method: '*',
@@ -15,7 +14,7 @@ export function queueHandlerFactory(service: string, version?: string): Types.Ne
     readonly service: string = service;
     readonly version: string = version;
   }
-  
+
   return CustomQueueHandler;
 }
-  
+

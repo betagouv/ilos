@@ -1,4 +1,4 @@
-import { ContainerInterface } from '@ilos/container';
+import { ContainerInterface } from '../container';
 import { CallType } from '../types/CallType';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';

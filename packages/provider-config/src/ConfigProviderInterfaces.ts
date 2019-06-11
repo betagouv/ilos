@@ -4,7 +4,7 @@ export interface ConfigProviderInterface extends Interfaces.ProviderInterface {
   loadConfigDirectory(workingPath: string, configDir?: string): void;
   get(key: string, fallback?: any): any;
   set(key: string, value: any): void;
-};
+}
 
 export abstract class ConfigProviderInterfaceResolver implements ConfigProviderInterface {
   async boot() {

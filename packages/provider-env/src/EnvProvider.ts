@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
-import { provider } from '@ilos/container';
+import { Container } from '@ilos/core';
 
 import { EnvProviderInterface } from './EnvProviderInterfaces';
 
@@ -11,7 +11,7 @@ import { EnvProviderInterface } from './EnvProviderInterfaces';
  * @class EnvProvider
  * @implements {EnvProviderInterface}
  */
-@provider()
+@Container.provider()
 export class EnvProvider implements EnvProviderInterface {
   private env: Map<string, any> = new Map();
 

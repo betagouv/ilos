@@ -1,4 +1,4 @@
-import { ContainerModuleConfigurator } from '@ilos/container';
+import { ContainerModuleConfigurator } from '../container';
 
 export interface ProviderInterface {
 

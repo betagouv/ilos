@@ -1,6 +1,5 @@
 import { HttpHandler } from '../HttpHandler';
-import { handler } from '@ilos/container';
-import { Types, Interfaces } from '@ilos/core';
+import { Container, Types, Interfaces } from '@ilos/core';
 /**
  * httpHandlerFactory - Create a HttpHandler for a remote service
  * @export
@@ -10,7 +9,7 @@ import { Types, Interfaces } from '@ilos/core';
  * @returns {NewableType<HandlerInterface>}
  */
 export function httpHandlerFactory(service: string, url: string, version?: string): Types.NewableType<Interfaces.HandlerInterface> {
-  @handler({
+  @Container.handler({
     service,
     version,
     method: '*',
@@ -23,4 +22,4 @@ export function httpHandlerFactory(service: string, url: string, version?: strin
   }
   return CustomHttpHandler;
 }
-  
+

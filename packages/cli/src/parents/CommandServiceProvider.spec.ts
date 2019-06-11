@@ -2,15 +2,13 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { command } from '@ilos/container';
-
-import { ResultType } from '@ilos/core/src/types/ResultType';
+import { Container, Types } from '@ilos/core';
 import { CommandProvider } from '../providers/CommandProvider';
 
 import { CommandServiceProvider } from './CommandServiceProvider';
 import { Command } from './Command';
 
-@command()
+@Container.command()
 class BasicCommand extends Command {
   public readonly signature: string = 'hello <name>';
   public readonly options = [
@@ -20,7 +18,7 @@ class BasicCommand extends Command {
     },
   ];
 
-  public async call(name, options?):Promise<ResultType> {
+  public async call(name, options?):Promise<Types.ResultType> {
     if (options && 'hi' in options) {
       return `Hi ${name}`;
     }

@@ -1,4 +1,4 @@
-import { ContainerInterface, ContainerModuleConfigurator } from '@ilos/container';
+import { ContainerInterface, ContainerModuleConfigurator } from '../container';
 
 import { ServiceProviderInterface } from './ServiceProviderInterface';
 import { RPCCallType, RPCResponseType, ResultType, ContextType, ParamsType } from '../types';

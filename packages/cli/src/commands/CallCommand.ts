@@ -1,6 +1,6 @@
-import { command } from '@ilos/container';
-import { Interfaces, Types } from '@ilos/core';
+import { Container, Interfaces, Types } from '@ilos/core';
 
+import { CommandOptionType } from '../types';
 import { Command } from '../parents/Command';
 
 /**
@@ -9,11 +9,11 @@ import { Command } from '../parents/Command';
  * @class CallCommand
  * @extends {Command}
  */
-@command()
+@Container.command()
 export class CallCommand extends Command {
   public readonly signature: string = 'call <method>';
   public readonly description: string = 'Make an RPC call';
-  public readonly options: Types.CommandOptionType[] = [
+  public readonly options: CommandOptionType[] = [
     {
       signature: '-p, --params <params>',
       description: 'Set call parameters',

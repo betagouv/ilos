@@ -1,21 +1,22 @@
 import { Types, Interfaces, Parents } from '@ilos/core';
 import { CommandProvider } from '../providers/CommandProvider';
+import { CommandInterface } from '../interfaces';
 
 export abstract class CommandServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
   protected commander: CommandProvider;
-  public readonly commands: Types.NewableType<Interfaces.CommandInterface>[];
+  public readonly commands: Types.NewableType<CommandInterface>[];
 
   async boot() {
     await super.boot();
     this.commander = this.container.get<CommandProvider>(CommandProvider);
 
     for (const command of this.commands) {
-      const cmd = this.container.get<Interfaces.CommandInterface>(command);
+      const cmd = this.container.get<CommandInterface>(command);
       this.registerCommand(cmd);
     }
   }
 
-  registerCommand(cmd: Interfaces.CommandInterface): any {
+  registerCommand(cmd: CommandInterface): any {
     const command = this.commander.command(cmd.signature);
 
     command.description(cmd.description);

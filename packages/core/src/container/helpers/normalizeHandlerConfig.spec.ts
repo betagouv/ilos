@@ -1,7 +1,7 @@
 import { describe } from 'mocha';
 import { expect, assert } from 'chai';
-import { Exceptions } from '@ilos/core';
 
+import { Exceptions } from '../..';
 import { getConfigBySignature, getSignatureByConfig } from './normalizeHandlerConfig';
 
 describe('Helpers: resolve method', () => {

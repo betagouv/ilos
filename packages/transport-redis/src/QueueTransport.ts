@@ -1,6 +1,5 @@
 import { Queue } from 'bull';
-import { ContainerInterface } from '@ilos/container';
-import { Interfaces } from '@ilos/core';
+import { Container, Interfaces } from '@ilos/core';
 
 import { bullFactory } from './helpers/bullFactory';
 
@@ -26,7 +25,7 @@ export class QueueTransport implements Interfaces.TransportInterface {
     const [redisUrl, env] = opts;
     // throw error
 
-    const container = <ContainerInterface>this.kernel.getContainer();
+    const container = <Container.ContainerInterface>this.kernel.getContainer();
     const services = Array.from(new Set(
       container
       .getHandlers()

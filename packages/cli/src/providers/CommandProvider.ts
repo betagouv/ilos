@@ -1,7 +1,5 @@
 import { Command } from 'commander';
-import { provider } from '@ilos/container';
-
-import { ProviderInterface } from '../interfaces/ProviderInterface';
+import { Container, Interfaces } from '@ilos/core';
 
 /**
  * Commander provider
@@ -10,8 +8,8 @@ import { ProviderInterface } from '../interfaces/ProviderInterface';
  * @extends {Command}
  * @implements {ProviderInterface}
  */
-@provider()
-export class CommandProvider extends Command implements ProviderInterface {
+@Container.provider()
+export class CommandProvider extends Command implements Interfaces.ProviderInterface {
   boot() {
     //
   }

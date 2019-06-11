@@ -1,7 +1,6 @@
-import { handler } from '@ilos/container';
-import { Parents, Types, Exceptions, Interfaces } from '@ilos/core';
+import { Container, Parents, Types, Exceptions, Interfaces } from '@ilos/core';
 
-@handler({
+@Container.handler({
   service: 'string',
   method: 'result',
 })

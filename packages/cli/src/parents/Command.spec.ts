@@ -4,13 +4,14 @@ import { expect } from 'chai';
 import { Types } from '@ilos/core';
 
 import { Command } from './Command';
+import { CommandOptionType } from '../types';
 
 describe('Command', () => {
   it('works', async () => {
     class BasicCommand extends Command {
       public readonly signature: string = 'hello <name>';
       public readonly description: string = 'basic hello command';
-      public readonly options: Types.CommandOptionType[] = [
+      public readonly options: CommandOptionType[] = [
         { signature: '-h, --hi', description: 'hi' },
       ];
       public async call(name, opts):Promise<Types.ResultType> {

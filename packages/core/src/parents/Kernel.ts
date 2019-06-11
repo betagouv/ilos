@@ -1,4 +1,4 @@
-import { ContainerInterface } from '@ilos/container';
+import { ContainerInterface } from '../container';
 
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';

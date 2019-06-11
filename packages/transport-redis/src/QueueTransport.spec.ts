@@ -2,15 +2,14 @@
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { handler } from '@ilos/container';
-import { Types, Interfaces, Parents } from '@ilos/core';
+import { Container, Types, Interfaces, Parents } from '@ilos/core';
 
 import * as Bull from './helpers/bullFactory';
 import { QueueTransport } from './QueueTransport';
 
 const sandbox = sinon.createSandbox();
 
-@handler({
+@Container.handler({
   service: 'math',
   method: 'minus',
 })
@@ -29,7 +28,7 @@ class BasicAction extends Parents.Action {
   }
 }
 
-@handler({
+@Container.handler({
   service: 'math',
   method: 'add',
 })
@@ -48,11 +47,11 @@ class BasicTwoAction extends Parents.Action {
   }
 }
 
-class BasicServiceProvider extends ServiceProvider {
+class BasicServiceProvider extends Parents.ServiceProvider {
   readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [BasicAction, BasicTwoAction];
 }
 
-class BasicKernel extends Kernel {
+class BasicKernel extends Parents.Kernel {
   serviceProviders = [BasicServiceProvider];
 }
 

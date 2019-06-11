@@ -2,20 +2,19 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import axios from 'axios';
-import { injectable } from '@ilos/container';
 import { HttpTransport, httpHandlerFactory } from '@ilos/transport-http';
-import { Parents, Interfaces } from '@ilos/core';
+import { Container, Parents, Interfaces } from '@ilos/core';
 
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
 
-@injectable()
+@Container.injectable()
 class MathKernel extends Parents.Kernel {
   name = 'math';
   serviceProviders = [MathServiceProvider];
 }
 
-@injectable()
+@Container.injectable()
 class StringKernel extends Parents.Kernel {
   name = 'string';
   serviceProviders = [

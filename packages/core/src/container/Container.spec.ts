@@ -2,8 +2,8 @@
 import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { Types, Interfaces } from '@ilos/core';
 
+import { Types, Interfaces } from '..';
 import { Container, handler, lib, provider, inject } from '.';
 
 chai.use(chaiAsPromised);

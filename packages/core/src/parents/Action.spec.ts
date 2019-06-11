@@ -2,8 +2,8 @@
 import { describe } from 'mocha';
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { Container, middleware } from '@ilos/container';
 
+import { Container, middleware } from '../container';
 import { Action } from './Action';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';

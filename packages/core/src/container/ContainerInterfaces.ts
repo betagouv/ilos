@@ -1,7 +1,7 @@
 /* tslint:disable:no-empty-interface */
-
 import { interfaces } from 'inversify';
-import { Types, Interfaces } from '@ilos/core';
+
+import { Types, Interfaces } from '..';
 
 export type HandlerConfig = {
   service?: string,
