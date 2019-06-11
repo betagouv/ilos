@@ -1,5 +1,5 @@
 {
-  "name": "@ilos/core",
+  "name": "@ilos/handler-http",
   "version": "0.0.1",
   "publishConfig": {
     "access": "public"
@@ -10,6 +10,8 @@
     "type": "git",
     "url": "https://github.com/betagouv/ilos.git"
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "yarn build-ts && yarn lint",
     "build-ts": "tsc",
@@ -21,8 +23,6 @@
     "watch": "tsc -w",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json"
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "mocha": {
     "require": [
       "ts-node/register",
@@ -53,7 +53,6 @@
     "instrument": true
   },
   "devDependencies": {
-    "@types/bull": "^3.5.11",
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^5.2.6",
@@ -77,7 +76,10 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/container": "~0",
-    "lodash": "^4.17.11"
+    "axios": "^0.18.0"
+  },
+  "peerDependencies": {
+    "@ilos/core": "~0",
+    "@ilos/container": "~0"
   }
 }

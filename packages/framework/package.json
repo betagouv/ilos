@@ -1,5 +1,5 @@
 {
-  "name": "@ilos/core",
+  "name": "@ilos/framework",
   "version": "0.0.1",
   "publishConfig": {
     "access": "public"
@@ -9,6 +9,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/betagouv/ilos.git"
+  },
+  "bin": {
+    "ilos": "./dist/cli.js"
   },
   "scripts": {
     "build": "yarn build-ts && yarn lint",
@@ -77,7 +80,11 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/container": "~0",
-    "lodash": "^4.17.11"
+    "@ilos/core": "~0",
+    "@ilos/cli": "~0",
+    "@ilos/provider-env": "~0",
+    "@ilos/provider-config": "~0",
+    "@ilos/transport-http": "~0",
+    "@ilos/transport-redis": "~0"
   }
 }

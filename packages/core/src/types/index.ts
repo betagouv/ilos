@@ -1,5 +1,4 @@
 export { CallType } from './CallType';
-export { CommandOptionType } from './CommandOptionType';
 export { ContextType } from './ContextType';
 export { IdType } from './IdType';
 export { NewableType } from './NewableType';

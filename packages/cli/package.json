@@ -24,7 +24,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "ilos": "./dist/Cli.js"
+    "ilos-cli": "./dist/cli.js"
   },
   "mocha": {
     "require": [
@@ -82,6 +82,7 @@
   },
   "peerDependencies": {
     "@ilos/core": "~0",
-    "@ilos/container": "~0"
+    "@ilos/container": "~0",
+    "commander": "^2.20.0"
   }
 }
