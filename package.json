@@ -15,9 +15,41 @@
     "bootstrap": "lerna bootstrap",
     "lint": "lerna run lint",
     "build": "lerna run build",
-    "test": "lerna run test",
+    "test": "mocha packages/*/src/**/*.spec.ts",
+    "test:integration": "mocha packages/*/tests/**/*.spec.ts",
+    "coverage-ci": "nyc --all --reporter=lcov mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
+    "coverage": "nyc --all --reporter=text mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
     "changed": "lerna changed",
     "publish": "lerna publish"
+  },
+  "mocha": {
+    "require": [
+      "ts-node/register",
+      "tsconfig-paths/register"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "packages/*/src/**/*.ts"
+    ],
+    "exclude": [
+      "packages/*/src/**/*.spec.ts",
+      "packages/*/src/interfaces/**",
+      "packages/*/src/types/**",
+      "packages/*/src/exceptions/**",
+      "packages/*/src/**/index.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true
   },
   "devDependencies": {
     "lerna": "^3.15.0"

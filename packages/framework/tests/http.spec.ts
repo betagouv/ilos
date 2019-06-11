@@ -2,7 +2,8 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import axios from 'axios';
-import { HttpTransport, httpHandlerFactory } from '@ilos/transport-http';
+import { HttpTransport } from '@ilos/transport-http';
+import { httpHandlerFactory } from '@ilos/handler-http';
 import { Container, Parents, Interfaces } from '@ilos/core';
 
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';

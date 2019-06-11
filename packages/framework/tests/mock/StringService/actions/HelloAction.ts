@@ -1,4 +1,4 @@
-import { Parents, Types, Exceptions } from '@ilos/core';
+import { Container, Parents, Types, Exceptions } from '@ilos/core';
 
 @Container.handler({
   service: 'string',
