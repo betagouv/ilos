@@ -1,5 +1,6 @@
 import ajv from 'ajv';
-import { Container, Providers, Types } from '@pdc/core';
+import { Container, Types } from '@ilos/core';
+import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
 import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
 
@@ -13,7 +14,7 @@ export class AjvValidatorProvider implements ValidatorProviderInterface {
   protected cache: Cache = new Cache();
   protected isSchemaSecure: ajv.ValidateFunction;
 
-  constructor(protected config: Providers.ConfigProvider) {}
+  constructor(protected config: ConfigProviderInterfaceResolver) {}
 
   boot() {
     const ajvConfig = {

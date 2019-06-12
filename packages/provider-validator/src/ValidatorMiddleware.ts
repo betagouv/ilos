@@ -1,4 +1,4 @@
-import { Interfaces, Container, Types, Exceptions } from '@pdc/core';
+import { Interfaces, Container, Types, Exceptions } from '@ilos/core';
 
 import { ValidatorProviderInterfaceResolver } from './ValidatorProviderInterface';
 

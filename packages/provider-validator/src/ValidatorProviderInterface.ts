@@ -1,4 +1,4 @@
-import { Types, Interfaces } from '@pdc/core';
+import { Types, Interfaces } from '@ilos/core';
 
 export interface ValidatorProviderInterface extends Interfaces.ProviderInterface {
   registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorProviderInterface;

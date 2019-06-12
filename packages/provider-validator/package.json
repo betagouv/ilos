@@ -44,7 +44,8 @@
     "ajv": "^6.10.0"
   },
   "peerDependencies": {
-    "@ilos/core": "~0"
+    "@ilos/core": "~0",
+    "@ilos/provider-config": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
