@@ -86,6 +86,7 @@ describe('Repository provider', () => {
     mongoServer = new MongoMemoryServer();
     connectionString = await mongoServer.getConnectionString();
     dbName = await mongoServer.getDbName();
+    await kernel.boot();
     const container = kernel.getContainer();
     (<FakeConfigProvider>container.get(ConfigProviderInterfaceResolver)).setConfig({
       mongo: {
@@ -93,7 +94,6 @@ describe('Repository provider', () => {
         db: dbName,
       },
     });
-    await kernel.boot();
   });
 
   after(async () => {

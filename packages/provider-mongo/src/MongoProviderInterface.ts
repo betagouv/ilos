@@ -11,7 +11,7 @@ export abstract class MongoProviderInterfaceResolver implements MongoProviderInt
   async boot() {
     throw new Error();
   }
- 
+
   async getDb(name: string): Promise<Db> {
     throw new Error();
   }
@@ -19,7 +19,7 @@ export abstract class MongoProviderInterfaceResolver implements MongoProviderInt
   async getCollectionFromDb(collection: string, db: string): Promise<Collection> {
     throw new Error();
   }
- 
+
   async close(): Promise<void> {
     throw new Error();
   }

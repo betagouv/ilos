@@ -9,6 +9,7 @@
         "sourceMap": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "resolveJsonModule": true,
         "baseUrl": ".",
         "paths": {
             "*": [

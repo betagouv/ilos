@@ -39,6 +39,7 @@ const kernel = new Kernel();
 
 @Container.injectable()
 class FirstMigration extends ParentMigration {
+  readonly signature = '20190527.FirstMigration';
   static signature = '20190527.FirstMigration';
 
   constructor(private mongo: MongoProviderInterfaceResolver) {
@@ -58,6 +59,7 @@ class FirstMigration extends ParentMigration {
 
 @Container.injectable()
 class SecondMigration extends ParentMigration {
+  readonly signature = '20190527.SecondMigration';
   static signature = '20190527.SecondMigration';
 
   constructor(private mongo: MongoProviderInterfaceResolver) {
@@ -96,6 +98,7 @@ describe('Repository provider: migrate', () => {
     mongoServer = new MongoMemoryServer();
     connectionString = await mongoServer.getConnectionString();
     dbName = await mongoServer.getDbName();
+    await kernel.boot();
     const container = kernel.getContainer();
     (<FakeConfigProvider>container.get(ConfigProviderInterfaceResolver)).setConfig({
       mongo: {
@@ -107,7 +110,6 @@ describe('Repository provider: migrate', () => {
         collection: collectionName,
       },
     });
-    await kernel.boot();
   });
 
   after(async () => {

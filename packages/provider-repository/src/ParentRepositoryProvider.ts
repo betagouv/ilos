@@ -2,7 +2,7 @@ import {
   MongoProviderInterfaceResolver,
   CollectionInterface,
   MongoException,
-  ObjectId
+  ObjectId,
 } from '@ilos/provider-mongo';
 import { Types, Exceptions } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
@@ -14,7 +14,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
 
   constructor(
     protected config: ConfigProviderInterfaceResolver,
-    protected mongoProvider: MongoProviderInterfaceResolver
+    protected mongoProvider: MongoProviderInterfaceResolver,
   ) {}
 
   boot(): void {
@@ -70,7 +70,8 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
 
   async delete(data: Model | string | ObjectId): Promise<void> {
     const collection = await this.getCollection();
-    const id = typeof data === 'string' ? new ObjectId(data) : '_id' in data ? data._id : data;
+    let id = typeof data === 'string' ? data : '_id' in data ? data._id : data;
+    id = typeof id === 'string' ? new ObjectId(id) : id;
     const result = await collection.deleteOne({ _id: id });
     if (result.deletedCount !== 1) {
       throw new MongoException();
@@ -134,7 +135,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
   }
 
   protected instanciateMany(data: any[]): Model[] {
-    return data.map((d) => this.instanciate(d));
+    return data.map(d => this.instanciate(d));
   }
 
   protected castObjectIdFromString(data: Model) {

@@ -11,19 +11,13 @@ export type MigrationType = {
 };
 
 export interface MigrationInterface {
+  readonly signature: string;
   up(): Promise<void>;
   down(): Promise<void>;
 }
 
 export abstract class ParentMigration implements MigrationInterface {
-  static signature: string;
-
-  static getSignature(): string {
-    if (ParentMigration.signature) {
-      return ParentMigration.signature;
-    }
-    throw new Error('No signature provided');
-  }
+  readonly signature: string;
 
   async up() {
     throw new Error();
@@ -89,7 +83,8 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
   protected boot() {
     const container = this.kernel.getContainer();
     this.migrations.forEach((migration) => {
-      this.availableMigrationsMap.set((<any>migration).getSignature(), container.get(migration));
+      const migrationInstance = container.get(migration);
+      this.availableMigrationsMap.set(migrationInstance.signature, migrationInstance);
     });
   }
 
@@ -104,7 +99,7 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
     const availableMigrations = this.availableMigrations;
     const result = [];
     for (const signature of availableMigrations) {
-      const info = dbMigrations.find((migration) => migration.signature === signature);
+      const info = dbMigrations.find(migration => migration.signature === signature);
       result.push({ signature, info });
     }
 
@@ -117,7 +112,7 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
 
   protected async rollback(round: number): Promise<string> {
     const dbMigrations = await this.listDbMigrations();
-    const orderedDbMigrations = dbMigrations.filter((migration) => !!migration.success).reverse();
+    const orderedDbMigrations = dbMigrations.filter(migration => !!migration.success).reverse();
 
     let output = '';
     for (let i = 0; i < round; i += 1) {
@@ -141,7 +136,7 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
     const dbMigrations = await this.listDbMigrations();
     let output = '';
     for (const migrationSignature of this.availableMigrations) {
-      if (!dbMigrations.find((m) => m.signature === migrationSignature && !!m.success)) {
+      if (!dbMigrations.find(m => m.signature === migrationSignature && !!m.success)) {
         const r = await this.applyMigrationAndSave(this.availableMigrationsMap.get(migrationSignature));
         output += `${r.signature}: ${r.success ? 'success' : 'failure'}\n`;
       }
@@ -212,13 +207,13 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
         await migration.up();
       }
       return {
-        signature: (<any>migration).constructor.getSignature(),
+        signature: migration.signature,
         date: new Date(),
         success: true,
       };
     } catch (e) {
       return {
-        signature: (<any>migration).constructor.getSignature(),
+        signature: migration.signature,
         date: new Date(),
         success: false,
       };
