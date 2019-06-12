@@ -1,9 +1,10 @@
 import { MongoClient, Collection, Db } from 'mongodb';
-import { Container, Interfaces } from '@ilos/core';
+import { Container } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { MongoProviderInterface } from './MongoProviderInterface';
 
 @Container.provider()
-export class MongoProvider implements Interfaces.ProviderInterface {
+export class MongoProvider implements MongoProviderInterface {
   protected client: MongoClient;
   protected connected = false;
 
