@@ -1,4 +1,4 @@
-import { Parents } from '@ilos/core';
+import { Parents, Interfaces, Types } from '@ilos/core';
 import { EnvProvider, EnvProviderInterfaceResolver } from '@ilos/provider-env';
 import { ConfigProvider, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { CommandProvider } from '@ilos/cli';
@@ -12,7 +12,7 @@ export class Kernel extends Parents.Kernel {
     CommandProvider,
   ];
 
-  readonly serviceProviders = [
+  readonly serviceProviders: Types.NewableType<Interfaces.ServiceProviderInterface>[] = [
     CommandServiceProvider,
   ];
 }

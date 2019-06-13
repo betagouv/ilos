@@ -19,6 +19,7 @@
     "test:integration": "mocha packages/*/tests/**/*.spec.ts",
     "coverage-ci": "nyc --all --reporter=lcov mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
     "coverage": "nyc --all --reporter=text mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
+    "watch": "lerna run --parallel watch",
     "changed": "lerna changed",
     "publish": "lerna publish"
   },

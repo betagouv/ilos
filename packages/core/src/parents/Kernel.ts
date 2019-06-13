@@ -95,7 +95,11 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async call(method: string, params: ParamsType, context: ContextType): Promise<ResultType> {
-    return this.getHandlerAndCall({ signature: method }, { method, params, context });
+    try {
+      return this.getHandlerAndCall({ signature: method }, { method, params, context });
+    } catch(e) {
+      throw e;
+    }
   }
 
 
@@ -108,7 +112,11 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async notify(method: string, params: ParamsType, context: ContextType): Promise<void> {
-    return this.getHandlerAndCall({ signature: method, queue: true }, { method, params, context });
+    try {
+      return this.getHandlerAndCall({ signature: method, queue: true }, { method, params, context });
+    } catch(e) {
+      throw e;
+    }
   }
 
 

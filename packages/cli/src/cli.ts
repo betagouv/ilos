@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { Bootstrap } from './Bootstrap';
+import { bootstrap } from './Bootstrap';
 console.log('Bootstraping app...');
 
-Bootstrap.boot(process.argv)
+bootstrap.boot(process.argv)
   .then(() => {
     console.log('Ready!');
   })
