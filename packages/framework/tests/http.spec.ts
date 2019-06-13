@@ -1,22 +1,22 @@
 // tslint:disable max-classes-per-file
-import { describe } from 'mocha';
 import { expect } from 'chai';
 import axios from 'axios';
 import { HttpTransport } from '@ilos/transport-http';
 import { httpHandlerFactory } from '@ilos/handler-http';
-import { Container, Parents, Interfaces } from '@ilos/core';
+import { Container, Interfaces } from '@ilos/core';
+import { Kernel } from '../src/Kernel';
 
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
 
 @Container.injectable()
-class MathKernel extends Parents.Kernel {
+class MathKernel extends Kernel {
   name = 'math';
-  serviceProviders = [MathServiceProvider];
+  readonly serviceProviders = [MathServiceProvider];
 }
 
 @Container.injectable()
-class StringKernel extends Parents.Kernel {
+class StringKernel extends Kernel {
   name = 'string';
   serviceProviders = [
     StringServiceProvider,
