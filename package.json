@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "RPC microframework written in Typescript",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/betagouv/ilos.git"
+    "type": "git",
+    "url": "https://github.com/betagouv/ilos.git"
   },
   "license": "Apache-2.0",
   "private": true,
@@ -14,7 +14,17 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "lint": "lerna run lint",
-    "build": "lerna run build",
+    "clean": "rm -rf packages/*/dist",
+    "build": "run-s clean build:core build:cli build:transport build:provider:env build:provider:config build:providers build:handlers build:packages build:framework",
+    "build:core": "lerna run --scope @ilos/core build",
+    "build:cli": "lerna run --scope @ilos/cli build",
+    "build:transport": "lerna run --scope @ilos/transport* build",
+    "build:provider:env": "lerna run --scope @ilos/provider-env build",
+    "build:provider:config": "lerna run --scope @ilos/provider-config build",
+    "build:providers": "lerna run --scope @ilos/provider* build",
+    "build:handlers": "lerna run --scope @ilos/handler* build",
+    "build:packages": "lerna run --scope @ilos/package* build",
+    "build:framework": "lerna run --scope @ilos/framework build",
     "test": "mocha ./packages/*/src/**/*.spec.ts",
     "test:integration": "mocha packages/*/tests/**/*.spec.ts",
     "coverage-ci": "nyc --all --reporter=lcov mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
@@ -53,6 +63,7 @@
     "instrument": true
   },
   "devDependencies": {
-    "lerna": "^3.15.0"
+    "lerna": "^3.15.0",
+    "npm-run-all": "^4.1.5"
   }
 }
