@@ -56,38 +56,44 @@ export class Bootstrap {
 
     if (!fs.existsSync(bootstrapPath)) {
       console.error('No bootstrap file provided');
-      process.exit(1);
+      return;
     }
     return bootstrapPath;
   }
 
-  async start(bootstrapPath: string, argv: string[]): Promise<Interfaces.TransportInterface> {
+  async start(argv: string[], bootstrapPath?: string): Promise<Interfaces.TransportInterface> {
     const fallbackBootstrap: BootstrapType = this.defaultBootstrap;
 
     const [_node, _script, command, ...opts] = argv;
-    const currentBootstrap = await import(bootstrapPath);
-    const bootstrap = { ...fallbackBootstrap, ...currentBootstrap };
+    let bootstrap = { ...fallbackBootstrap };
 
+    if (bootstrapPath) {
+      const currentBootstrap = await import(bootstrapPath);
+      bootstrap = { ...bootstrap, ...currentBootstrap };
+    }
     const kernel = bootstrap.kernel();
     await kernel.boot();
     const serviceProviders = bootstrap.serviceProviders;
-
+    
     for (const serviceProvider of serviceProviders) {
       await kernel.registerServiceProvider(serviceProvider);
     }
+    
+    if (command !== 'cli' && (command in bootstrap.transport)) {
+      const transport = bootstrap.transport[command](kernel);
+      await transport.up(opts);
+      return transport;  
+    }
 
-    const transport = (command in bootstrap.transport) ?
-      bootstrap.transport[command](kernel) : bootstrap.transport.cli(kernel);
-
-    await transport.up(opts);
-
-    return transport;
+    const cli = bootstrap.transport.cli(kernel);
+    await cli.up(argv);
+    return cli;
   }
 
   async boot(argv: string[]) {
     this.setEnvironment();
     const bootstrapPath = this.getBootstrapFile();
-    return this.start(bootstrapPath, argv);
+    return this.start(argv, bootstrapPath);
   }
 }
 

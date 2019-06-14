@@ -11,6 +11,7 @@ const defaultBootstrap: Types.BootstrapType = {
     http: k => new HttpTransport(k),
     queue: k => new QueueTransport(k),
   },
+  serviceProviders: [],
 };
 
 export const bootstrap = new Bootstrap(defaultBootstrap);

@@ -1,0 +1,21 @@
+import { Parents, Container, Types } from '@ilos/core';
+
+@Container.handler({
+  service: 'myService',
+  method: '{{name}}',
+})
+export class {{name}}Action extends Parents.Action {
+  constructor(
+    // here inject your dependencies
+    // private provider: MyProviderInterfaceResolver,
+  ) {
+    super();
+  }
+
+  protected async handle(
+    params: Types.ParamsType,
+    context: Types.ContextType,
+  ): Promise<Types.ResultType> {
+    // 
+  }
+}

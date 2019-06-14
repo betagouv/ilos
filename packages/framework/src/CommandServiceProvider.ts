@@ -4,5 +4,6 @@ export class CommandServiceProvider extends Parents.CommandServiceProvider {
   commands = [
     Commands.CallCommand,
     Commands.ListCommand,
+    Commands.ScaffoldCommand,
   ];
 }

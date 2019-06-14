@@ -1,0 +1,8 @@
+import { Container, Interfaces } from '@ilos/core';
+
+@Container.provider()
+export class {{name}}Provider implements Interfaces.ProviderInterface {
+  boot(): Promise<void> | void {
+    // Boot is called after instanciation
+  }
+}

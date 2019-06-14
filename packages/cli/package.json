@@ -11,7 +11,8 @@
     "url": "https://github.com/betagouv/ilos.git"
   },
   "scripts": {
-    "build": "tsc",
+    "copy-static": "cp -R ./src/stubs ./dist/",
+    "build": "tsc && yarn copy-static",
     "test": "mocha src/**/*.spec.ts",
     "test:integration": "mocha tests/**/*.spec.ts",
     "coverage-ci": "nyc --all --reporter=lcov mocha src/**/*.spec.ts tests/**/*.spec.ts",
@@ -83,6 +84,7 @@
     "commander": "^2.20.0"
   },
   "peerDependencies": {
-    "@ilos/core": "~0"
+    "@ilos/core": "~0",
+    "@ilos/provider-template": "~0"
   }
 }

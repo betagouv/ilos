@@ -97,8 +97,7 @@ export abstract class ServiceProvider implements ServiceProviderInterface {
     return this.container;
   }
 
-  // TODO: add to interface
-  public async registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>) {
+  public async registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void> {
     const serviceProvider = new serviceProviderConstructor(this.getContainer());
     await serviceProvider.boot();
   }

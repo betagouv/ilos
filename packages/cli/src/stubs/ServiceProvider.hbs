@@ -1,0 +1,24 @@
+import { Parents, Interfaces, Types } from '@ilos/core';
+
+export class {{name}}ServiceProvider extends Parents.ServiceProvider implements Interfaces.ServiceProviderInterface {
+  readonly serviceProviders: Types.NewableType<Interfaces.ServiceProviderInterface>[] = [
+    // Declare sub service providers here  
+  ];
+
+  readonly alias: any[] = [
+    // Declare your container resolution
+    // ex: [MyProviderInterfaceResolver, MyProvider],
+    // Or your bindings
+    // ex: MyProvider,
+  ];
+
+  readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
+    // Declare here your handlers
+    // ex: MyCustomAction,
+  ];
+
+  readonly middlewares: [string, Types.NewableType<Interfaces.MiddlewareInterface>][] = [
+    // Declare middleware bindings
+    // ex: ['can', PermissionMiddleware],  
+  ];
+}

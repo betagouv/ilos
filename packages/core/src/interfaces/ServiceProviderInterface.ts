@@ -37,4 +37,6 @@ export interface ServiceProviderInterface extends ProviderInterface {
    * @memberof ServiceProviderInterface
    */
   getContainer():ContainerInterface;
+
+  registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void>;
 }
