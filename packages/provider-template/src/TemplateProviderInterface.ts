@@ -12,7 +12,11 @@ export interface TemplateProviderInterface extends Interfaces.ProviderInterface 
   render(template: string, opts: any): string;
 }
 
-export abstract class TemplateProviderInterfaceResolver {
+export abstract class TemplateProviderInterfaceResolver implements TemplateProviderInterface {
+  async boot() {
+    return;
+  }
+
   setMetadata(templateName: string, metadata: any): void {
     throw new Error();
   }

@@ -9,7 +9,7 @@ export interface MongoProviderInterface extends Interfaces.ProviderInterface {
 
 export abstract class MongoProviderInterfaceResolver implements MongoProviderInterface {
   async boot() {
-    throw new Error();
+    return;
   }
 
   async getDb(name: string): Promise<Db> {

@@ -8,7 +8,7 @@ export interface ConfigProviderInterface extends Interfaces.ProviderInterface {
 
 export abstract class ConfigProviderInterfaceResolver implements ConfigProviderInterface {
   async boot() {
-    throw new Error();
+    return;
   }
   loadConfigDirectory(workingPath: string, configDir?: string): void {
     throw new Error();

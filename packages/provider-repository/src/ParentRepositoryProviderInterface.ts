@@ -17,7 +17,7 @@ export interface ParentRepositoryProviderInterface extends Interfaces.ProviderIn
 
 export abstract class ParentRepositoryProviderInterfaceResolver implements ParentRepositoryProviderInterface {
   async boot(): Promise<void> {
-    throw new Error();
+    return;
   }
 
   async find(id: string): Promise<Model> {

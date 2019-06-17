@@ -11,6 +11,12 @@ export interface KernelInterface extends ServiceProviderInterface {
    * @memberof KernelInterface
    */
   handle(call: RPCCallType): Promise<RPCResponseType | void>;
+
+  call(method: string, params: ParamsType, context: ContextType): Promise<ResultType>;
+
+  notify(method: string, params: ParamsType, context: ContextType): Promise<void>;
+
+  registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void>;
 }
 
 export abstract class KernelInterfaceResolver implements KernelInterface {
@@ -22,8 +28,8 @@ export abstract class KernelInterfaceResolver implements KernelInterface {
     throw new Error();
   }
 
-  boot() {
-    throw new Error();
+  async boot() {
+    return;
   }
 
   register(module: ContainerModuleConfigurator) {

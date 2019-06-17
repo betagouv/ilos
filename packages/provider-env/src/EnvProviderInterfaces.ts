@@ -7,7 +7,7 @@ export interface EnvProviderInterface extends Interfaces.ProviderInterface {
 
 export abstract class EnvProviderInterfaceResolver implements EnvProviderInterface {
   async boot() {
-    throw new Error();
+    return;
   }
   loadEnvFile(envDirectory: string, envFile?: string): void {
     throw new Error();

@@ -8,7 +8,7 @@ export interface ValidatorProviderInterface extends Interfaces.ProviderInterface
 
 export abstract class ValidatorProviderInterfaceResolver implements ValidatorProviderInterface {
   boot(): Promise<void> | void {
-    throw new Error();
+    return;
   }
   registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorProviderInterface {
     throw new Error();
