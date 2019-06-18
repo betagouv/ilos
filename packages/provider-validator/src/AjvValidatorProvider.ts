@@ -22,7 +22,7 @@ export class AjvValidatorProvider implements ValidatorProviderInterface {
       logger: console,
       missingRefs: true,
       extendRefs: 'fail',
-      removeAdditional: true,
+      removeAdditional: false,
       useDefaults: true,
       coerceTypes: false,
       strictKeywords: true,
