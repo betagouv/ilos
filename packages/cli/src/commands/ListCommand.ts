@@ -45,7 +45,7 @@ export class ListCommand extends Command {
             if (!(keyVersion in acc)) {
               acc[keyVersion] = [];
             }
-            acc[key].push(h);
+            acc[keyVersion].push(h);
             return acc;
           },
           {});
