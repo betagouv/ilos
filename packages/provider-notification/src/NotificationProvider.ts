@@ -1,13 +1,14 @@
-import { Container, Interfaces, Types } from '@ilos/core';
+import { Container, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { TemplateProviderInterfaceResolver } from '@ilos/provider-template';
 
 import { MailjetDriver } from './mail/MailjetDriver';
-import { MailDriverInterface, MailInterface } from './mail/MailDriverInterface';
+import { MailDriverInterface, MailInterface, TemplateMailInterface } from './mail/MailDriverInterface';
 import { NotificationConfigurationType } from './NotificationConfigurationType';
+import { NotificationProviderInterface } from './NotificationProviderInterface';
 
 @Container.provider()
-export class NotificationProvider implements Interfaces.ProviderInterface {
+export class NotificationProvider implements NotificationProviderInterface {
   protected config: NotificationConfigurationType;
   protected mailDriver: MailDriverInterface;
   protected mailDrivers: { [key:string]: Types.NewableType<MailDriverInterface> } = {
@@ -47,12 +48,7 @@ export class NotificationProvider implements Interfaces.ProviderInterface {
     return this.mailDriver.send(mail, this.config.mail.sendOptions);
   }
 
-  async sendTemplateByEmail(mail: {
-    email: string,
-    fullname: string,
-    template: string,
-    opts: any,
-  }): Promise<void> {
+  async sendTemplateByEmail(mail: TemplateMailInterface): Promise<void> {
     const { template, email, fullname, opts } = mail;
 
     let { subject } = this.template.getMetadata(template);
