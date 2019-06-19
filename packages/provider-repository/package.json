@@ -1,6 +1,6 @@
 {
   "name": "@ilos/provider-repository",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
@@ -46,7 +46,7 @@
   "dependencies": {
     "@ilos/cli": "^0.0.2",
     "@ilos/provider-config": "^0.0.2",
-    "@ilos/provider-mongo": "^0.0.2"
+    "@ilos/provider-mongo": "^0.0.3"
   },
   "peerDependencies": {
     "@ilos/core": "~0"
