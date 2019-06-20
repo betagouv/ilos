@@ -1,42 +1,22 @@
-import { ContainerInterface } from '../container';
 
-import { ProviderInterface } from './ProviderInterface';
+import { ServiceContainerInterface } from './ServiceContainerInterface';
 import { NewableType } from '../types/NewableType';
 import { MiddlewareInterface } from './MiddlewareInterface';
+import { HandlerInterface } from './HandlerInterface';
 
-export interface ServiceProviderInterface extends ProviderInterface {
-
+export interface ServiceProviderInterface extends ServiceContainerInterface {
   /**
-   * Alias is a shortcut to registrer bindings
-   * @example [MyCustomService] will bind MyCustomService to self
-   * @example [['custom', MyCustomService]] will bind 'custom' to MyCustomService
-   * @type {any[]}
+   * Handlers array provided by this service provider
+   * @type {NewableType<HandlerInterface>[]}
    * @memberof ServiceProviderInterface
    */
-  readonly alias: any[];
+  readonly handlers: NewableType<HandlerInterface>[];
 
-    /**
+  /**
    * Middlewares is a shortcut to registrer middlewares
    * @example [['can', CanMiddleware]] will bind 'can' to CanMiddleware
    * @type {[string, NewableType<MiddlewareInterface>][]}
    * @memberof ServiceProviderInterface
    */
   readonly middlewares?: [string, NewableType<MiddlewareInterface>][];
-
-  /**
-   * List of Service providers constructor
-   * @type {NewableType<ServiceProviderInterface>[]}
-   * @memberof ServiceProviderInterface
-   */
-  readonly serviceProviders: NewableType<ServiceProviderInterface>[];
-
-
-  /**
-   * Get the container
-   * @returns {ContainerInterface}
-   * @memberof ServiceProviderInterface
-   */
-  getContainer():ContainerInterface;
-
-  registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void>;
 }
