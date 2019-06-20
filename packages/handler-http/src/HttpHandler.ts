@@ -17,15 +17,20 @@ export class HttpHandler implements Interfaces.HandlerInterface {
   private client: AxiosInstance;
 
   public boot() {
+    throw new Error('no url found')
+  }
+
+  protected createClient(url){
     this.client = axios.create({
-      baseURL: this.url,
+      baseURL: url,
       timeout: 1000,
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
       },
     });
   }
+    
 
   public async call(call: Types.CallType): Promise<Types.ResultType> {
     const { method, params, context } = call;
