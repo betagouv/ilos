@@ -11,7 +11,7 @@ import {
 
 import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 import { NewableType } from '../types/NewableType';
-import { ServiceContainerInterface } from '../interfaces/ServiceContainerInterface';
+import { ServiceContainerInterface, ServiceContainerInterfaceResolver } from '../interfaces/ServiceContainerInterface';
 
 /**
  * Service container parent class
@@ -32,6 +32,8 @@ export abstract class ServiceContainer implements ServiceContainerInterface {
     if (container) {
       this.container.parent = container;
     }
+
+    this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
   }
 
   /**

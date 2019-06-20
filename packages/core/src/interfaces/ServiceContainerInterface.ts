@@ -43,3 +43,24 @@ export interface ServiceContainerInterface extends ProviderInterface {
    */
   registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void>;
 }
+
+export abstract class ServiceContainerInterfaceResolver implements ServiceContainerInterface {
+  readonly alias = [];
+  readonly serviceProviders = [];
+
+  getContainer():ContainerInterface {
+    throw new Error();
+  }
+
+  async boot() {
+    return;
+  }
+
+  register(module: ContainerModuleConfigurator) {
+    throw new Error();
+  }
+
+  async registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void> {
+    throw new Error();
+  }
+}
