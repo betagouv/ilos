@@ -43,7 +43,7 @@ export class NotificationProvider implements NotificationProviderInterface {
 
   async sendByEmail(mail: MailInterface): Promise<void> {
     if ('debug' in this.config.mail.sendOptions) {
-      //
+      // FIX ME : add a check on debug > "to" options erase initial target
     }
     return this.mailDriver.send(mail, this.config.mail.sendOptions);
   }
@@ -51,7 +51,13 @@ export class NotificationProvider implements NotificationProviderInterface {
   async sendTemplateByEmail(mail: TemplateMailInterface): Promise<void> {
     const { template, email, fullname, opts } = mail;
 
-    let { subject } = this.template.getMetadata(template);
+    let subject;
+    try {
+      const meta = this.template.getMetadata(template);
+      subject = meta.subject;
+    } catch(e) {
+      subject = this.config.mail.defaultSubject;
+    }
 
     const content = this.template.get(template, { email, fullname, subject, ...opts });
 

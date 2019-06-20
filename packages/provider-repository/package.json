@@ -1,9 +1,12 @@
 {
   "name": "@ilos/provider-repository",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -41,9 +44,9 @@
     "instrument": true
   },
   "dependencies": {
-    "@ilos/provider-mongo": "~0",
-    "@ilos/provider-config": "~0",
-    "@ilos/cli": "~0"
+    "@ilos/cli": "^0.0.2",
+    "@ilos/provider-config": "^0.0.2",
+    "@ilos/provider-mongo": "^0.0.3"
   },
   "peerDependencies": {
     "@ilos/core": "~0"
