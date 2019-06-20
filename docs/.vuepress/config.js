@@ -39,10 +39,7 @@ module.exports = {
         lastUpdated: 'Last Updated',
         nav: require('./nav/en'),
         sidebar: {
-          // '/api/': getApiSidebar(),
-          // '/guide/': getGuideSidebar('Guide', 'Advanced'),
-          // '/plugin/': getPluginSidebar('Plugin', 'Introduction', 'Official Plugins'),
-          // '/theme/': getThemeSidebar('Theme', 'Introduction'),
+          ...require('./sidebar'),
         },
       },
       '/fr/': {
@@ -52,10 +49,7 @@ module.exports = {
         lastUpdated: 'Dernière mise à jour',
         nav: require('./nav/en'),
         sidebar: {
-          // '/zh/api/': getApiSidebar(),
-          // '/zh/guide/': getGuideSidebar('指南', '深入'),
-          // '/zh/plugin/': getPluginSidebar('插件', '介绍', '官方插件'),
-          // '/zh/theme/': getThemeSidebar('主题', '介绍')
+          ...require('./sidebar'),
         },
       },
     },

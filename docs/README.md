@@ -3,17 +3,13 @@ title: Ilos
 lang: en-US
 home: true
 heroText: Ilos
-tagline: Tralala
+tagline: Another node framework
 actionText: Get Started →
 actionLink: /guide/
 features:
-  - title: Modulaire
-    details: Lorem ipsum
-  - title: Perfomant
-    details: Lorem ipsum
-  - title: Featured
+  - title: Microservice
     details: Lorem ipsum
 footer: Apache 2.0 Licensed
 ---
 
-# Hello
+# Welcome to Ilos
