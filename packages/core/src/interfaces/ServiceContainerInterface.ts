@@ -42,6 +42,28 @@ export interface ServiceContainerInterface extends ProviderInterface {
    * @memberof ServiceContainerInterface
    */
   registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void>;
+
+  /**
+   * Boot is the first method called after constructor
+   * @returns {(Promise<void> | void)}
+   * @memberof ProviderInterface
+   */
+  boot(): Promise<void> | void;
+
+  /**
+   * Shutdown is called to graceful shutdown
+   * @returns {Promise<void>}
+   * @memberof ServiceContainerInterface
+   */
+  shutdown(): Promise<void>;
+
+
+  /**
+   * Register a hook on shutdown
+   * @param {Function} hook
+   * @memberof ServiceContainerInterface
+   */
+  registerShutdownHook(hook: Function):void;
 }
 
 export abstract class ServiceContainerInterfaceResolver implements ServiceContainerInterface {
@@ -54,6 +76,14 @@ export abstract class ServiceContainerInterfaceResolver implements ServiceContai
 
   async boot() {
     return;
+  }
+
+  async shutdown(){
+    return;
+  }
+
+  registerShutdownHook(hook: Function):void {
+    throw new Error();
   }
 
   register(module: ContainerModuleConfigurator) {

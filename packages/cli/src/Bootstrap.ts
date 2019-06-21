@@ -72,6 +72,7 @@ export class Bootstrap {
       bootstrap = { ...bootstrap, ...currentBootstrap };
     }
     const kernel = bootstrap.kernel();
+
     await kernel.boot();
     const serviceProviders = bootstrap.serviceProviders;
     
@@ -79,15 +80,44 @@ export class Bootstrap {
       await kernel.registerServiceProvider(serviceProvider);
     }
     
+    let transport;
+
     if (command !== 'cli' && (command in bootstrap.transport)) {
-      const transport = bootstrap.transport[command](kernel);
+      transport = bootstrap.transport[command](kernel);
       await transport.up(opts);
-      return transport;  
+    } else {
+      transport = bootstrap.transport.cli(kernel);
+      await transport.up(argv);
     }
 
-    const cli = bootstrap.transport.cli(kernel);
-    await cli.up(argv);
-    return cli;
+    this.registerShutdownHook(kernel, transport);
+    
+    return transport;  
+  }
+
+  registerShutdownHook(kernel: Interfaces.KernelInterface, transport: Interfaces.TransportInterface) {
+    function handle() {
+      setTimeout(() => {
+        process.exit(0);
+      }, 5000);
+
+      transport.down()
+        .then(() => {
+          kernel.shutdown()
+            .then(() => {
+              process.exit(1);
+            })
+            .catch(() => {
+              process.exit(0);
+            });
+        })
+        .catch(() => {
+          process.exit(0);
+        });
+    }
+
+    process.on('SIGINT', handle);
+    process.on('SIGTERM', handle);
   }
 
   async boot(argv: string[]) {
