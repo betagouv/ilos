@@ -5,5 +5,5 @@ export interface ProviderInterface {
    * @returns {(Promise<void> | void)}
    * @memberof ProviderInterface
    */
-  boot(): Promise<void> | void;
+  boot?(): Promise<void> | void;
 }
