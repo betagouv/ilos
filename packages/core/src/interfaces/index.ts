@@ -4,3 +4,4 @@ export { MiddlewareInterface, FunctionMiddlewareInterface } from './MiddlewareIn
 export { ProviderInterface } from './ProviderInterface';
 export { ServiceProviderInterface } from './ServiceProviderInterface';
 export { TransportInterface } from './TransportInterface';
+export { ServiceContainerInterface, ServiceContainerInterfaceResolver } from './ServiceContainerInterface';

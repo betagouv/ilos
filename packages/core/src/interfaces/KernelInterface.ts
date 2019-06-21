@@ -1,8 +1,9 @@
 import { ContainerInterface, ContainerModuleConfigurator } from '../container';
 import { ServiceProviderInterface } from './ServiceProviderInterface';
 import { RPCCallType, RPCResponseType, ResultType, ContextType, ParamsType, NewableType } from '../types';
+import { ServiceContainerInterface } from './ServiceContainerInterface';
 
-export interface KernelInterface extends ServiceProviderInterface {
+export interface KernelInterface extends ServiceContainerInterface {
 
   /**
    * Handle an RPC call and provide an RPC response
@@ -15,13 +16,10 @@ export interface KernelInterface extends ServiceProviderInterface {
   call(method: string, params: ParamsType, context: ContextType): Promise<ResultType>;
 
   notify(method: string, params: ParamsType, context: ContextType): Promise<void>;
-
-  registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void>;
 }
 
 export abstract class KernelInterfaceResolver implements KernelInterface {
   readonly alias = [];
-  readonly middlewares = [];
   readonly serviceProviders = [];
 
   getContainer():ContainerInterface {
