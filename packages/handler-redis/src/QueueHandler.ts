@@ -20,8 +20,8 @@ export class QueueHandler implements Interfaces.HandlerInterface {
   }
 
   public boot() {
-    const redisUrl = this.config.get('redisUrl');
-    const env = this.env.get('NODE_ENV');
+    const redisUrl = this.config.get('queue.connexionString');
+    const env = this.env.get('APP_ENV');
 
     this.client = bullFactory(`${env}-${this.service}`, redisUrl);
   }
