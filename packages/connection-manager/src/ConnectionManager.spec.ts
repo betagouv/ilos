@@ -3,7 +3,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { expect } from 'chai';
 
 import { ConnectionManager } from './ConnectionManager';
-import { ConnectionInterface, ConnectionDeclaration } from './ConnectionManagerInterfaces';
+import { ConnectionInterface, ConnectionDeclarationType } from './ConnectionManagerInterfaces';
 
 class FakeDriverOne implements ConnectionInterface {
   constructor(public config: object) {
@@ -99,7 +99,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
 }
 
 class ConnectionServiceProvider extends ConnectionManager {
-  readonly connections: ConnectionDeclaration[] = [
+  readonly connections: ConnectionDeclarationType[] = [
     [
       FakeProviderOne,
       [

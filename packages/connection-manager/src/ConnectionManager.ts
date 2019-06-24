@@ -1,13 +1,13 @@
 import { Types, Interfaces, Container } from '@ilos/core';
 import { ConfigProviderInterfaceResolver, ConfigProviderInterface } from '@ilos/provider-config';
-import { ConnectionDeclaration, ConnectionInterface, ConnectionConfigType } from './ConnectionManagerInterfaces';
+import { ConnectionDeclarationType, ConnectionInterface, ConnectionConfigType } from './ConnectionManagerInterfaces';
 
 export class ConnectionManager implements Interfaces.ServiceProviderInterface {
   readonly alias = [];
   readonly handlers = [];
   readonly serviceProviders = [];
 
-  readonly connections: ConnectionDeclaration[] = [];
+  readonly connections: ConnectionDeclarationType[] = [];
 
   protected config: ConfigProviderInterface;
   protected connectionRegistry: Map<Symbol, Map<Symbol, ConnectionInterface>> = new Map();

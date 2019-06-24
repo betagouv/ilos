@@ -2,6 +2,7 @@ export { ConnectionManager } from './ConnectionManager';
 export {
   ConnectionInterface,
   ConnectionConfigType,
-  ConnectionDefinition,
-  ConnectionDeclaration
+  ConnectionDefinitionType,
+  ConnectionDeclarationType,
+  ConnectionConfigurationType,
 } from './ConnectionManagerInterfaces';
