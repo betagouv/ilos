@@ -22,7 +22,7 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
     //
   }
 
-  boot(): void {
+  async boot(): Promise<void> {
     this.config = this.getContainer().get(ConfigProviderInterfaceResolver);
     for(const serviceConnectionDeclaration of this.connections) {
       if (Array.isArray(serviceConnectionDeclaration)) {
@@ -34,6 +34,7 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
       }
     }
     this.setUpContainer();
+    await this.bootConnections();
   }
 
   async shutdown(): Promise<void> {
@@ -45,6 +46,20 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
           await connection.down();
         } catch(e) {
           // do nothing
+        }
+      }
+    }
+  }
+
+  async bootConnections(): Promise<void> {
+    const connectionRegistry = this.connectionRegistry.entries();
+    for(const [_symbol, connectionScopedRegistry] of connectionRegistry) {
+      const connections = connectionScopedRegistry.entries();
+      for(const [_symbol, connection] of connections) {
+        try {
+          await connection.up();
+        } catch(e) {
+          throw e;
         }
       }
     }
@@ -98,9 +113,9 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
                 const constructor = parentRequest.bindings[0].implementationType;
                 return !(connectionMapRegistry.has(constructor));
               }
-              return false;
+              return true;
             }
-            return false;
+            return true;
           });
       }
     }
@@ -111,8 +126,6 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
     connectionConfigurationKey: string,
     constructors?: Types.NewableType<any>[],
   ): void {
-    const container = this.getContainer();
-
     const configurationToken = this.connectionRequest(
       connectionConstructor,
       this.getConfig(connectionConfigurationKey),

@@ -17,7 +17,7 @@ export class MongoConnection implements ConnectionInterface<MongoClient> {
 
   async up() {
     try {
-      if (this.connected) {
+      if (!this.connected) {
         await this.client.connect();
         return;
       }
@@ -28,9 +28,13 @@ export class MongoConnection implements ConnectionInterface<MongoClient> {
   }
 
   async down() {
-    if (this.connected) {
-      await this.client.close();
-      this.connected = false;
+    try {
+      if (this.connected) {
+        await this.client.close();
+        this.connected = false;
+      }
+    } catch(err) {
+      throw err;
     }
   }
 
