@@ -98,25 +98,31 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   }
 }
 
+
 class ConnectionServiceProvider extends ConnectionManager {
   readonly connections: ConnectionDeclarationType[] = [
-    [
-      FakeProviderOne,
-      [
-        [FakeDriverOne, { shared: true, configKey: 'hello.world'}],
-        [FakeDriverTwo, { shared: true, configKey: 'hello.you'}],
-        [FakeDriverThree, { shared: true, configKey: 'hello.world'}],
-      ],
-    ],
-    [
-      FakeProviderTwo,
-      [
-        [FakeDriverOne, { shared: false, configKey: 'hello.world'}],
-        [FakeDriverTwo, { shared: true, configKey: 'hello.you'}],
-        [FakeDriverThree, { shared: true, configKey: 'hello.you'}],
-      ],
-    ],
- ];
+    {
+      use: FakeDriverOne,
+      withConfig: 'hello.world',
+      inside: [FakeProviderOne],
+    },
+    {
+      use: FakeDriverOne,
+      withConfig: 'hello.world',
+      inside: [FakeProviderTwo],
+    },
+    {
+      use: FakeDriverTwo,
+      withConfig: 'hello.you',
+      inside: [FakeProviderOne, FakeProviderTwo],
+    },
+    {
+      use: FakeDriverThree,
+      withConfig: 'hello.world',
+      inside: [FakeProviderOne],
+    },
+    [FakeDriverThree, 'hello.you'],
+  ];
 }
 
 class ServiceProvider extends Parents.ServiceProvider {

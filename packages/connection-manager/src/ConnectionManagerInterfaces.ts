@@ -10,10 +10,8 @@ export type ConnectionConfigurationType = {
   [key: string]: any,
 };
 
-export type ConnectionConfigType = {
-  shared?: boolean,
-  configKey?: string,
-};
-
-export type ConnectionDefinitionType = [Types.NewableType<ConnectionInterface>, ConnectionConfigType];
-export type ConnectionDeclarationType = [any, ConnectionDefinitionType[]];
+export type ConnectionDeclarationType = {
+  use: Types.NewableType<ConnectionInterface>,
+  withConfig: string,
+  inside?: Types.NewableType<any>[]
+} | [Types.NewableType<ConnectionInterface>, string, Types.NewableType<any>[]?];

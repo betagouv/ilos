@@ -1,6 +1,6 @@
 import { Types, Interfaces, Container } from '@ilos/core';
 import { ConfigProviderInterfaceResolver, ConfigProviderInterface } from '@ilos/provider-config';
-import { ConnectionDeclarationType, ConnectionInterface, ConnectionConfigType } from './ConnectionManagerInterfaces';
+import { ConnectionDeclarationType, ConnectionInterface, ConnectionConfigurationType } from './ConnectionManagerInterfaces';
 
 export class ConnectionManager implements Interfaces.ServiceProviderInterface {
   readonly alias = [];
@@ -11,7 +11,10 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
 
   protected config: ConfigProviderInterface;
   protected connectionRegistry: Map<Symbol, Map<Symbol, ConnectionInterface>> = new Map();
+
+  /* Register maps */
   protected connectionConstructorSymbols: Map<Types.NewableType<ConnectionInterface>, Symbol> = new Map();
+  protected connectionMappingRegistry: Map<Types.NewableType<ConnectionInterface>, Map<Types.NewableType<any>, Symbol>> = new Map();
 
   constructor(
     protected serviceContainer: Container.ContainerInterface
@@ -21,13 +24,16 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
 
   boot(): void {
     this.config = this.getContainer().get(ConfigProviderInterfaceResolver);
-    for(const serviceConnectionDefinition of this.connections) {
-      const [ serviceConstructor, serviceConnections] = serviceConnectionDefinition;
-      for(const connection of serviceConnections) {
-        const [ connectionConstructor, connectionConfig ] = connection;
-        this.registerConnectionRequest(serviceConstructor, connectionConstructor, connectionConfig);
+    for(const serviceConnectionDeclaration of this.connections) {
+      if (Array.isArray(serviceConnectionDeclaration)) {
+        const [connectionConstructor, connectionConfig, serviceConstructors] = serviceConnectionDeclaration;
+        this.registerConnectionRequest(connectionConstructor, connectionConfig, serviceConstructors);
+      } else {
+        const { use: connectionConstructor, withConfig: connectionConfig, inside: serviceConstructors } = serviceConnectionDeclaration;
+        this.registerConnectionRequest(connectionConstructor, connectionConfig, serviceConstructors);
       }
     }
+    this.setUpContainer();
   }
 
   async shutdown(): Promise<void> {
@@ -56,18 +62,76 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
     //
   }
 
+  protected setUpContainer() {
+    const connectionMappingRegistry = this.connectionMappingRegistry.entries();
+    const container = this.getContainer();
+    for (const [ connectionConstructor, connectionMapRegistry] of connectionMappingRegistry) {
+      const connectionSymbol = this.connectionConstructorSymbols.get(connectionConstructor);
+
+      const connectionMap = connectionMapRegistry.entries();
+      for (const [ constructor, constructorSymbol] of connectionMap) {
+        container
+        .bind(connectionConstructor)
+        .toConstantValue(
+          this.getConnection(connectionSymbol, constructorSymbol),
+        )
+        .whenInjectedInto(constructor);
+      }
+
+      const fallbackSymbol = Symbol.for('default');
+      let fallback;
+      try {
+        fallback = this.getConnection(connectionSymbol, fallbackSymbol);
+      } catch {
+        // do nothings
+      }
+
+      if (fallback) {
+        container
+          .bind(connectionConstructor)
+          .toConstantValue(fallback)
+          .when((request) => {
+            const parentRequest = request.parentRequest;
+            if (parentRequest !== null) {
+              const binding = parentRequest.bindings[0];
+              if (binding) {
+                const constructor = parentRequest.bindings[0].implementationType;
+                return !(connectionMapRegistry.has(constructor));
+              }
+              return false;
+            }
+            return false;
+          });
+      }
+    }
+  }
+
   protected registerConnectionRequest(
-    constructor: Types.NewableType<any>,
     connectionConstructor: Types.NewableType<ConnectionInterface>,
-    connectionConfiguration: ConnectionConfigType
+    connectionConfigurationKey: string,
+    constructors?: Types.NewableType<any>[],
   ): void {
     const container = this.getContainer();
-    const tokens = this.connectionRequest(connectionConstructor, connectionConfiguration);
 
-    container
-      .bind(connectionConstructor)
-      .toDynamicValue((context) => this.getConnection(...tokens))
-      .whenInjectedInto(constructor);
+    const configurationToken = this.connectionRequest(
+      connectionConstructor,
+      this.getConfig(connectionConfigurationKey),
+      constructors ? false : true,
+    );
+    
+    if (!(this.connectionMappingRegistry.has(connectionConstructor))) {
+      this.connectionMappingRegistry.set(connectionConstructor, new Map());
+    }
+
+    const connectionMapping = this.connectionMappingRegistry.get(connectionConstructor);
+    
+    if (constructors) {
+      for (const constructor of constructors) {
+        if (!(connectionMapping.has(constructor))) {
+          connectionMapping.set(constructor, configurationToken);
+        }
+      }
+    }
   }
 
   protected getConnection(constructorToken: Symbol, configurationToken: Symbol): ConnectionInterface {
@@ -81,44 +145,38 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
     return connectionRegistry.get(configurationToken);
   }
 
-  protected connectionRequest(constructor: Types.NewableType<ConnectionInterface>, configuration: ConnectionConfigType): [Symbol, Symbol] {
-    let config = {};
+  protected connectionRequest(constructor: Types.NewableType<ConnectionInterface>, configuration: ConnectionConfigurationType, fallback = false): Symbol {
+    const constructorSymbol = this.getConnectionConstructorSymbol(constructor);
+    const configurationSymbol = fallback ? Symbol.for('default') : Symbol();
 
-    if ('configKey' in configuration) {
-      config = this.config.get(configuration.configKey, {});      
-    }
-    const [ constructorSymbol, configurationSymbol ] = this.getSymbols(
-      constructor,
-      ('shared' in configuration) ? configuration.shared : true,
-      config,
-    );
+    this.setConnectionInRegistry(constructorSymbol, configurationSymbol, constructor, configuration);
 
-    this.setConnectionInRegistry(constructorSymbol, configurationSymbol, constructor, config);
-
-    return [ constructorSymbol, configurationSymbol ];
+    return configurationSymbol;
   }
 
-  protected setConnectionInRegistry(constructorSymbol: Symbol, configurationSymbol: Symbol, constructor, config) {
+  protected setConnectionInRegistry(
+    constructorSymbol: Symbol,
+    configurationSymbol: Symbol,
+    constructor: Types.NewableType<ConnectionInterface>,
+    configuration: ConnectionConfigurationType,
+  ) {
     if (!(this.connectionRegistry.has(constructorSymbol))) {
       this.connectionRegistry.set(constructorSymbol, new Map());
     }
     const connectionRegistry = this.connectionRegistry.get(constructorSymbol);
     if (!(connectionRegistry.has(configurationSymbol))) {
-      connectionRegistry.set(configurationSymbol, new constructor(config));
+      connectionRegistry.set(configurationSymbol, new constructor(configuration));
     }
   }
 
-  protected getSymbols(constructor: Types.NewableType<ConnectionInterface>, shared: boolean, configuration: object): [Symbol, Symbol] {
+  protected getConfig(configurationKey: string): ConnectionConfigurationType {
+    return this.config.get(configurationKey, {});
+  }
+
+  protected getConnectionConstructorSymbol(constructor: Types.NewableType<ConnectionInterface>): Symbol {
     if (!(this.connectionConstructorSymbols.has(constructor))) {
       this.connectionConstructorSymbols.set(constructor, Symbol());
     }
-
-    const constructorSymbol = this.connectionConstructorSymbols.get(constructor);
-
-    if (!shared) {
-      return [constructorSymbol, Symbol()];
-    }
-    const configurationSymbol = Symbol.for(JSON.stringify(configuration));
-    return [constructorSymbol, configurationSymbol];
+    return this.connectionConstructorSymbols.get(constructor);
   }
 }
