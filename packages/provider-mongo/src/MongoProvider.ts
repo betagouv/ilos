@@ -10,13 +10,13 @@ export class MongoProvider implements MongoProviderInterface {
 
   constructor(protected config: ConfigProviderInterfaceResolver) {}
 
-  async boot() {
+  async boot(url = null) {
     const mongoConfig = {
       useNewUrlParser: true,
       ...this.config.get('mongo.config', {}),
     };
 
-    const mongoUrl = this.config.get('mongo.url');
+    const mongoUrl = url || this.config.get('mongo.url');
 
     this.client = new MongoClient(mongoUrl, mongoConfig);
   }

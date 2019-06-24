@@ -1,5 +1,9 @@
 import http from 'http';
+
 import { Interfaces } from '@ilos/core';
+
+import { mapStatusCode } from './helpers/mapStatusCode';
+import { RPCCallType } from '@ilos/core/dist/types';
 
 /**
  * Http Transport
@@ -15,16 +19,16 @@ export class HttpTransport implements Interfaces.TransportInterface {
     this.kernel = kernel;
   }
 
-  getKernel():Interfaces.KernelInterface {
+  getKernel(): Interfaces.KernelInterface {
     return this.kernel;
   }
 
   async up(opts: string[] = []) {
     this.server = http.createServer((req, res) => {
       if (
-        !('content-type' in req.headers && 'accept' in req.headers)
-        || (req.headers['content-type'] !== 'application/json')
-        || (req.headers.accept !== 'application/json')
+        !('content-type' in req.headers && 'accept' in req.headers) ||
+        req.headers['content-type'] !== 'application/json' ||
+        req.headers.accept !== 'application/json'
       ) {
         res.statusCode = 415;
         res.end('Wrong content type header');
@@ -42,19 +46,20 @@ export class HttpTransport implements Interfaces.TransportInterface {
       });
       req.on('end', () => {
         try {
-          // Add Lenght check
-          if (Number(req.headers['content-length']) !== (data.length + 1)) {
+          // Add Length check
+          if (Number(req.headers['content-length']) !== data.length + 1) {
             // console.log(Number(req.headers['content-length']), data.length)
             // TODO repair, this is not working
             // throw new Error();
           }
 
-          const call = JSON.parse(data);
+          const call: RPCCallType = JSON.parse(data);
           // TODO : add channel ?
-          this.kernel.handle(call)
+          this.kernel
+            .handle(call)
             .then((results) => {
               res.setHeader('content-type', 'application/json');
-              res.statusCode = 200;
+              res.statusCode = mapStatusCode(call, results);
               res.end(JSON.stringify(results));
             })
             .catch((e) => {

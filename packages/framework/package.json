@@ -15,10 +15,10 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "mocha src/**/*.spec.ts",
+    "test": "mocha src/*.spec.ts src/**/*.spec.ts",
     "test:integration": "mocha tests/**/*.spec.ts",
-    "coverage-ci": "nyc --all --reporter=lcov mocha src/**/*.spec.ts tests/**/*.spec.ts",
-    "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts tests/**/*.spec.ts",
+    "coverage-ci": "nyc --all --reporter=lcov mocha src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
+    "coverage": "nyc --all --reporter=text mocha src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
     "watch-test": "yarn test -- --watchAll",
     "watch": "tsc -w",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json"
