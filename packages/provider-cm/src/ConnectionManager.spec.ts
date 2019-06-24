@@ -1,10 +1,9 @@
-import { Parents, Container } from '@ilos/core';
+import { Parents, Container, Interfaces, Types } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { expect } from 'chai';
 
 import { ConnectionManager } from './ConnectionManager';
-import { ConnectionInterface } from './ConnectionInterface';
-import { ConnectionDeclaration } from './ConnectionManagerInterface';
+import { ConnectionInterface, ConnectionDeclaration } from './ConnectionManagerInterfaces';
 
 class FakeDriverOne implements ConnectionInterface {
   constructor(public config: object) {
@@ -99,12 +98,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
   }
 }
 
-class ServiceProvider extends Parents.ServiceProvider {
-  readonly alias = [
-    [ConfigProviderInterfaceResolver, FakeConfigProvider],
-    ConnectionManager,
-  ];
-
+class ConnectionServiceProvider extends ConnectionManager {
   readonly connections: ConnectionDeclaration[] = [
     [
       FakeProviderOne,
@@ -123,18 +117,13 @@ class ServiceProvider extends Parents.ServiceProvider {
       ],
     ],
  ];
+}
 
- async boot() {
-   await super.boot();
-   const cm = this.getContainer().get(ConnectionManager);
-   for(const serviceConnectionDefinition of this.connections) {
-     const [ serviceConstructor, serviceConnections] = serviceConnectionDefinition;
-     for(const connection of serviceConnections) {
-       const [ connectionConstructor, connectionConfig ] = connection;
-       cm.registerConnectionRequest(serviceConstructor, connectionConstructor, connectionConfig);
-     }
-   }
- }
+class ServiceProvider extends Parents.ServiceProvider {
+  readonly serviceProviders = [ConnectionServiceProvider];
+  readonly alias = [
+    [ConfigProviderInterfaceResolver, FakeConfigProvider],
+  ];
 }
 
 describe('Connection manager', () => {

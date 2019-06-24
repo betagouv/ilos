@@ -1,4 +1,4 @@
-import { ConnectionInterface } from "../ConnectionInterface";
+import { ConnectionInterface } from "../ConnectionManagerInterfaces";
 
 export class MongoDriver implements ConnectionInterface {
   async up(): Promise<void> {
