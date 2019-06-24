@@ -26,7 +26,7 @@
     "build:handlers": "lerna run --scope @ilos/handler* build",
     "build:packages": "lerna run --scope @ilos/package* build",
     "build:framework": "lerna run --scope @ilos/framework build",
-    "test": "mocha ./packages/*/src/**/*.spec.ts",
+    "test": "mocha ./packages/*/src/*.spec.ts ./packages/*/src/**/*.spec.ts",
     "test:integration": "mocha packages/*/tests/**/*.spec.ts",
     "coverage-ci": "nyc --all --reporter=lcov mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
     "coverage": "nyc --all --reporter=text mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
