@@ -1,27 +1,56 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import supertest from 'supertest';
+
 import { Parents, Types } from '@ilos/core';
 
 import { HttpTransport } from './HttpTransport';
 
-let request;
-let httpTransport;
+let request: supertest.SuperTest<supertest.Test>;
+let httpTransport: HttpTransport;
 
 describe('Http transport', () => {
   before(() => {
     class BasicKernel extends Parents.Kernel {
       async handle(call: Types.RPCCallType): Promise<Types.RPCResponseType> {
-        if ('method' in call && call.method === 'error') {
-          throw new Error('wrong!');
+        // generate errors from method name
+        if ('method' in call) {
+          switch (call.method) {
+            case 'test':
+              return {
+                id: 1,
+                jsonrpc: '2.0',
+                result: 'hello world',
+              };
+            case 'error':
+              return {
+                id: 1,
+                jsonrpc: '2.0',
+                error: {
+                  code: -32000,
+                  message: 'Server error',
+                },
+              };
+            case 'invalidRequest':
+              return {
+                id: 1,
+                jsonrpc: '2.0',
+                error: {
+                  code: -32600,
+                  message: 'Server error',
+                },
+              };
+          }
         }
 
-        const response = {
+        return {
           id: 1,
           jsonrpc: '2.0',
-          result: 'hello world',
+          error: {
+            code: -32601,
+            message: 'Method not found',
+          },
         };
-        return response;
       }
     }
 
@@ -38,15 +67,16 @@ describe('Http transport', () => {
     httpTransport.down();
   });
 
-  it('should work', async () => {
-    const response = await request.post('/')
-        .send({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'test',
-        })
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json');
+  it('regular request', async () => {
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'test',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(200);
     expect(response.body).to.deep.equal({
       id: 1,
@@ -55,57 +85,101 @@ describe('Http transport', () => {
     });
   });
 
+  it('notification request', async () => {
+    const response = await request
+      .post('/')
+      .send({
+        jsonrpc: '2.0',
+        method: 'test',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
+    expect(response.status).equal(204);
+    expect(response.body).to.equal('');
+  });
+
   it('should fail if missing accept header', async () => {
-    const response = await request.post('/')
-        .send({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'test',
-        })
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'test',
+      })
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(415);
   });
 
   it('should fail if missing content type header', async () => {
-    const response = await request.post('/')
-        .send({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'test',
-        })
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'test',
+      })
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(415);
   });
 
   it('should fail if http verb is not POST', async () => {
-    const response = await request.get('/')
-        .send({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'test',
-        })
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .get('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'test',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(405);
   });
 
   it('should fail if json is misformed', async () => {
-    const response = await request.post('/')
-        .send('{ "id": 1, jsonrpc: "2.0", "method": "test"}')
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .post('/')
+      .send('{ "id": 1, jsonrpc: "2.0", "method": "test"}')
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(415);
   });
 
   it('should fail if service reject', async () => {
-    const response = await request.post('/')
-        .send({
-            id: 1,
-            jsonrpc: '2.0',
-            method: 'error',
-        })
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json');
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'error',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
     expect(response.status).equal(500);
+  });
+
+  it('should fail if request is invalid', async () => {
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'invalidRequest',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
+    expect(response.status).equal(400);
+  });
+
+  it('should fail if method is not found', async () => {
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'nonExistingMethod',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
+    expect(response.status).equal(404);
   });
 });

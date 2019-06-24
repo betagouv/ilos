@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+
 import { Types, Interfaces, Exceptions } from '@ilos/core';
 
 /**
@@ -8,7 +9,7 @@ import { Types, Interfaces, Exceptions } from '@ilos/core';
  * @implements {HandlerInterface}
  */
 export class HttpHandler implements Interfaces.HandlerInterface {
-  public readonly middlewares: (string|[string, any])[] = [];
+  public readonly middlewares: (string | [string, any])[] = [];
 
   protected readonly service: string;
   protected readonly version: string;
@@ -17,20 +18,19 @@ export class HttpHandler implements Interfaces.HandlerInterface {
   private client: AxiosInstance;
 
   public boot() {
-    throw new Error('no url found')
+    throw new Error('no url found');
   }
 
-  protected createClient(url){
+  protected createClient(url) {
     this.client = axios.create({
       baseURL: url,
       timeout: 1000,
       headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
     });
   }
-    
 
   public async call(call: Types.CallType): Promise<Types.ResultType> {
     const { method, params, context } = call;
