@@ -1,0 +1,40 @@
+import { MongoClient } from 'mongodb';
+import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/connection-manager';
+
+export class MongoConnection implements ConnectionInterface<MongoClient> {
+  protected client: MongoClient;
+  protected connected = false;
+
+  constructor(protected config: ConnectionConfigurationType) {
+    const { connectionString, connectionOptions } = this.config;
+    const mongoConfig = {
+      useNewUrlParser: true,
+      ...connectionOptions,
+    };
+
+    this.client = new MongoClient(connectionString, mongoConfig);
+  }
+
+  async up() {
+    try {
+      if (this.connected) {
+        await this.client.connect();
+        return;
+      }
+      this.connected = true;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async down() {
+    if (this.connected) {
+      await this.client.close();
+      this.connected = false;
+    }
+  }
+
+  getClient(): MongoClient {
+    return this.client;
+  }
+}
