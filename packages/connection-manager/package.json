@@ -1,5 +1,5 @@
 {
-  "name": "@ilos/provider-cm",
+  "name": "@ilos/connection-manager",
   "version": "0.0.2",
   "publishConfig": {
     "access": "public"
