@@ -77,6 +77,7 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
+    "winston": "^3.2.1"
   },
   "peerDependencies": {
     "@ilos/core": "~0"
