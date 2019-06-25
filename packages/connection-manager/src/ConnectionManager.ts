@@ -129,7 +129,7 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
     const configurationToken = this.connectionRequest(
       connectionConstructor,
       this.getConfig(connectionConfigurationKey),
-      constructors ? false : true,
+      !!constructors.length,
     );
     
     if (!(this.connectionMappingRegistry.has(connectionConstructor))) {

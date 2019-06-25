@@ -105,10 +105,10 @@ export class Bootstrap {
         .then(() => {
           kernel.shutdown()
             .then(() => {
-              process.exit(1);
+              process.exit(0);
             })
             .catch(() => {
-              process.exit(0);
+              process.exit(1);
             });
         })
         .catch(() => {
