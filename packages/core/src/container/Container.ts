@@ -39,37 +39,73 @@ export class Container extends InversifyContainer {
 
   /**
    * Get a particular handler
+   * [local, sync] => [local/sync, local/sync/*, remote/sync, remote/sync/*]
+   * [local, async] => [local/async, local/async/*, local/sync, local/sync/*, remote/sync, remote/sync/*]
+   * [remote, sync] => [remote/sync, remote/sync/*]
+   * [remote, async] => [remote/sync, remote/sync/*]
    * @param {HandlerConfig} config
    * @returns {Interfaces.HandlerInterface}
    * @memberof Container
    */
   getHandler(config: HandlerConfig): Interfaces.HandlerInterface {
     const normalizedHandlerConfig = normalizeHandlerConfig(config);
+
+    // local is true by default
     if (!('local' in normalizedHandlerConfig) || normalizedHandlerConfig.local === undefined) {
       normalizedHandlerConfig.local = true;
     }
 
-    /*
-      1. Try to get local or specific service:method
-      2. Try to get local or specific service:*
-      3. Try to get http service:method
-      4. Try to get http service:*
-    */
-
-    let result = this.getHandlerFinal(normalizedHandlerConfig);
-    if (result) {
-      return result;
+    // remote/async is not possible now
+    if ('local' in normalizedHandlerConfig 
+      && !normalizedHandlerConfig.local
+      && 'queue' in normalizedHandlerConfig
+      && normalizedHandlerConfig
+    ) {
+      normalizedHandlerConfig.queue = false;
     }
-    normalizedHandlerConfig.method = '*';
+
+    let result: Interfaces.HandlerInterface | undefined;
+
+    // 1. Try to get service:method
     result = this.getHandlerFinal(normalizedHandlerConfig);
     if (result) {
       return result;
     }
-    if (!normalizedHandlerConfig.local) {
-      return;
+
+    // 2. Try to get service:*
+    result = this.getHandlerFinal({
+      ...normalizedHandlerConfig,
+      method: '*',
+    });
+    if (result) {
+      return result;
     }
-    normalizedHandlerConfig.local = false;
-    return this.getHandler(normalizedHandlerConfig);
+
+    /*
+      Try with a new configuration :
+      - if the config is local and not a queue > try remote
+      - if the config is queue > try sync
+    */
+
+    if (normalizedHandlerConfig.local
+      && (!('queue' in normalizedHandlerConfig) || !normalizedHandlerConfig.queue)
+    ) {
+      // 3. Try to get remote call
+      return this.getHandler({
+        ...normalizedHandlerConfig,
+        local: false,
+      });
+    }
+
+    if (normalizedHandlerConfig.queue) {
+      // 3bis. Try to get sync call
+      return this.getHandler({
+        ...normalizedHandlerConfig,
+        queue: false,
+      });
+    }
+
+    return;
   }
 
   /**
