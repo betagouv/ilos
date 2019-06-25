@@ -87,3 +87,12 @@ export class HelloAction extends Parents.Action {
   }
 }
 ```
+
+### Middlewares
+```ts
+  public readonly middlewares: (string|[string, any])[] = [
+    'isConnected',
+    ['can', ['user.list']]
+  ];
+```
+You can add middlewares to you handler by adding a middlewares property. This will use middlewares bindings declared in your service provider. You can pass arguments with a tuple.
