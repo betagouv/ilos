@@ -1,0 +1,12 @@
+{
+  "mode": "modules",
+  "out": "docs/dist/api",
+  "exclude": [
+      "**/node_modules/**",
+      "**/*.spec.ts",
+      "**/dist/**"
+  ],
+  "name": "Ilos",
+  "excludePrivate": true,
+  "skipInternal": true
+}

@@ -35,6 +35,7 @@
     "coverage": "nyc --all --reporter=text mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
     "watch": "lerna run --parallel watch",
     "docs:dev": "vuepress dev docs",
+    "docs:api": "typedoc",
     "docs:build": "vuepress build docs",
     "changed": "lerna changed",
     "publish": "lerna publish"
@@ -72,6 +73,7 @@
     "lerna": "^3.15.0",
     "mocha": "^6.1.4",
     "npm-run-all": "^4.1.5",
+    "typedoc": "^0.14.2",
     "vuepress": "^1.0.1"
   }
 }
