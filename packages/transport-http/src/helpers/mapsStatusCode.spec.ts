@@ -3,12 +3,12 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 
-import { mapStatus } from './mapStatusCode';
+import { mapStatusCode } from './mapStatusCode';
 
 describe('RPC/HTTP status codes mapping', () => {
   it('regular -> 200', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({ id: 1 } as any, {
         id: 1,
         jsonrpc: '2.0',
         result: {},
@@ -18,7 +18,7 @@ describe('RPC/HTTP status codes mapping', () => {
 
   it('notification -> 204', () => {
     expect(
-      mapStatus({} as any, {
+      mapStatusCode({} as any, {
         id: 1,
         jsonrpc: '2.0',
         result: {},
@@ -28,7 +28,7 @@ describe('RPC/HTTP status codes mapping', () => {
 
   it('Parse error -> 500', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({ id: 1 } as any, {
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32700, message: 'Parse error' },
@@ -38,7 +38,7 @@ describe('RPC/HTTP status codes mapping', () => {
 
   it('Invalid Request -> 400', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({ id: 1 } as any, {
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32600, message: 'Invalid Request' },
@@ -48,7 +48,7 @@ describe('RPC/HTTP status codes mapping', () => {
 
   it('Method not found -> 404', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({ id: 1 } as any, {
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32601, message: 'Method not found' },
@@ -58,7 +58,7 @@ describe('RPC/HTTP status codes mapping', () => {
 
   it('Invalid Params -> 400', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({ id: 1 } as any, {
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32602, message: 'Invalid Params' },
@@ -68,7 +68,7 @@ describe('RPC/HTTP status codes mapping', () => {
 
   it('Internal error -> 500', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({ id: 1 } as any, {
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32603, message: 'Internal error' },
@@ -78,7 +78,7 @@ describe('RPC/HTTP status codes mapping', () => {
 
   it('Server error 32000 -> 500', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({ id: 1 } as any, {
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32000, message: 'Server error' },
@@ -88,7 +88,7 @@ describe('RPC/HTTP status codes mapping', () => {
 
   it('Server error 32099 -> 500', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({ id: 1 } as any, {
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32000, message: 'Server error' },

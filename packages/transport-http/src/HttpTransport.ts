@@ -34,27 +34,31 @@ export class HttpTransport implements Interfaces.TransportInterface {
         req.headers.accept !== 'application/json'
       ) {
         res.statusCode = 415;
-        res.end({
-          id: 1,
-          jsonrpc: '2.0',
-          error: {
-            code: -32000,
-            message: 'Wrong Content-type header. Requires application/json',
-          },
-        });
+        res.end(
+          JSON.stringify({
+            id: 1,
+            jsonrpc: '2.0',
+            error: {
+              code: -32000,
+              message: 'Wrong Content-type header. Requires application/json',
+            },
+          }),
+        );
       }
       // Add Host/Origin check
 
       if (req.method !== 'POST') {
         res.statusCode = 405;
-        res.end({
-          id: 1,
-          jsonrpc: '2.0',
-          error: {
-            code: -32601,
-            message: 'Method not found',
-          },
-        });
+        res.end(
+          JSON.stringify({
+            id: 1,
+            jsonrpc: '2.0',
+            error: {
+              code: -32601,
+              message: 'Method not found',
+            },
+          }),
+        );
       }
 
       let data = '';
@@ -77,29 +81,33 @@ export class HttpTransport implements Interfaces.TransportInterface {
             .then((results: Types.RPCResponseType) => {
               res.setHeader('content-type', 'application/json');
               res.statusCode = mapStatusCode(call, results);
-              res.end(results);
+              res.end(JSON.stringify(results));
             })
             .catch((e) => {
               res.statusCode = 500;
-              res.end({
-                id: 1,
-                jsonrpc: '2.0',
-                error: {
-                  code: -32000,
-                  message: e.message,
-                },
-              });
+              res.end(
+                JSON.stringify({
+                  id: 1,
+                  jsonrpc: '2.0',
+                  error: {
+                    code: -32000,
+                    message: e.message,
+                  },
+                }),
+              );
             });
         } catch (err) {
           res.statusCode = 415;
-          res.end({
-            id: 1,
-            jsonrpc: '2.0',
-            error: {
-              code: -32000,
-              message: 'Wrong content length',
-            },
-          });
+          res.end(
+            JSON.stringify({
+              id: 1,
+              jsonrpc: '2.0',
+              error: {
+                code: -32000,
+                message: 'Wrong content length',
+              },
+            }),
+          );
         }
       });
 
