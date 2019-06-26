@@ -21,7 +21,7 @@ export class QueueTransport implements Interfaces.TransportInterface {
     return this.kernel;
   }
 
-  getServer(): Queue[] {
+  getInstance(): Queue[] {
     return this.queues;
   }
 

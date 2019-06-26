@@ -22,7 +22,7 @@ export class HttpTransport implements Interfaces.TransportInterface {
     return this.kernel;
   }
 
-  getServer(): http.Server {
+  getInstance(): http.Server {
     return this.server;
   }
 

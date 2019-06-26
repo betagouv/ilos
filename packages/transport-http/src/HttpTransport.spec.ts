@@ -60,7 +60,7 @@ describe('Http transport', () => {
 
     httpTransport.up();
 
-    request = supertest(httpTransport.getServer());
+    request = supertest(httpTransport.getInstance());
   });
 
   after(() => {

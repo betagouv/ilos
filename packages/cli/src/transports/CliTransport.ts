@@ -15,7 +15,7 @@ export class CliTransport implements Interfaces.TransportInterface {
     this.kernel = kernel;
   }
 
-  getServer(): void {
+  getInstance(): void {
     return;
   }
 
