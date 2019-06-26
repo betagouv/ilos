@@ -28,6 +28,8 @@ export class HttpTransport implements Interfaces.TransportInterface {
 
   async up(opts: string[] = []) {
     this.server = http.createServer((req, res) => {
+      res.setHeader('Content-type', 'application/json');
+
       if (
         !('content-type' in req.headers && 'accept' in req.headers) ||
         req.headers['content-type'] !== 'application/json' ||
@@ -55,7 +57,7 @@ export class HttpTransport implements Interfaces.TransportInterface {
             jsonrpc: '2.0',
             error: {
               code: -32601,
-              message: 'Method not found',
+              message: 'Method not allowed',
             },
           }),
         );
@@ -79,8 +81,7 @@ export class HttpTransport implements Interfaces.TransportInterface {
           this.kernel
             .handle(call)
             .then((results: Types.RPCResponseType) => {
-              res.setHeader('content-type', 'application/json');
-              res.statusCode = mapStatusCode(call, results);
+              res.statusCode = mapStatusCode(results);
               res.end(JSON.stringify(results));
             })
             .catch((e) => {
