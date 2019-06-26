@@ -1,11 +1,15 @@
 import { Container, Parents, Types, Exceptions, Interfaces } from '@ilos/core';
+import { CustomProvider } from '../../Providers/CustomProvider';
 
 @Container.handler({
   service: 'string',
   method: 'result',
 })
-export class ResultAction extends Parents.Action {
-  constructor(private kernel: Interfaces.KernelInterfaceResolver) {
+export class ResultAction extends Parents.Action {  
+  constructor(
+    private kernel: Interfaces.KernelInterfaceResolver,
+    public custom: CustomProvider,
+  ) {
     super();
   }
 
@@ -20,7 +24,7 @@ export class ResultAction extends Parents.Action {
       params: params.add,
     });
     if (addResult && 'result' in addResult) {
-      return `Hello world ${params.name}, result is ${addResult.result}`;
+      return `${this.custom.get()}Hello world ${params.name}, result is ${addResult.result}`;
     }
     throw new Error('Something goes wrong');
   }

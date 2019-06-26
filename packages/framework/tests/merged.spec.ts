@@ -2,35 +2,17 @@
 import { expect } from 'chai';
 import axios from 'axios';
 import { HttpTransport } from '@ilos/transport-http';
-import { httpHandlerFactory } from '@ilos/handler-http';
-import { Container, Interfaces, Parents } from '@ilos/core';
+import { Container, Interfaces } from '@ilos/core';
 import { Kernel } from '../src/Kernel';
 
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
-import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
+import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
 
-class StringServiceProvider extends Parents.ServiceProvider {
-  readonly serviceProviders = [
-    ParentStringServiceProvider,
-  ];
-
-  readonly handlers = [
-    httpHandlerFactory('math', 'http://127.0.0.1:8080'),
-  ];
-}
 
 @Container.injectable()
-class MathKernel extends Kernel {
-  name = 'math';
+class MyKernel extends Kernel {
   readonly serviceProviders = [
     MathServiceProvider,
-  ];
-}
-
-@Container.injectable()
-class StringKernel extends Kernel {
-  name = 'string';
-  readonly serviceProviders = [
     StringServiceProvider,
   ];
 }
@@ -63,26 +45,18 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
     },
   });
 }
-let mathTransport: Interfaces.TransportInterface;
-let stringTransport: Interfaces.TransportInterface;
+let transport: Interfaces.TransportInterface;
 
-describe('Http only integration', () => {
+describe('Merged integration', () => {
   before(async () => {
-    const mathKernel = new MathKernel();
-    await mathKernel.boot();
-
-    mathTransport = new HttpTransport(mathKernel);
-    await mathTransport.up(['8080']);
-
-    const stringKernel = new StringKernel();
-    await stringKernel.boot();
-    stringTransport = new HttpTransport(stringKernel);
-    await stringTransport.up(['8081']);
+    const kernel = new MyKernel();
+    await kernel.boot();
+    transport = new HttpTransport(kernel);
+    await transport.up(['8080']);
   });
 
   after(async () => {
-    await mathTransport.down();
-    await stringTransport.down();
+    await transport.down();
   });
 
   it('should works', async () => {
@@ -95,7 +69,7 @@ describe('Http only integration', () => {
       result: 'math:2',
     });
 
-    const responseString = await makeRPCCall(8081, [
+    const responseString = await makeRPCCall(8080, [
       { method: 'string:hello', params: { name: 'sam' } },
     ]);
     expect(responseString.data).to.deep.equal({
@@ -103,25 +77,12 @@ describe('Http only integration', () => {
       id: 0,
       result: 'string:Hello world sam',
     });
-  });
 
-  it('should works with internal service call', async () => {
-    const response = await makeRPCCall(8081, [
-      { method: 'string:result', params: { name: 'sam', add: [1, 1] } },
-    ]);
-
-    expect(response.data).to.deep.equal({
-      jsonrpc: '2.0',
-      id: 0,
-      result: 'string:Hello world sam, result is math:2',
-    });
-  });
-
-  it('should works with batch call', async () => {
-    const response = await makeRPCCall(8081, [
+    const response = await makeRPCCall(8080, [
       { method: 'string:result', params: { name: 'sam', add: [1, 1] } },
       { method: 'string:result', params: { name: 'john', add: [1, 10] } },
     ]);
+
     expect(response.data).to.deep.equal([
       {
         jsonrpc: '2.0',

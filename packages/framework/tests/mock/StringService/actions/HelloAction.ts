@@ -1,5 +1,6 @@
 import { Container, Parents, Types, Exceptions } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { CustomProvider } from '../../Providers/CustomProvider';
 
 @Container.handler({
   service: 'string',
@@ -7,6 +8,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 })
 export class HelloAction extends Parents.Action {
   constructor(
+    public custom: CustomProvider,
     private config: ConfigProviderInterfaceResolver,
   ) {
     super();
@@ -17,6 +19,6 @@ export class HelloAction extends Parents.Action {
       throw new Exceptions.InvalidParamsException();
     }
     const sentence = this.config.get('string.hello');
-    return `${sentence} ${params.name}`;
+    return `${this.custom.get()}${sentence} ${params.name}`;
   }
 }
