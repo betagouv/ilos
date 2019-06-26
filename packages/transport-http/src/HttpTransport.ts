@@ -2,7 +2,7 @@ import http from 'http';
 
 import { Interfaces, Types } from '@ilos/core';
 
-import { mapStatus } from './helpers/mapStatusCode';
+import { mapStatusCode } from './helpers/mapStatusCode';
 
 /**
  * Http Transport
@@ -11,8 +11,8 @@ import { mapStatus } from './helpers/mapStatusCode';
  * @implements {TransportInterface}
  */
 export class HttpTransport implements Interfaces.TransportInterface {
-  server: http.Server;
-  kernel: Interfaces.KernelInterface;
+  protected server: http.Server;
+  protected kernel: Interfaces.KernelInterface;
 
   constructor(kernel: Interfaces.KernelInterface) {
     this.kernel = kernel;
@@ -20,6 +20,10 @@ export class HttpTransport implements Interfaces.TransportInterface {
 
   getKernel(): Interfaces.KernelInterface {
     return this.kernel;
+  }
+
+  getServer(): http.Server {
+    return this.server;
   }
 
   async up(opts: string[] = []) {
@@ -30,13 +34,27 @@ export class HttpTransport implements Interfaces.TransportInterface {
         req.headers.accept !== 'application/json'
       ) {
         res.statusCode = 415;
-        res.end('Wrong content type header');
+        res.end({
+          id: 1,
+          jsonrpc: '2.0',
+          error: {
+            code: -32000,
+            message: 'Wrong Content-type header. Requires application/json',
+          },
+        });
       }
       // Add Host/Origin check
 
       if (req.method !== 'POST') {
         res.statusCode = 405;
-        res.end('Method not allowed');
+        res.end({
+          id: 1,
+          jsonrpc: '2.0',
+          error: {
+            code: -32601,
+            message: 'Method not found',
+          },
+        });
       }
 
       let data = '';
@@ -58,25 +76,30 @@ export class HttpTransport implements Interfaces.TransportInterface {
             .handle(call)
             .then((results: Types.RPCResponseType) => {
               res.setHeader('content-type', 'application/json');
-              res.statusCode = mapStatus(call, results);
-              res.end(JSON.stringify(results));
+              res.statusCode = mapStatusCode(call, results);
+              res.end(results);
             })
             .catch((e) => {
               res.statusCode = 500;
-              res.end(
-                JSON.stringify({
-                  id: 1,
-                  jsonrpc: '2.0',
-                  error: {
-                    code: 500,
-                    message: e.message,
-                  },
-                }),
-              );
+              res.end({
+                id: 1,
+                jsonrpc: '2.0',
+                error: {
+                  code: -32000,
+                  message: e.message,
+                },
+              });
             });
         } catch (err) {
           res.statusCode = 415;
-          res.end('Wrong request');
+          res.end({
+            id: 1,
+            jsonrpc: '2.0',
+            error: {
+              code: -32000,
+              message: 'Wrong content length',
+            },
+          });
         }
       });
 

@@ -1,38 +1,32 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
 import axios from 'axios';
+
 import { HttpTransport } from '@ilos/transport-http';
 import { httpHandlerFactory } from '@ilos/handler-http';
 import { Container, Interfaces, Parents } from '@ilos/core';
+
 import { Kernel } from '../src/Kernel';
 
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
 
 class StringServiceProvider extends Parents.ServiceProvider {
-  readonly serviceProviders = [
-    ParentStringServiceProvider,
-  ];
+  readonly serviceProviders = [ParentStringServiceProvider];
 
-  readonly handlers = [
-    httpHandlerFactory('math', 'http://127.0.0.1:8080'),
-  ];
+  readonly handlers = [httpHandlerFactory('math', 'http://127.0.0.1:8080')];
 }
 
 @Container.injectable()
 class MathKernel extends Kernel {
   name = 'math';
-  readonly serviceProviders = [
-    MathServiceProvider,
-  ];
+  readonly serviceProviders = [MathServiceProvider];
 }
 
 @Container.injectable()
 class StringKernel extends Kernel {
   name = 'string';
-  readonly serviceProviders = [
-    StringServiceProvider,
-  ];
+  readonly serviceProviders = [StringServiceProvider];
 }
 
 function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
@@ -86,18 +80,14 @@ describe('Http only integration', () => {
   });
 
   it('should works', async () => {
-    const responseMath = await makeRPCCall(8080, [
-      { method: 'math:add', params: [1, 1] },
-    ]);
+    const responseMath = await makeRPCCall(8080, [{ method: 'math:add', params: [1, 1] }]);
     expect(responseMath.data).to.deep.equal({
       jsonrpc: '2.0',
       id: 0,
       result: 'math:2',
     });
 
-    const responseString = await makeRPCCall(8081, [
-      { method: 'string:hello', params: { name: 'sam' } },
-    ]);
+    const responseString = await makeRPCCall(8081, [{ method: 'string:hello', params: { name: 'sam' } }]);
     expect(responseString.data).to.deep.equal({
       jsonrpc: '2.0',
       id: 0,
@@ -106,9 +96,7 @@ describe('Http only integration', () => {
   });
 
   it('should works with internal service call', async () => {
-    const response = await makeRPCCall(8081, [
-      { method: 'string:result', params: { name: 'sam', add: [1, 1] } },
-    ]);
+    const response = await makeRPCCall(8081, [{ method: 'string:result', params: { name: 'sam', add: [1, 1] } }]);
 
     expect(response.data).to.deep.equal({
       jsonrpc: '2.0',

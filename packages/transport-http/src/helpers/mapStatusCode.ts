@@ -1,7 +1,7 @@
 import { Types } from '@ilos/core';
 
 // https://www.jsonrpc.org/historical/json-rpc-over-http.html#response-codes
-export function mapStatus(call: Types.RPCCallType, results: Types.RPCResponseType): number {
+export function mapStatusCode(call: Types.RPCCallType, results: Types.RPCResponseType): number {
   if (!results) {
     return 204;
   }
