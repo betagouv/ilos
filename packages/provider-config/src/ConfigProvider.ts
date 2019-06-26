@@ -24,8 +24,10 @@ export class ConfigProvider implements ConfigProviderInterface {
   async boot() {
     const defaultConfigFolder = this.env.get('APP_WORKING_PATH', process.cwd()); 
     const defaultConfigDir = this.env.get('APP_CONFIG_DIR', './config');
-    if (fs.existsSync(path.resolve(defaultConfigFolder, defaultConfigDir))) {
+    try {
       this.loadConfigDirectory(defaultConfigFolder, defaultConfigDir);
+    } catch {
+      // do nothing
     }
   }
 
