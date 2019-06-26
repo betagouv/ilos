@@ -78,6 +78,7 @@ describe('Http transport', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
 
+    expect(response.status).to.equal(200);
     expect(response.body).to.deep.equal({
       id: 1,
       jsonrpc: '2.0',
@@ -96,11 +97,12 @@ describe('Http transport', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
 
+    expect(response.status).to.equal(404);
     expect(response.body).to.deep.equal({
       id: 1,
       jsonrpc: '2.0',
       error: {
-        code: 404,
+        code: -32601,
         message: 'Method not found',
       },
     });

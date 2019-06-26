@@ -1,12 +1,15 @@
+import { Types } from '@ilos/core';
+
 // https://www.jsonrpc.org/historical/json-rpc-over-http.html#response-codes
-export function mapStatus(call, results): { message: string; code: number; data?: string } {
+export function mapStatus(call: Types.RPCCallType, results: Types.RPCResponseType): number {
+  if (!results) {
+    return 204;
+  }
+
   // BATCH requests
   if (Array.isArray(results)) {
     // TODO
-    return {
-      code: 200,
-      message: 'OK',
-    };
+    return 200;
   }
 
   // ONE SHOT requests
@@ -21,36 +24,18 @@ export function mapStatus(call, results): { message: string; code: number; data?
     switch (error.code) {
       case -32600:
       case -32602:
-        return {
-          code: 400,
-          message: 'Bad Request',
-          data: error.data,
-        };
+        return 400;
       case -32601:
-        return {
-          code: 404,
-          message: 'Method not found',
-          data: error.data,
-        };
+        return 404;
       default:
-        return {
-          code: 500,
-          message: 'Server error',
-          data: error.data,
-        };
+        return 500;
     }
   }
 
   // Notifications return a 204
   if (!('id' in call) || call.id === '' || call.id === null) {
-    return {
-      code: 204,
-      message: 'No Content',
-    };
+    return 204;
   }
 
-  return {
-    code: 200,
-    message: 'OK',
-  };
+  return 200;
 }
