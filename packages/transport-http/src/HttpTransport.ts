@@ -1,9 +1,8 @@
 import http from 'http';
 
-import { Interfaces } from '@ilos/core';
+import { Interfaces, Types } from '@ilos/core';
 
-import { mapStatusCode } from './helpers/mapStatusCode';
-import { RPCCallType } from '@ilos/core/dist/types';
+import { mapStatus } from './helpers/mapStatusCode';
 
 /**
  * Http Transport
@@ -53,18 +52,27 @@ export class HttpTransport implements Interfaces.TransportInterface {
             // throw new Error();
           }
 
-          const call: RPCCallType = JSON.parse(data);
+          const call: Types.RPCCallType = JSON.parse(data);
           // TODO : add channel ?
           this.kernel
             .handle(call)
-            .then((results) => {
+            .then((results: Types.RPCResponseType) => {
               res.setHeader('content-type', 'application/json');
-              res.statusCode = mapStatusCode(call, results);
+              res.statusCode = mapStatus(call, results);
               res.end(JSON.stringify(results));
             })
             .catch((e) => {
               res.statusCode = 500;
-              res.end(`An error occured : ${e ? e.message : ''}`);
+              res.end(
+                JSON.stringify({
+                  id: 1,
+                  jsonrpc: '2.0',
+                  error: {
+                    code: 500,
+                    message: e.message,
+                  },
+                }),
+              );
             });
         } catch (err) {
           res.statusCode = 415;

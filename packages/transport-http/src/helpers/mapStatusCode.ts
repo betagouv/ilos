@@ -1,7 +1,11 @@
-import { IncomingMessage, ServerResponse } from 'http';
+import { Types } from '@ilos/core';
 
 // https://www.jsonrpc.org/historical/json-rpc-over-http.html#response-codes
-export function mapStatusCode(call, results): number {
+export function mapStatus(call: Types.RPCCallType, results: Types.RPCResponseType): number {
+  if (!results) {
+    return 204;
+  }
+
   // BATCH requests
   if (Array.isArray(results)) {
     // TODO
@@ -12,13 +16,14 @@ export function mapStatusCode(call, results): number {
   // 500 -32700            Parse error.
   // 400 -32600            Invalid Request.
   // 404 -32601            Method not found.
-  // 500 -32602            Invalid params.
+  // 400 -32602            Invalid params.
   // 500 -32603            Internal error.
   // 500 -32099...-32000   Server error.
   const { error } = results;
   if (error) {
     switch (error.code) {
       case -32600:
+      case -32602:
         return 400;
       case -32601:
         return 404;
