@@ -67,6 +67,45 @@ describe('Http transport', () => {
     httpTransport.down();
   });
 
+  it('returns JSON-RPC compliant success response', async () => {
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'test',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
+
+    expect(response.body).to.deep.equal({
+      id: 1,
+      jsonrpc: '2.0',
+      result: 'hello world',
+    });
+  });
+
+  it('returns JSON-RPC compliant error response', async () => {
+    const response = await request
+      .post('/')
+      .send({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'returnAnError',
+      })
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json');
+
+    expect(response.body).to.deep.equal({
+      id: 1,
+      jsonrpc: '2.0',
+      error: {
+        code: 404,
+        message: 'Method not found',
+      },
+    });
+  });
+
   it('regular request', async () => {
     const response = await request
       .post('/')
@@ -78,11 +117,6 @@ describe('Http transport', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
     expect(response.status).equal(200);
-    expect(response.body).to.deep.equal({
-      id: 1,
-      jsonrpc: '2.0',
-      result: 'hello world',
-    });
   });
 
   it('notification request', async () => {
