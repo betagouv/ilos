@@ -19,11 +19,20 @@ export class PermissionMiddleware implements Interfaces.MiddlewareInterface {
       throw new Exceptions.InvalidParamsException('No permissions defined');
     }
 
-    if (!context || !('call' in context) || !('permissions' in context.call.user)) {
+    let permissions = [];
+
+    if (!!context.call 
+      && !!context.call.user 
+      && !!context.call.user.permissions
+      && !!context.call.user.permissions.length
+    ) {
+      permissions = context.call.user.permissions;
+    }
+
+    if (permissions.length === 0) {
       throw new Exceptions.ForbiddenException('Invalid permissions');
     }
 
-    const { permissions } = context.call.user;
     const pass = neededPermissions.reduce((p, c) => p && (permissions || []).indexOf(c) > -1, true);
 
     if (!pass) {
