@@ -17,6 +17,11 @@ describe('Http transport', () => {
         if ('method' in call) {
           switch (call.method) {
             case 'test':
+              // notifications return void
+              if (call.id === undefined || call.id === null) {
+                return;
+              }
+
               return {
                 id: 1,
                 jsonrpc: '2.0',
@@ -60,7 +65,7 @@ describe('Http transport', () => {
 
     httpTransport.up();
 
-    request = supertest(httpTransport.server);
+    request = supertest(httpTransport.getInstance());
   });
 
   after(() => {
@@ -97,7 +102,7 @@ describe('Http transport', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
 
-    expect(response.status).to.equal(404);
+    expect(response.status).to.equal(405);
     expect(response.body).to.deep.equal({
       id: 1,
       jsonrpc: '2.0',
@@ -119,6 +124,9 @@ describe('Http transport', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
     expect(response.status).equal(200);
+    expect(response.body).to.have.property('id', 1);
+    expect(response.body).to.have.property('jsonrpc', '2.0');
+    expect(response.body).to.have.property('result');
   });
 
   it('notification request', async () => {
@@ -134,7 +142,7 @@ describe('Http transport', () => {
     expect(response.body).to.equal('');
   });
 
-  it('should fail if missing accept header', async () => {
+  it('should fail if missing Accept header', async () => {
     const response = await request
       .post('/')
       .send({
@@ -144,9 +152,13 @@ describe('Http transport', () => {
       })
       .set('Content-Type', 'application/json');
     expect(response.status).equal(415);
+    expect(response.body).to.have.property('id', 1);
+    expect(response.body).to.have.property('jsonrpc', '2.0');
+    expect(response.body).to.have.property('error');
   });
 
-  it('should fail if missing content type header', async () => {
+  // Content-type is infered from Accept header
+  it('should work without Content-type header', async () => {
     const response = await request
       .post('/')
       .send({
@@ -154,8 +166,11 @@ describe('Http transport', () => {
         jsonrpc: '2.0',
         method: 'test',
       })
-      .set('Content-Type', 'application/json');
-    expect(response.status).equal(415);
+      .set('Accept', 'application/json');
+    expect(response.status).equal(200);
+    expect(response.body).to.have.property('id', 1);
+    expect(response.body).to.have.property('jsonrpc', '2.0');
+    expect(response.body).to.have.property('result');
   });
 
   it('should fail if http verb is not POST', async () => {
@@ -169,6 +184,9 @@ describe('Http transport', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
     expect(response.status).equal(405);
+    expect(response.body).to.have.property('id', 1);
+    expect(response.body).to.have.property('jsonrpc', '2.0');
+    expect(response.body).to.have.property('error');
   });
 
   it('should fail if json is misformed', async () => {
@@ -178,6 +196,9 @@ describe('Http transport', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
     expect(response.status).equal(415);
+    expect(response.body).to.have.property('id', 1);
+    expect(response.body).to.have.property('jsonrpc', '2.0');
+    expect(response.body).to.have.property('error');
   });
 
   it('should fail if service reject', async () => {
@@ -191,6 +212,9 @@ describe('Http transport', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
     expect(response.status).equal(500);
+    expect(response.body).to.have.property('id', 1);
+    expect(response.body).to.have.property('jsonrpc', '2.0');
+    expect(response.body).to.have.property('error');
   });
 
   it('should fail if request is invalid', async () => {
@@ -204,6 +228,9 @@ describe('Http transport', () => {
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
     expect(response.status).equal(400);
+    expect(response.body).to.have.property('id', 1);
+    expect(response.body).to.have.property('jsonrpc', '2.0');
+    expect(response.body).to.have.property('error');
   });
 
   it('should fail if method is not found', async () => {
@@ -216,6 +243,9 @@ describe('Http transport', () => {
       })
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json');
-    expect(response.status).equal(404);
+    expect(response.status).equal(405);
+    expect(response.body).to.have.property('id', 1);
+    expect(response.body).to.have.property('jsonrpc', '2.0');
+    expect(response.body).to.have.property('error');
   });
 });
