@@ -1,13 +1,19 @@
 import { KernelInterface } from './KernelInterface';
 
 export interface TransportInterface {
-
   /**
    * Get Kernel instance
    * @returns {KernelInterface}
    * @memberof TransportInterface
    */
-  getKernel():KernelInterface;
+  getKernel(): KernelInterface;
+
+  /**
+   * Get Server instance such as httpServer, queue, etc.
+   * @returns {T | void}
+   * @memberof TransportInterface
+   */
+  getInstance<T>(): T | void;
 
   /**
    * Start the transport
@@ -15,12 +21,12 @@ export interface TransportInterface {
    * @returns {Promise<void>}
    * @memberof TransportInterface
    */
-  up(opts?: string[]):Promise<void>;
+  up(opts?: string[]): Promise<void>;
 
   /**
    * Stop the transport
    * @returns {Promise<void>}
    * @memberof TransportInterface
    */
-  down():Promise<void>;
+  down(): Promise<void>;
 }

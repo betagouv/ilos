@@ -3,12 +3,12 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 
-import { mapStatus } from './mapStatusCode';
+import { mapStatusCode } from './mapStatusCode';
 
 describe('RPC/HTTP status codes mapping', () => {
   it('regular -> 200', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({
         id: 1,
         jsonrpc: '2.0',
         result: {},
@@ -17,28 +17,22 @@ describe('RPC/HTTP status codes mapping', () => {
   });
 
   it('notification -> 204', () => {
-    expect(
-      mapStatus({} as any, {
-        id: 1,
-        jsonrpc: '2.0',
-        result: {},
-      }),
-    ).to.eq(204);
+    expect(mapStatusCode()).to.eq(204);
   });
 
-  it('Parse error -> 500', () => {
+  it('Parse error -> 422', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32700, message: 'Parse error' },
       }),
-    ).to.eq(500);
+    ).to.eq(422);
   });
 
   it('Invalid Request -> 400', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32600, message: 'Invalid Request' },
@@ -46,19 +40,9 @@ describe('RPC/HTTP status codes mapping', () => {
     ).to.eq(400);
   });
 
-  it('Method not found -> 404', () => {
-    expect(
-      mapStatus({ id: 1 } as any, {
-        id: 1,
-        jsonrpc: '2.0',
-        error: { code: -32601, message: 'Method not found' },
-      }),
-    ).to.eq(404);
-  });
-
   it('Invalid Params -> 400', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32602, message: 'Invalid Params' },
@@ -66,9 +50,19 @@ describe('RPC/HTTP status codes mapping', () => {
     ).to.eq(400);
   });
 
+  it('Method not found -> 405', () => {
+    expect(
+      mapStatusCode({
+        id: 1,
+        jsonrpc: '2.0',
+        error: { code: -32601, message: 'Method not found' },
+      }),
+    ).to.eq(405);
+  });
+
   it('Internal error -> 500', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32603, message: 'Internal error' },
@@ -78,7 +72,7 @@ describe('RPC/HTTP status codes mapping', () => {
 
   it('Server error 32000 -> 500', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32000, message: 'Server error' },
@@ -88,11 +82,41 @@ describe('RPC/HTTP status codes mapping', () => {
 
   it('Server error 32099 -> 500', () => {
     expect(
-      mapStatus({ id: 1 } as any, {
+      mapStatusCode({
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32000, message: 'Server error' },
       }),
     ).to.eq(500);
+  });
+
+  it('Unauthorized -> 501', () => {
+    expect(
+      mapStatusCode({
+        id: 1,
+        jsonrpc: '2.0',
+        error: { code: -32501, message: 'Unauthorized' },
+      }),
+    ).to.eq(501);
+  });
+
+  it('Forbidden -> 503', () => {
+    expect(
+      mapStatusCode({
+        id: 1,
+        jsonrpc: '2.0',
+        error: { code: -32503, message: 'Forbidden' },
+      }),
+    ).to.eq(503);
+  });
+
+  it('Conflict -> 409', () => {
+    expect(
+      mapStatusCode({
+        id: 1,
+        jsonrpc: '2.0',
+        error: { code: -32509, message: 'Conflict' },
+      }),
+    ).to.eq(409);
   });
 });

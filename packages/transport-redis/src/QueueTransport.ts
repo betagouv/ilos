@@ -17,8 +17,12 @@ export class QueueTransport implements Interfaces.TransportInterface {
     this.kernel = kernel;
   }
 
-  getKernel():Interfaces.KernelInterface {
+  getKernel(): Interfaces.KernelInterface {
     return this.kernel;
+  }
+
+  getInstance(): Queue[] {
+    return this.queues;
   }
 
   async up(opts: string[] = []) {
@@ -26,12 +30,14 @@ export class QueueTransport implements Interfaces.TransportInterface {
     // throw error
 
     const container = <Container.ContainerInterface>this.kernel.getContainer();
-    const services = Array.from(new Set(
-      container
-      .getHandlers()
-      .filter(cfg => ('local' in cfg && cfg.local) && ('queue' in cfg && !cfg.queue))
-      .map(cfg => cfg.service),
-      ));
+    const services = Array.from(
+      new Set(
+        container
+          .getHandlers()
+          .filter((cfg) => 'local' in cfg && cfg.local && ('queue' in cfg && !cfg.queue))
+          .map((cfg) => cfg.service),
+      ),
+    );
 
     for (const service of services) {
       const key = `${env}-${service}`;
@@ -42,17 +48,19 @@ export class QueueTransport implements Interfaces.TransportInterface {
       this.registerListeners(queue, key);
       this.queues.push(queue);
 
-      queue.process(job => this.kernel.handle({
-        jsonrpc: '2.0',
-        id: 1,
-        method: job.data.method,
-        params: {
-          params: job.data.params.params,
-          _context: {
-            ...job.data.params._context,
+      queue.process((job) =>
+        this.kernel.handle({
+          jsonrpc: '2.0',
+          id: 1,
+          method: job.data.method,
+          params: {
+            params: job.data.params.params,
+            _context: {
+              ...job.data.params._context,
+            },
           },
-        },
-      }));
+        }),
+      );
     }
   }
 
