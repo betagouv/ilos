@@ -1,9 +1,10 @@
 import {
-  MongoProviderInterfaceResolver,
+  MongoConnection,
   CollectionInterface,
   MongoException,
   ObjectId,
-} from '@ilos/provider-mongo';
+  DbInterface,
+} from '@ilos/connection-mongo';
 import { Types, Exceptions } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
@@ -14,7 +15,7 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
 
   constructor(
     protected config: ConfigProviderInterfaceResolver,
-    protected mongoProvider: MongoProviderInterfaceResolver,
+    protected connection: MongoConnection,
   ) {}
 
   boot(): void {
@@ -41,8 +42,20 @@ export abstract class ParentRepositoryProvider implements ParentRepositoryProvid
     return this.getCollection();
   }
 
+  get client() {
+    return this.connection.getClient();
+  }
+
+  async getDb(name: string): Promise<DbInterface> {
+    return this.client.db(name);
+  }
+
+  async getCollectionFromDb(collection: string, db: string): Promise<CollectionInterface> {
+    return this.client.db(db).collection(collection);
+  }
+
   async getCollection() {
-    return this.mongoProvider.getCollectionFromDb(this.getKey(), this.getDbName());
+    return this.getCollectionFromDb(this.getKey(), this.getDbName());
   }
 
   async find(id: string | ObjectId): Promise<Model> {

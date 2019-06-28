@@ -30,6 +30,14 @@ export abstract class KernelInterfaceResolver implements KernelInterface {
     return;
   }
 
+  async shutdown() {
+    return;
+  }
+
+  registerShutdownHook(hook: Function):void {
+    throw new Error();
+  }
+
   register(module: ContainerModuleConfigurator) {
     throw new Error();
   }

@@ -9,8 +9,10 @@ import { HandlerConfig } from './ContainerInterfaces';
 
 export function provider() {
   return function (target) {
-    const metadata = new Metadata(METADATA_KEY.POST_CONSTRUCT, 'boot');
-    Reflect.defineMetadata(METADATA_KEY.POST_CONSTRUCT, metadata, target);
+    if ('boot' in target.prototype) {
+      const metadata = new Metadata(METADATA_KEY.POST_CONSTRUCT, 'boot');
+      Reflect.defineMetadata(METADATA_KEY.POST_CONSTRUCT, metadata, target);
+    }
     return injectable()(target);
   };
 }

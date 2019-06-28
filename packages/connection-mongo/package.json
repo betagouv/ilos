@@ -1,6 +1,6 @@
 {
-  "name": "@ilos/provider-mongo",
-  "version": "0.0.3",
+  "name": "@ilos/connection-mongo",
+  "version": "0.0.1",
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
@@ -46,8 +46,7 @@
     "mongodb": "^3.2.4"
   },
   "peerDependencies": {
-    "@ilos/core": "~0",
-    "@ilos/provider-config": "~0"
+    "@ilos/connection-manager": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

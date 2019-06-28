@@ -24,6 +24,9 @@ export abstract class ServiceContainer implements ServiceContainerInterface {
   readonly alias: any[] = [];
   readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
 
+  protected serviceProviderInstances: Set<ServiceProviderInterface> = new Set();
+  protected shutdownHooks: Set<Function> = new Set();
+
   protected ready = false;
   protected container: ContainerInterface;
 
@@ -90,5 +93,22 @@ export abstract class ServiceContainer implements ServiceContainerInterface {
   public async registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void> {
     const serviceProvider = new serviceProviderConstructor(this.getContainer());
     await serviceProvider.boot();
+    this.serviceProviderInstances.add(serviceProvider);
+  }
+
+  async shutdown() {
+    const serviceProviders = this.serviceProviderInstances.entries();
+    for (const [serviceProvider] of serviceProviders) {
+      await serviceProvider.shutdown();
+    }
+
+    const shutdownHooks = this.shutdownHooks.entries();
+    for (const [hook] of shutdownHooks) {
+      await hook();
+    }
+  }
+
+  registerShutdownHook(hook: Function):void {
+    this.shutdownHooks.add(hook);
   }
 }

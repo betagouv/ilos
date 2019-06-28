@@ -3,13 +3,21 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
 import { Parents, Container } from '@ilos/core';
 import { ConfigProvider, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { MongoProvider, MongoProviderInterfaceResolver } from '@ilos/provider-mongo';
+import { MongoConnection } from '@ilos/connection-mongo';
+import { ConnectionManager as ParentConnectionManager, ConnectionDeclarationType } from '@ilos/connection-manager';
 
 import { ParentRepositoryProvider } from '../src/index';
 
 let mongoServer;
 let connectionString;
 let dbName;
+const config = {
+  mongo: {
+    connectionString: null,
+    connectionOptions: {},
+    db: null,
+  },
+};
 
 class User {
   constructor(data) {
@@ -23,10 +31,8 @@ class FakeConfigProvider extends ConfigProvider {
   protected config: object = {
     //
   };
+
   async boot() {
-    //
-  }
-  setConfig(config) {
     this.config = config;
   }
 }
@@ -35,7 +41,7 @@ class FakeConfigProvider extends ConfigProvider {
 class UserRepositoryProvider extends ParentRepositoryProvider {
   constructor(
     protected config: ConfigProviderInterfaceResolver,
-    protected mongoProvider: MongoProviderInterfaceResolver
+    protected mongoProvider: MongoConnection
   ) {
     super(config, mongoProvider);
   }
@@ -71,11 +77,20 @@ class UserRepositoryProvider extends ParentRepositoryProvider {
   }
 }
 
+class ConnectionManager extends ParentConnectionManager {
+  readonly connections: ConnectionDeclarationType[] = [
+    [MongoConnection, 'mongo'],
+  ];
+}
+
 class Kernel extends Parents.Kernel {
   alias = [
     [ConfigProviderInterfaceResolver, FakeConfigProvider],
-    [MongoProviderInterfaceResolver, MongoProvider],
     UserRepositoryProvider
+  ];
+
+  serviceProviders = [
+    ConnectionManager,
   ];
 }
 
@@ -86,18 +101,14 @@ describe('Repository provider', () => {
     mongoServer = new MongoMemoryServer();
     connectionString = await mongoServer.getConnectionString();
     dbName = await mongoServer.getDbName();
+    config.mongo.connectionString = connectionString;
+    config.mongo.db = dbName;
+
     await kernel.boot();
-    const container = kernel.getContainer();
-    (<FakeConfigProvider>container.get(ConfigProviderInterfaceResolver)).setConfig({
-      mongo: {
-        url: connectionString,
-        db: dbName,
-      },
-    });
   });
 
   after(async () => {
-    await (<MongoProviderInterfaceResolver>kernel.getContainer().get(MongoProviderInterfaceResolver)).close();
+    await kernel.shutdown();
     await mongoServer.stop();
   });
 

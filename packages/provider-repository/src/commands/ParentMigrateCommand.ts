@@ -2,7 +2,7 @@ import { Types as CliTypes, Interfaces as CliInterfaces } from '@ilos/cli';
 import { Types, Interfaces } from '@ilos/core';
 
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { MongoProviderInterfaceResolver } from '@ilos/provider-mongo';
+import { MongoConnection } from '@ilos/connection-mongo';
 
 export type MigrationType = {
   signature: string;
@@ -58,7 +58,7 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
 
   constructor(
     protected kernel: Interfaces.KernelInterfaceResolver,
-    protected db: MongoProviderInterfaceResolver,
+    protected connection: MongoConnection,
     protected config: ConfigProviderInterfaceResolver,
   ) {}
 
@@ -91,7 +91,7 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
   public async getMigrationCollection() {
     const collection = this.config.get('migration.collection', 'migrations');
     const db = this.config.get('migration.db');
-    return this.db.getCollectionFromDb(collection, db);
+    return this.connection.getClient().db(db).collection(collection);
   }
 
   protected async status(): Promise<string> {

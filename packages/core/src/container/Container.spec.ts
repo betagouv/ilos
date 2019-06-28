@@ -88,4 +88,38 @@ describe('Container', () => {
     });
     expect(tbis.hello.world).to.equal('yeah');
   });
+
+  it('works with no boot provider', async () => {
+    @provider()
+    class Hello {
+      public world = 'yeah';
+    }
+
+    @handler({
+      service: 'test',
+      method: 'hello',
+    })
+    class Test implements Interfaces.HandlerInterface {
+      public readonly middlewares = [];
+      constructor(public hello: Hello) {}
+      boot() {
+        //
+      }
+      async call(call: Types.CallType) {
+        return;
+      }
+    }
+
+    const container = new Container();
+    const t = container.resolve(Test);
+    expect(t.hello.world).to.equal('yeah');
+
+    container.setHandler(Test);
+
+    const tbis = <Test>container.getHandler({
+      service: 'test',
+      method: 'hello',
+    });
+    expect(tbis.hello.world).to.equal('yeah');
+  });
 });
