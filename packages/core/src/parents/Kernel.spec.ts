@@ -261,14 +261,6 @@ describe('Kernel', () => {
         },
       },
     });
-    expect(response).to.deep.equal({
-      jsonrpc: '2.0',
-      id: undefined,
-      error: {
-        code: -32601,
-        data: 'Unknown method or service string:hi',
-        message: 'Method not found',
-      },
-    });
+    expect(response).to.equal(undefined);
   });
 });
