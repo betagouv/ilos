@@ -1,9 +1,9 @@
 import { Interfaces } from '@ilos/core';
-import { ObjectId } from '@ilos/provider-mongo';
+import { ObjectId } from '@ilos/connection-mongo';
 
 export type Model = any;
 
-export interface ParentRepositoryProviderInterface extends Interfaces.ProviderInterface {
+export interface ParentRepositoryInterface extends Interfaces.ProviderInterface {
   find(id: string): Promise<Model>;
   all(): Promise<Model[]>;
   create(data: Model): Promise<Model>;
@@ -15,11 +15,7 @@ export interface ParentRepositoryProviderInterface extends Interfaces.ProviderIn
   getDriver(): Promise<any>;
 }
 
-export abstract class ParentRepositoryProviderInterfaceResolver implements ParentRepositoryProviderInterface {
-  async boot(): Promise<void> {
-    return;
-  }
-
+export abstract class ParentRepositoryInterfaceResolver implements ParentRepositoryInterface {
   async find(id: string): Promise<Model> {
     throw new Error();
   }

@@ -8,19 +8,15 @@ import {
 import { Types, Exceptions } from '@ilos/core';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 
-import { ParentRepositoryProviderInterface, Model } from './ParentRepositoryProviderInterface';
+import { ParentRepositoryInterface, Model } from './ParentRepositoryInterface';
 
-export abstract class ParentRepositoryProvider implements ParentRepositoryProviderInterface {
+export abstract class ParentRepository implements ParentRepositoryInterface {
   protected readonly castObjectIds: string[] = ['_id'];
 
   constructor(
     protected config: ConfigProviderInterfaceResolver,
     protected connection: MongoConnection,
   ) {}
-
-  boot(): void {
-    return;
-  }
 
   public getDbName(): string {
     return this.config.get('mongo.db');
