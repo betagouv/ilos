@@ -5,3 +5,4 @@ export { ProviderInterface } from './ProviderInterface';
 export { ServiceProviderInterface } from './ServiceProviderInterface';
 export { TransportInterface } from './TransportInterface';
 export { ServiceContainerInterface, ServiceContainerInterfaceResolver } from './ServiceContainerInterface';
+export * from './hooks';
