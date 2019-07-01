@@ -2,11 +2,7 @@ import { Types, Interfaces, Container } from '@ilos/core';
 import { ConfigProviderInterfaceResolver, ConfigProviderInterface } from '@ilos/provider-config';
 import { ConnectionDeclarationType, ConnectionInterface, ConnectionConfigurationType } from './ConnectionManagerInterfaces';
 
-export class ConnectionManager implements Interfaces.ServiceProviderInterface {
-  readonly alias = [];
-  readonly handlers = [];
-  readonly serviceProviders = [];
-
+export class ConnectionManager implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface, Interfaces.DestroyHookInterface {
   readonly connections: ConnectionDeclarationType[] = [];
 
   protected config: ConfigProviderInterface;
@@ -22,7 +18,7 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
     //
   }
 
-  async boot(): Promise<void> {
+  async register(): Promise<void> {
     this.config = this.getContainer().get(ConfigProviderInterfaceResolver);
     for(const serviceConnectionDeclaration of this.connections) {
       if (Array.isArray(serviceConnectionDeclaration)) {
@@ -34,24 +30,9 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
       }
     }
     this.setUpContainer();
-    await this.bootConnections();
   }
 
-  async shutdown(): Promise<void> {
-    const connectionRegistry = this.connectionRegistry.entries();
-    for(const [_symbol, connectionScopedRegistry] of connectionRegistry) {
-      const connections = connectionScopedRegistry.entries();
-      for(const [_symbol, connection] of connections) {
-        try {
-          await connection.down();
-        } catch(e) {
-          // do nothing
-        }
-      }
-    }
-  }
-
-  async bootConnections(): Promise<void> {
+  async init() {
     const connectionRegistry = this.connectionRegistry.entries();
     for(const [_symbol, connectionScopedRegistry] of connectionRegistry) {
       const connections = connectionScopedRegistry.entries();
@@ -65,16 +46,22 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
     }
   }
 
+  async destroy(): Promise<void> {
+    const connectionRegistry = this.connectionRegistry.entries();
+    for(const [_symbol, connectionScopedRegistry] of connectionRegistry) {
+      const connections = connectionScopedRegistry.entries();
+      for(const [_symbol, connection] of connections) {
+        try {
+          await connection.down();
+        } catch(e) {
+          // do nothing
+        }
+      }
+    }
+  }
+
   getContainer():Container.ContainerInterface {
     return this.serviceContainer;
-  }
-
-  async registerServiceProvider(serviceProviderConstructor): Promise<void> {
-    return;
-  }
-
-  registerShutdownHook(hook: Function) {
-    //
   }
 
   protected setUpContainer() {
@@ -124,12 +111,12 @@ export class ConnectionManager implements Interfaces.ServiceProviderInterface {
   protected registerConnectionRequest(
     connectionConstructor: Types.NewableType<ConnectionInterface>,
     connectionConfigurationKey: string,
-    constructors?: Types.NewableType<any>[],
+    constructors: Types.NewableType<any>[] = [],
   ): void {
     const configurationToken = this.connectionRequest(
       connectionConstructor,
       this.getConfig(connectionConfigurationKey),
-      !!constructors.length,
+      constructors.length === 0,
     );
     
     if (!(this.connectionMappingRegistry.has(connectionConstructor))) {

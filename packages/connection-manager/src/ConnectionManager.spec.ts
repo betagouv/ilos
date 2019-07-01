@@ -99,7 +99,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
 }
 
 
-class ConnectionServiceProvider extends ConnectionManager {
+class ConnectionExtension extends ConnectionManager {
   readonly connections: ConnectionDeclarationType[] = [
     {
       use: FakeDriverOne,
@@ -126,16 +126,19 @@ class ConnectionServiceProvider extends ConnectionManager {
 }
 
 class ServiceProvider extends Parents.ServiceProvider {
-  readonly serviceProviders = [ConnectionServiceProvider];
-  readonly alias = [
-    [ConfigProviderInterfaceResolver, FakeConfigProvider],
-  ];
+  readonly extensions = [ConnectionExtension];
+
+  async register() {
+    this.getContainer().bind(ConfigProviderInterfaceResolver).to(FakeConfigProvider);
+    return super.register();
+  }
 }
 
 describe('Connection manager', () => {
   it('container should work', async () => {
     const sp = new ServiceProvider();
-    await sp.boot();
+    await sp.register();
+    await sp.init();
     const p1 = sp.getContainer().get(FakeProviderOne);
     const p2 = sp.getContainer().get(FakeProviderTwo);
     // shared = false
