@@ -4,5 +4,5 @@ export interface ShutdownHookInterface {
    * @returns {(Promise<void> | void)}
    * @memberof ShutdownHookInterface
    */
-  shutdown(): Promise<void> | void;
+  shutdown(): Promise<void>;
 }

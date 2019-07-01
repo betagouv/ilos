@@ -4,5 +4,5 @@ export interface BootstrapHookInterface {
    * @returns {(Promise<void> | void)}
    * @memberof BootstrapHookInterface
    */
-  bootstrap(): Promise<void> | void;
+  bootstrap(): Promise<void>;
 }
