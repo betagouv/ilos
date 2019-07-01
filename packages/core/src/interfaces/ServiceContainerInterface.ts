@@ -15,6 +15,9 @@ export interface ServiceContainerConstructorInterface<T = any> {
 }
 
 export interface ServiceContainerInterface {
+  readonly children: ServiceContainerConstructorInterface[];
+  readonly extensions: ServiceContainerConstructorInterface[];
+
   /**
    * Get the container
    * @returns {ContainerInterface}
@@ -24,6 +27,9 @@ export interface ServiceContainerInterface {
 }
 
 export abstract class ServiceContainerInterfaceResolver implements ServiceContainerInterface {
+  readonly children: ServiceContainerConstructorInterface[] = [];
+  readonly extensions: ServiceContainerConstructorInterface[] = [];
+
   getContainer():ContainerInterface {
     throw new Error();
   }
