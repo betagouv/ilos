@@ -52,7 +52,7 @@ class BasicServiceProvider extends Parents.ServiceProvider {
 }
 
 class BasicKernel extends Parents.Kernel {
-  serviceProviders = [BasicServiceProvider];
+  children = [BasicServiceProvider];
 }
 
 
@@ -77,7 +77,7 @@ describe('Queue transport', () => {
   });
   it('works', async () => {
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const queueTransport = new QueueTransport(kernel);
     await queueTransport.up(['redis://localhost', 'prod']);
     expect(queueTransport.queues.length).to.equal(1);
