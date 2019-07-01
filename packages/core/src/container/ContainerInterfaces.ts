@@ -17,6 +17,7 @@ export interface ContainerInterface extends interfaces.Container {
   setHandler(handler: Types.NewableType<Interfaces.HandlerInterface>): Interfaces.HandlerInterface;
   getHandler(config: HandlerConfig): Interfaces.HandlerInterface;
   getHandlers(): HandlerConfig[];
+  createChild(containerOptions?: interfaces.ContainerOptions): ContainerInterface;
 }
 
 export interface Bind extends interfaces.Bind {}

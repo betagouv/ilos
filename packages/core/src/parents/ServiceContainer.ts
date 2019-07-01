@@ -1,17 +1,18 @@
 import {
-  ContainerModule,
-  ContainerModuleConfigurator,
   Container,
   ContainerInterface,
-  Bind,
-  Unbind,
-  IsBound,
-  Rebind,
 } from '../container';
 
-import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
-import { NewableType } from '../types/NewableType';
-import { ServiceContainerInterface, ServiceContainerInterfaceResolver } from '../interfaces/ServiceContainerInterface';
+import {
+  ServiceContainerInterface,
+  ServiceContainerConstructorInterface,
+  ServiceContainerInterfaceResolver
+} from '../interfaces/ServiceContainerInterface';
+
+import { hasInterface } from '../helpers/types/hasInterface';
+import { DestroyHookInterface } from '../interfaces/hooks/DestroyHookInterface';
+import { InitHookInterface } from '../interfaces/hooks/InitHookInterface';
+import { RegisterHookInterface } from '../interfaces/hooks/RegisterHookInterface';
 
 /**
  * Service container parent class
@@ -20,65 +21,47 @@ import { ServiceContainerInterface, ServiceContainerInterfaceResolver } from '..
  * @class ServiceContainer
  * @implements {ServiceContainerInterface}
  */
-export abstract class ServiceContainer implements ServiceContainerInterface {
-  readonly alias: any[] = [];
-  readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
+export abstract class ServiceContainer implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface {
+  readonly children: ServiceContainerConstructorInterface[] = [];
+  readonly extensions: ServiceContainerConstructorInterface[] = [];
 
-  protected serviceProviderInstances: Set<ServiceProviderInterface> = new Set();
-  protected shutdownHooks: Set<Function> = new Set();
+  protected registerHookRegistry: Set<RegisterHookInterface> = new Set();
+  protected initHookRegistry: Set<InitHookInterface> = new Set();
+  protected destroyHookRegistry: Set<DestroyHookInterface> = new Set();
 
-  protected ready = false;
   protected container: ContainerInterface;
 
   constructor(container?: ContainerInterface) {
-    this.container = new Container();
     if (container) {
-      this.container.parent = container;
+      this.container = container;
+    } else {
+      this.container = new Container();
+      this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
     }
-
-    this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
   }
 
   /**
-   * Boot register a container module provided by register function,
-   * then register the handlers, then boot other service providers
-   * @memberof ServiceProvider
+   * Register hook add children and extension, then dispatch register
+   * @memberof ServiceContainer
    */
-  public async boot() {
-    if (this.ready) {
-      return;
+  async register() {
+    for (const extension of this.extensions) {
+      this.registerHooks(extension, this.getContainer());
     }
 
-    this.getContainer().load(
-      new ContainerModule(
-        (bind: Bind, unbind: Unbind, isBound: IsBound, rebind: Rebind) => {
-          this.register({ bind, unbind, isBound, rebind });
-
-        },
-      ),
-    );
-
-    for (const serviceProviderConstructor of this.serviceProviders) {
-      await this.registerServiceProvider(serviceProviderConstructor);
+    for (const child of this.children) {
+      this.registerHooks(child, this.getContainer().createChild());
     }
 
-    this.ready = true;
+    return this.dispatchRegisterHook();
   }
 
-  /**
-   * Auto bind alias
-   * @param {ContainerModuleConfigurator} module
-   * @memberof ServiceProvider
-   */
-  public register(module: ContainerModuleConfigurator):void {
-    this.alias.forEach((def) => {
-      if (Array.isArray(def)) {
-        const [alias, target] = def;
-        module.bind(alias).to(target);
-      } else {
-        module.bind(def).toSelf();
-      }
-    });
+  async init() {
+    return this.dispatchInitHook();
+  }
+
+  async destroy() {
+    return this.dispatchDestroyHook();
   }
 
   /**
@@ -90,25 +73,43 @@ export abstract class ServiceContainer implements ServiceContainerInterface {
     return this.container;
   }
 
-  public async registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void> {
-    const serviceProvider = new serviceProviderConstructor(this.getContainer());
-    await serviceProvider.boot();
-    this.serviceProviderInstances.add(serviceProvider);
+  protected async dispatchRegisterHook() {
+    for (const [hook] of this.registerHookRegistry.entries()) {
+      await hook.register();
+    }
+    this.registerHookRegistry.clear();
   }
 
-  async shutdown() {
-    const serviceProviders = this.serviceProviderInstances.entries();
-    for (const [serviceProvider] of serviceProviders) {
-      await serviceProvider.shutdown();
+  protected async dispatchInitHook() {
+    for (const [hook] of this.initHookRegistry.entries()) {
+      await hook.init();
     }
-
-    const shutdownHooks = this.shutdownHooks.entries();
-    for (const [hook] of shutdownHooks) {
-      await hook();
-    }
+    this.initHookRegistry.clear();
   }
 
-  registerShutdownHook(hook: Function):void {
-    this.shutdownHooks.add(hook);
+  protected async dispatchDestroyHook() {
+    const destroyHookRegistry = [...this.destroyHookRegistry].reverse();
+    for (const hook of destroyHookRegistry) {
+      await hook.destroy();
+    }
+    this.destroyHookRegistry.clear();
+  }
+
+  protected registerHooks(serviceContainerConstructor: ServiceContainerConstructorInterface, container: ContainerInterface): void {
+    const serviceContainer = new serviceContainerConstructor(container);
+
+    if (hasInterface<RegisterHookInterface>(serviceContainer, 'register')) {
+      this.registerHookRegistry.add(serviceContainer);
+    }
+
+    if (hasInterface<InitHookInterface>(serviceContainer, 'init')) {
+      this.initHookRegistry.add(serviceContainer);
+    }
+
+    if (hasInterface<DestroyHookInterface>(serviceContainer, 'destroy')) {
+      this.destroyHookRegistry.add(serviceContainer);
+    }
+
+    return;
   }
 }

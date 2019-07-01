@@ -14,6 +14,7 @@ import { Action } from './Action';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
+import { Bindings } from '../extensions/Bindings';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -74,19 +75,25 @@ class BasicTwoAction extends Action {
 }
 
 class BasicTwoServiceProvider extends ServiceProvider {
-  readonly alias = [
-    [Test, Test],
+  readonly extensions = [
+    class extends Bindings {
+      readonly alias = [
+        Test,
+      ];
+    }
   ];
-  readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
-
   readonly handlers: NewableType<HandlerInterface>[] = [BasicTwoAction];
 }
 
 class BasicServiceProvider extends ServiceProvider {
-  readonly alias = [
-    [Test, Test],
+  readonly extensions = [
+    class extends Bindings {
+      readonly alias = [
+        Test,
+      ];
+    }
   ];
-  readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [
+  readonly children: NewableType<ServiceProviderInterface>[] = [
     BasicTwoServiceProvider,
   ];
 
@@ -96,11 +103,11 @@ class BasicServiceProvider extends ServiceProvider {
 describe('Kernel', () => {
   it('should work with single call', async () => {
     class BasicKernel extends Kernel {
-      serviceProviders = [BasicServiceProvider];
+      children = [BasicServiceProvider];
     }
 
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       id: 1,
@@ -118,10 +125,10 @@ describe('Kernel', () => {
 
   it('should work with a batch', async () => {
     class BasicKernel extends Kernel {
-      serviceProviders = [BasicServiceProvider];
+      children = [BasicServiceProvider];
     }
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle([
       {
         jsonrpc: '2.0',
@@ -158,7 +165,7 @@ describe('Kernel', () => {
     class BasicKernel extends Kernel {
     }
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       id: 1,
@@ -180,10 +187,10 @@ describe('Kernel', () => {
 
   it('should return an error if method throw an error', async () => {
     class BasicKernel extends Kernel {
-      serviceProviders = [BasicServiceProvider];
+      children = [BasicServiceProvider];
     }
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       id: 1,
@@ -203,11 +210,11 @@ describe('Kernel', () => {
 
   it('should work with contexted call', async () => {
     class BasicKernel extends Kernel {
-      serviceProviders = [BasicServiceProvider];
+      children = [BasicServiceProvider];
     }
 
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       id: 1,
@@ -237,11 +244,11 @@ describe('Kernel', () => {
 
   it('should work with notify call', async () => {
     class BasicKernel extends Kernel {
-      serviceProviders = [BasicServiceProvider];
+      children = [BasicServiceProvider];
     }
 
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       method: 'string:hi',

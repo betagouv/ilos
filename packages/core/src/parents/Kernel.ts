@@ -37,6 +37,14 @@ export abstract class Kernel extends ServiceContainer implements KernelInterface
     }
   }
 
+  async bootstrap() {
+    await this.register();
+    await this.init();
+  }
+
+  async shutdown() {
+    await this.destroy();
+  }
 
   /**
    * Validate a call, check if JSON RPC standart is fulfilled properly

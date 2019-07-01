@@ -6,10 +6,10 @@ import {
 } from 'inversify';
 
 import { Interfaces, Types } from '..';
-import { HandlerConfig } from './ContainerInterfaces';
+import { HandlerConfig, ContainerInterface } from './ContainerInterfaces';
 import { normalizeHandlerConfig } from './helpers/normalizeHandlerConfig';
 
-export class Container extends InversifyContainer {
+export class Container extends InversifyContainer implements ContainerInterface {
   protected handlersRegistry: HandlerConfig[] = [];
   parent: Container | null;
 
@@ -171,6 +171,12 @@ export class Container extends InversifyContainer {
     this.setHandlerFinal(handlerConfig, resolvedHandler);
 
     return resolvedHandler;
+  }
+
+  createChild(containerOptions: interfaces.ContainerOptions = {}): Container {
+    const container = new Container(containerOptions);
+    container.parent = this;
+    return container;
   }
 }
 

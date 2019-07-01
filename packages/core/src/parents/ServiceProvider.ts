@@ -1,12 +1,7 @@
-import {
-  ContainerModuleConfigurator,
-} from '../container';
-
 import { HandlerInterface } from '../interfaces/HandlerInterface';
 
 import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 import { NewableType } from '../types/NewableType';
-import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
 import { ServiceContainer } from './ServiceContainer';
 
 /**
@@ -18,21 +13,21 @@ import { ServiceContainer } from './ServiceContainer';
  */
 export abstract class ServiceProvider extends ServiceContainer implements ServiceProviderInterface {
   readonly handlers: NewableType<HandlerInterface>[] = [];
-  readonly middlewares: [string, NewableType<MiddlewareInterface>][] = [];
+  protected handlerRegistry: Set<HandlerInterface> = new Set();
 
-  public async boot() {
-    await super.boot();
-
+  async register() {
+    await super.register();
     for (const handler of this.handlers) {
       const handlerInstance = this.getContainer().setHandler(handler);
-      await handlerInstance.boot(this.getContainer());
+      this.handlerRegistry.add(handlerInstance);
     }
   }
 
-  public register(module: ContainerModuleConfigurator):void {
-    super.register(module);
-    this.middlewares.forEach(([name, middleware]) => {
-      module.bind(name).to(middleware);
-    });
+  async init() {
+    await super.init();
+    for (const [handler] of this.handlerRegistry.entries()) {
+      await handler.boot(this.getContainer());
+    }
+    this.handlerRegistry.clear();
   }
 }

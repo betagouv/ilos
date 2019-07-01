@@ -11,12 +11,4 @@ export interface ServiceProviderInterface extends ServiceContainerInterface {
    * @memberof ServiceProviderInterface
    */
   readonly handlers: NewableType<HandlerInterface>[];
-
-  /**
-   * Middlewares is a shortcut to registrer middlewares
-   * @example [['can', CanMiddleware]] will bind 'can' to CanMiddleware
-   * @type {[string, NewableType<MiddlewareInterface>][]}
-   * @memberof ServiceProviderInterface
-   */
-  readonly middlewares?: [string, NewableType<MiddlewareInterface>][];
 }

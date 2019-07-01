@@ -13,6 +13,7 @@ import { Action } from './Action';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
+import { Bindings } from '../extensions/Bindings';
 
 chai.use(chaiAsPromised);
 
@@ -39,19 +40,24 @@ describe('Service provider', () => {
     }
 
     class BasicServiceProvider extends ServiceProvider {
-      readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
-
       readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
     }
 
     const serviceProvider = new BasicServiceProvider();
-    await serviceProvider.boot();
+    await serviceProvider.register();
+    await serviceProvider.init();
 
     const container = serviceProvider.getContainer();
     expect(container.getHandler({ service: 'test', method: 'add' })).be.instanceOf(BasicAction);
   });
 
-  it('should register handler with alias', async () => {
+  it('should register handler with extension', async () => {
+    abstract class TestResolver {
+      hello(name) {
+        throw new Error();
+      }
+    }
+
     @provider()
     class Test implements ProviderInterface {
       base: string;
@@ -68,7 +74,7 @@ describe('Service provider', () => {
       method: 'hi',
     })
     class BasicAction extends Action {
-      constructor(private test: Test) {
+      constructor(private test: TestResolver) {
         super();
       }
       protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
@@ -80,16 +86,19 @@ describe('Service provider', () => {
     }
 
     class BasicServiceProvider extends ServiceProvider {
-      readonly alias = [
-        [Test, Test],
+      readonly extensions = [
+        class extends Bindings {
+          readonly alias = [
+            [TestResolver, Test],
+          ];
+        }
       ];
-      readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
-
       readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
     }
 
     const serviceProvider = new BasicServiceProvider();
-    await serviceProvider.boot();
+    await serviceProvider.register();
+    await serviceProvider.init();
 
     const container = serviceProvider.getContainer();
     const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
@@ -98,6 +107,12 @@ describe('Service provider', () => {
   });
 
   it('should register handler with alias and nested service providers', async () => {
+    abstract class TestResolver {
+      hello(name) {
+        throw new Error();
+      }
+    }
+
     @provider()
     class Test implements ProviderInterface {
       base: string;
@@ -116,7 +131,7 @@ describe('Service provider', () => {
       method: 'hi',
     })
     class BasicAction extends Action {
-      constructor(private test: Test) {
+      constructor(private test: TestResolver) {
         super();
       }
       protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
@@ -132,7 +147,7 @@ describe('Service provider', () => {
       method: 'add',
     })
     class BasicTwoAction extends Action {
-      constructor(private test: Test) {
+      constructor(private test: TestResolver) {
         super();
       }
       protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
@@ -148,19 +163,25 @@ describe('Service provider', () => {
     }
 
     class BasicTwoServiceProvider extends ServiceProvider {
-      readonly alias = [
-        [Test, Test],
+      readonly extensions = [
+        class extends Bindings {
+          readonly alias = [
+            [TestResolver, Test],
+          ];
+        }
       ];
-      readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
-
       readonly handlers: NewableType<HandlerInterface>[] = [BasicTwoAction];
     }
 
     class BasicServiceProvider extends ServiceProvider {
-      readonly alias = [
-        [Test, Test],
+      readonly extensions = [
+        class extends Bindings {
+          readonly alias = [
+            [TestResolver, Test],
+          ];
+        }
       ];
-      readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [
+      readonly children: NewableType<ServiceProviderInterface>[] = [
         BasicTwoServiceProvider,
       ];
 
@@ -168,7 +189,8 @@ describe('Service provider', () => {
     }
 
     const serviceProvider = new BasicServiceProvider();
-    await serviceProvider.boot();
+    await serviceProvider.register();
+    await serviceProvider.init();
 
     const container = serviceProvider.getContainer();
     const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });

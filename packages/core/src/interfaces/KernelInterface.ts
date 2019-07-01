@@ -1,9 +1,9 @@
-import { ContainerInterface, ContainerModuleConfigurator } from '../container';
-import { ServiceProviderInterface } from './ServiceProviderInterface';
 import { RPCCallType, RPCResponseType, ResultType, ContextType, ParamsType, NewableType } from '../types';
-import { ServiceContainerInterface } from './ServiceContainerInterface';
+import { ServiceContainerInterface, ServiceContainerInterfaceResolver } from './ServiceContainerInterface';
+import { BootstrapHookInterface } from './hooks/BootstrapHook';
+import { ShutdownHookInterface } from './hooks/ShutdownHook';
 
-export interface KernelInterface extends ServiceContainerInterface {
+export interface KernelInterface extends ServiceContainerInterface, BootstrapHookInterface, ShutdownHookInterface {
 
   /**
    * Handle an RPC call and provide an RPC response
@@ -18,31 +18,8 @@ export interface KernelInterface extends ServiceContainerInterface {
   notify(method: string, params: ParamsType, context: ContextType): Promise<void>;
 }
 
-export abstract class KernelInterfaceResolver implements KernelInterface {
-  readonly alias = [];
-  readonly serviceProviders = [];
-
-  getContainer():ContainerInterface {
-    throw new Error();
-  }
-
-  async boot() {
-    return;
-  }
-
-  async shutdown() {
-    return;
-  }
-
-  registerShutdownHook(hook: Function):void {
-    throw new Error();
-  }
-
-  register(module: ContainerModuleConfigurator) {
-    throw new Error();
-  }
-
-  async handle(call: RPCCallType): Promise<RPCResponseType|void> {
+export abstract class KernelInterfaceResolver extends ServiceContainerInterfaceResolver implements KernelInterface {
+   async handle(call: RPCCallType): Promise<RPCResponseType|void> {
     throw new Error();
   }
 
@@ -54,8 +31,11 @@ export abstract class KernelInterfaceResolver implements KernelInterface {
     throw new Error();
   }
 
-  async registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void> {
+  async bootstrap() {
     throw new Error();
   }
 
+  async shutdown() {
+    throw new Error();
+  }
 }
