@@ -1,14 +1,11 @@
 import { Interfaces } from '@ilos/core';
 
-export interface EnvProviderInterface extends Interfaces.ProviderInterface {
+export interface EnvInterface extends Interfaces.ProviderInterface {
   loadEnvFile(envDirectory: string, envFile?: string): void;
   get(key: string, fallback?: any): any;
 }
 
-export abstract class EnvProviderInterfaceResolver implements EnvProviderInterface {
-  boot() {
-    return;
-  }
+export abstract class EnvInterfaceResolver implements EnvInterface {
   loadEnvFile(envDirectory: string, envFile?: string): void {
     throw new Error();
   }

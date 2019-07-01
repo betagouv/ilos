@@ -3,29 +3,32 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { Container } from '@ilos/core';
 
-import { EnvProviderInterface } from './EnvProviderInterfaces';
+import { EnvInterface } from './EnvInterfaces';
 
 /**
  * Env provider
  * @export
  * @class EnvProvider
- * @implements {EnvProviderInterface}
+ * @implements {EnvInterface}
  */
 @Container.provider()
-export class EnvProvider implements EnvProviderInterface {
+export class Env implements EnvInterface {
   private env: Map<string, any> = new Map();
 
   boot() {
     const envPath = ('APP_ROOT_PATH' in process.env) ? process.env.APP_ROOT_PATH : process.cwd();
-
+    this.loadFromProcess();
     this.loadEnvFile(envPath);
+  }
 
+  loadFromProcess() {
     Reflect.ownKeys(process.env)
       .filter((key: string) => key === key.toUpperCase() && key.startsWith('APP_'))
       .forEach((key: string) => {
         this.env.set(key, process.env[key]);
       });
   }
+
   loadEnvFile(envDirectory: string, envFile?: string) {
     const envPath = path.resolve(envDirectory, envFile ? envFile : '.env');
 

@@ -1,5 +1,5 @@
 {
-  "name": "@ilos/provider-env",
+  "name": "@ilos/env",
   "version": "0.0.2",
   "publishConfig": {
     "access": "public"
