@@ -1,10 +1,10 @@
 import { Interfaces, Container, Types, Exceptions } from '@ilos/core';
 
-import { ValidatorProviderInterfaceResolver } from './ValidatorProviderInterface';
+import { ValidatorInterfaceResolver } from './ValidatorInterface';
 
 @Container.middleware()
 export class ValidatorMiddleware implements Interfaces.MiddlewareInterface {
-  constructor(private validator: ValidatorProviderInterfaceResolver) {}
+  constructor(private validator: ValidatorInterfaceResolver) {}
 
   async process(
     params: Types.ParamsType,

@@ -1,20 +1,20 @@
 import ajv from 'ajv';
 import { Container, Types } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
 import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
 
-import { ValidatorProviderInterface } from './ValidatorProviderInterface';
+import { ValidatorInterface } from './ValidatorInterface';
 import { Cache } from './Cache';
 
 @Container.provider()
-export class AjvValidatorProvider implements ValidatorProviderInterface {
+export class AjvValidator implements ValidatorInterface {
   protected ajv: ajv.Ajv;
   protected bindings: Map<any, ajv.ValidateFunction> = new Map();
   protected cache: Cache = new Cache();
   protected isSchemaSecure: ajv.ValidateFunction;
 
-  constructor(protected config: ConfigProviderInterfaceResolver) {}
+  constructor(protected config: ConfigInterfaceResolver) {}
 
   boot() {
     const ajvConfig = {
@@ -35,7 +35,7 @@ export class AjvValidatorProvider implements ValidatorProviderInterface {
     this.isSchemaSecure = this.ajv.compile(jsonSchemaSecureJson);
   }
 
-  registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorProviderInterface {
+  registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorInterface {
     return this.addSchema(definition, target);
   }
 
@@ -43,7 +43,7 @@ export class AjvValidatorProvider implements ValidatorProviderInterface {
     name: string;
     type: string;
     definition: ajv.FormatValidator | ajv.FormatDefinition | ajv.KeywordDefinition;
-  }): ValidatorProviderInterface {
+  }): ValidatorInterface {
     const { name, type, definition } = def;
     switch (type) {
       case 'format':
@@ -55,7 +55,7 @@ export class AjvValidatorProvider implements ValidatorProviderInterface {
     }
   }
 
-  protected addSchema(schema: object, target?: Types.NewableType<any> | string): ValidatorProviderInterface {
+  protected addSchema(schema: object, target?: Types.NewableType<any> | string): ValidatorInterface {
     if (!this.ajv.validateSchema(schema)) {
       throw new Error(this.ajv.errorsText(this.ajv.errors));
     }
@@ -87,12 +87,12 @@ export class AjvValidatorProvider implements ValidatorProviderInterface {
     return true;
   }
 
-  protected addFormat(name: string, format: ajv.FormatValidator | ajv.FormatDefinition): ValidatorProviderInterface {
+  protected addFormat(name: string, format: ajv.FormatValidator | ajv.FormatDefinition): ValidatorInterface {
     this.ajv.addFormat(name, format);
     return this;
   }
 
-  protected addKeyword(keyword: string, definition: ajv.KeywordDefinition): ValidatorProviderInterface {
+  protected addKeyword(keyword: string, definition: ajv.KeywordDefinition): ValidatorInterface {
     this.ajv.addKeyword(keyword, definition);
     return this;
   }

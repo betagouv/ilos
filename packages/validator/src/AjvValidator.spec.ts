@@ -1,15 +1,15 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
-import { AjvValidatorProvider } from './AjvValidatorProvider';
+import { AjvValidator } from './AjvValidator';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 
 // tslint:disable prefer-type-cast
-const fakeConfigProvider = sinon.createStubInstance(ConfigProviderInterfaceResolver, {
+const fakeConfig = sinon.createStubInstance(ConfigInterfaceResolver, {
   get() {
     return {};
   },
@@ -27,7 +27,7 @@ class FakeObject {
 
 describe('Json Schema provider', () => {
   beforeEach(async () => {
-    provider = new AjvValidatorProvider(fakeConfigProvider);
+    provider = new AjvValidator(fakeConfig);
     await provider.boot();
   });
 

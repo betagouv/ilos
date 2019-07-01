@@ -47,7 +47,7 @@
   },
   "peerDependencies": {
     "@ilos/core": "~0",
-    "@ilos/provider-config": "~0"
+    "@ilos/config": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
