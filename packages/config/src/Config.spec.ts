@@ -2,11 +2,11 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import mockFs from 'mock-fs';
-import { EnvProviderInterfaceResolver } from '@ilos/provider-env';
+import { EnvInterfaceResolver } from '@ilos/env';
 
-import { ConfigProvider } from './ConfigProvider';
+import { Config } from './Config';
 
-class FakeEnvProvider extends EnvProviderInterfaceResolver {
+class FakeEnv extends EnvInterfaceResolver {
   async boot() {
     return;
   }
@@ -25,9 +25,9 @@ describe('Config provider', () => {
         \n`,
     });
 
-    const configProvider = new ConfigProvider(new FakeEnvProvider());
-    await configProvider.boot();
-    expect(configProvider.get('helloWorld')).to.deep.equal({
+    const config = new Config(new FakeEnv());
+    await config.boot();
+    expect(config.get('helloWorld')).to.deep.equal({
       hi: [
         { name: 'john' },
       ],
@@ -46,9 +46,9 @@ describe('Config provider', () => {
       module.exports.test = false;`,
     });
 
-    const configProvider = new ConfigProvider(new FakeEnvProvider());
-    await configProvider.boot();
-    expect(configProvider.get('helloWorld')).to.deep.include({
+    const config = new Config(new FakeEnv());
+    await config.boot();
+    expect(config.get('helloWorld')).to.deep.include({
       hi: [
         { name: 'john' },
       ],
@@ -67,9 +67,9 @@ describe('Config provider', () => {
       module.exports.test = false;`,
     });
 
-    const configProvider = new ConfigProvider(new FakeEnvProvider());
-    await configProvider.boot();
-    expect(configProvider.get('hello', 'world')).to.equal('world');
+    const config = new Config(new FakeEnv());
+    await config.boot();
+    expect(config.get('hello', 'world')).to.equal('world');
 
     mockFs.restore();
   });

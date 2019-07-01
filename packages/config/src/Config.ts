@@ -4,22 +4,22 @@ import path from 'path';
 import jsYaml from 'js-yaml';
 import { camelCase, get, set, has } from 'lodash';
 import { Container } from '@ilos/core';
-import { EnvProviderInterfaceResolver } from '@ilos/provider-env';
+import { EnvInterfaceResolver } from '@ilos/env';
 
-import { ConfigProviderInterface } from './ConfigProviderInterfaces';
+import { ConfigInterface } from './ConfigInterfaces';
 
 
 /**
  * Config provider
  * @export
- * @class ConfigProvider
- * @implements {ConfigProviderInterface}
+ * @class Config
+ * @implements {ConfigInterface}
  */
 @Container.provider()
-export class ConfigProvider implements ConfigProviderInterface {
+export class Config implements ConfigInterface {
   protected config: object = {};
   private configPaths: Set<string> = new Set();
-  constructor(protected env: EnvProviderInterfaceResolver) {}
+  constructor(protected env: EnvInterfaceResolver) {}
 
   async boot() {
     const defaultConfigFolder = this.env.get('APP_WORKING_PATH', process.cwd()); 

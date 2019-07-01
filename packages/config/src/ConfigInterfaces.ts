@@ -1,12 +1,12 @@
 import { Interfaces } from '@ilos/core';
 
-export interface ConfigProviderInterface extends Interfaces.ProviderInterface {
+export interface ConfigInterface extends Interfaces.ProviderInterface {
   loadConfigDirectory(workingPath: string, configDir?: string): void;
   get(key: string, fallback?: any): any;
   set(key: string, value: any): void;
 }
 
-export abstract class ConfigProviderInterfaceResolver implements ConfigProviderInterface {
+export abstract class ConfigInterfaceResolver implements ConfigInterface {
   async boot() {
     return;
   }
