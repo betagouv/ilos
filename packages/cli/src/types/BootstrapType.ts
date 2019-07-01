@@ -5,5 +5,5 @@ export type BootstrapType = {
   transport?: {
     [key: string]: (kernel: Interfaces.KernelInterface) => Interfaces.TransportInterface;
   };
-  kernel?(): Interfaces.KernelInterface;
+  kernel?(): Types.NewableType<Interfaces.KernelInterface>;
 };

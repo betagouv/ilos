@@ -85,6 +85,6 @@
   },
   "peerDependencies": {
     "@ilos/core": "~0",
-    "@ilos/provider-template": "~0"
+    "@ilos/template": "~0"
   }
 }

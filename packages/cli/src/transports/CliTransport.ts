@@ -1,6 +1,6 @@
 import { Interfaces } from '@ilos/core';
 
-import { CommandProvider } from '../providers/CommandProvider';
+import { CommandRegistry } from '../providers/CommandRegistry';
 
 /**
  * Cli Transport
@@ -26,7 +26,7 @@ export class CliTransport implements Interfaces.TransportInterface {
   async up(opts: string[] = []) {
     this.kernel
       .getContainer()
-      .get<CommandProvider>(CommandProvider)
+      .get<CommandRegistry>(CommandRegistry)
       .parse(opts);
   }
 

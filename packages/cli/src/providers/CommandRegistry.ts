@@ -9,11 +9,7 @@ import { Container, Interfaces } from '@ilos/core';
  * @implements {ProviderInterface}
  */
 @Container.provider()
-export class CommandProvider extends Command implements Interfaces.ProviderInterface {
-  boot() {
-    //
-  }
-
+export class CommandRegistry extends Command implements Interfaces.ProviderInterface {
   output(...args: any[]) {
     console.log(...args);
   }

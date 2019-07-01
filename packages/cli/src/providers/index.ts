@@ -1,1 +1,1 @@
-export { CommandProvider } from './CommandProvider';
+export { CommandRegistry } from './CommandRegistry';

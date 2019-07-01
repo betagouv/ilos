@@ -1,14 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { Parents, Interfaces } from '@ilos/core';
+import { Parents, Interfaces, Types } from '@ilos/core';
 
 import { CliTransport } from './transports/CliTransport';
 import { BootstrapType } from './types';
 
 const defaultBootstrap: BootstrapType = {
-  kernel(): Interfaces.KernelInterface {
-    class Kernel extends Parents.Kernel {}
-    return new Kernel();
+  kernel(): Types.NewableType<Interfaces.KernelInterface> {
+    return class extends Parents.Kernel {};
   },
   serviceProviders: [],
   transport: {
@@ -71,15 +70,19 @@ export class Bootstrap {
       const currentBootstrap = await import(bootstrapPath);
       bootstrap = { ...bootstrap, ...currentBootstrap };
     }
-    const kernel = bootstrap.kernel();
+    const kernelConstructor = bootstrap.kernel();
 
-    await kernel.boot();
-    const serviceProviders = bootstrap.serviceProviders;
-    
-    for (const serviceProvider of serviceProviders) {
-      await kernel.registerServiceProvider(serviceProvider);
+    const serviceProviders = 'serviceProviders' in bootstrap ? bootstrap.serviceProviders : [];
+
+    class Kernel extends kernelConstructor {
+      children = [
+        ...super.children,
+        ...bootstrap.serviceProviders,
+      ];
     }
-    
+    const kernel = new Kernel();
+    await kernel.bootstrap();
+
     let transport;
 
     if (command !== 'cli' && (command in bootstrap.transport)) {
