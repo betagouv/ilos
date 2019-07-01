@@ -1,6 +1,6 @@
 import { Interfaces } from '@ilos/core';
 
-export interface TemplateProviderInterface extends Interfaces.ProviderInterface {
+export interface TemplateInterface extends Interfaces.ProviderInterface {
   loadTemplatesFromDirectory(templatePath: string, metadata?: { [key: string]: any });
 
   setMetadata(templateName: string, metadata: any): void;
@@ -14,11 +14,7 @@ export interface TemplateProviderInterface extends Interfaces.ProviderInterface 
   render(template: string, opts: any): string;
 }
 
-export abstract class TemplateProviderInterfaceResolver implements TemplateProviderInterface {
-  async boot() {
-    return;
-  }
-
+export abstract class TemplateInterfaceResolver implements TemplateInterface {
   loadTemplatesFromDirectory(templatePath: string, metadata?: { [key: string]: any }) {
     throw new Error();
   }

@@ -1,5 +1,5 @@
 {
-  "name": "@ilos/provider-template",
+  "name": "@ilos/template",
   "version": "0.0.2",
   "publishConfig": {
     "access": "public"

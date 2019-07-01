@@ -3,18 +3,16 @@ import fs from 'fs';
 import Handlebars from 'handlebars';
 import { Container } from '@ilos/core';
 
-import { TemplateProviderInterface } from './TemplateProviderInterface';
+import { TemplateInterface } from './TemplateInterface';
 
 @Container.provider()
-export class HandlebarsProvider implements TemplateProviderInterface {
+export class HandlebarsTemplate implements TemplateInterface {
   protected templates: Map<string, Function> = new Map();
   protected metadata: Map<string, any> = new Map();
   protected hbs: typeof Handlebars;
 
   constructor(
-  ) {}
-
-  async boot(): Promise<void> {
+  ) {
     this.hbs = Handlebars.create();
   }
 
