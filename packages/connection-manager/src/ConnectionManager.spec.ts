@@ -1,5 +1,5 @@
-import { Parents, Container, Interfaces, Types } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { Parents, Container } from '@ilos/core';
+import { ConfigInterfaceResolver } from '@ilos/config';
 import { expect } from 'chai';
 
 import { ConnectionManager } from './ConnectionManager';
@@ -82,7 +82,7 @@ class FakeProviderTwo {
 }
 
 @Container.provider()
-class FakeConfigProvider extends ConfigProviderInterfaceResolver {
+class FakeConfigProvider extends ConfigInterfaceResolver {
   get(key: string) {
     if (key === 'hello.world') {
       return {
@@ -129,7 +129,7 @@ class ServiceProvider extends Parents.ServiceProvider {
   readonly extensions = [ConnectionExtension];
 
   async register() {
-    this.getContainer().bind(ConfigProviderInterfaceResolver).to(FakeConfigProvider);
+    this.getContainer().bind(ConfigInterfaceResolver).to(FakeConfigProvider);
     return super.register();
   }
 }

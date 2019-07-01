@@ -1,4 +1,4 @@
-import { Command } from 'commander';
+import * as commander from 'commander';
 import { Container, Interfaces } from '@ilos/core';
 
 /**
@@ -9,7 +9,7 @@ import { Container, Interfaces } from '@ilos/core';
  * @implements {ProviderInterface}
  */
 @Container.provider()
-export class CommandRegistry extends Command implements Interfaces.ProviderInterface {
+export class CommandRegistry extends commander.Command implements Interfaces.ProviderInterface {
   output(...args: any[]) {
     console.log(...args);
   }

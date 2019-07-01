@@ -12,7 +12,7 @@ import { ServiceProvider as MathServiceProvider } from './mock/MathService/Servi
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
 
 class StringServiceProvider extends Parents.ServiceProvider {
-  readonly serviceProviders = [ParentStringServiceProvider];
+  readonly children = [ParentStringServiceProvider];
 
   readonly handlers = [httpHandlerFactory('math', 'http://127.0.0.1:8080')];
 }
@@ -20,13 +20,13 @@ class StringServiceProvider extends Parents.ServiceProvider {
 @Container.injectable()
 class MathKernel extends Kernel {
   name = 'math';
-  readonly serviceProviders = [MathServiceProvider];
+  readonly children = [MathServiceProvider];
 }
 
 @Container.injectable()
 class StringKernel extends Kernel {
   name = 'string';
-  readonly serviceProviders = [StringServiceProvider];
+  readonly children = [StringServiceProvider];
 }
 
 function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
@@ -63,13 +63,13 @@ let stringTransport: Interfaces.TransportInterface;
 describe('Http only integration', () => {
   before(async () => {
     const mathKernel = new MathKernel();
-    await mathKernel.boot();
+    await mathKernel.bootstrap();
 
     mathTransport = new HttpTransport(mathKernel);
     await mathTransport.up(['8080']);
 
     const stringKernel = new StringKernel();
-    await stringKernel.boot();
+    await stringKernel.bootstrap();
     stringTransport = new HttpTransport(stringKernel);
     await stringTransport.up(['8081']);
   });

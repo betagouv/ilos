@@ -3,7 +3,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
 
 import { Parents, Container, Interfaces } from '@ilos/core';
-import { ConfigProvider, ConfigProviderInterfaceResolver, ConfigProviderInterface } from '@ilos/provider-config';
+import { Config, ConfigInterfaceResolver } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
 
 import { ConnectionManager as ParentConnectionManager, ConnectionDeclarationType } from '@ilos/connection-manager';
@@ -28,7 +28,7 @@ const config = {
 };
 
 @Container.provider()
-class FakeConfigProvider extends ConfigProvider {
+class FakeConfig extends Config {
   protected config: object = {
     //
   };
@@ -46,7 +46,7 @@ class ConnectionManager extends ParentConnectionManager {
 
 class Kernel extends Parents.Kernel {
   alias = [
-    [ConfigProviderInterfaceResolver, FakeConfigProvider],
+    [ConfigInterfaceResolver, FakeConfig],
   ];
 
   serviceProviders = [
@@ -106,7 +106,7 @@ class MigrateCommand extends ParentMigrateCommand {
   constructor(
     protected kernel: Interfaces.KernelInterfaceResolver,
     protected db: MongoConnection,
-    protected config: ConfigProviderInterfaceResolver,
+    protected config: ConfigInterfaceResolver,
   ) {
     super(kernel, db, config);
   }

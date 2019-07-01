@@ -6,7 +6,7 @@ import {
   DbInterface,
 } from '@ilos/connection-mongo';
 import { Types, Exceptions } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { ParentRepositoryInterface, Model } from './ParentRepositoryInterface';
 
@@ -14,7 +14,7 @@ export abstract class ParentRepository implements ParentRepositoryInterface {
   protected readonly castObjectIds: string[] = ['_id'];
 
   constructor(
-    protected config: ConfigProviderInterfaceResolver,
+    protected config: ConfigInterfaceResolver,
     protected connection: MongoConnection,
   ) {}
 

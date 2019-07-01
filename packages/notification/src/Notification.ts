@@ -1,6 +1,6 @@
 import { Container, Types } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { TemplateProviderInterfaceResolver } from '@ilos/provider-template';
+import { ConfigInterfaceResolver } from '@ilos/config';
+import { TemplateInterfaceResolver } from '@ilos/template';
 
 import { MailjetDriver } from './mail/MailjetDriver';
 import { MailDriverInterface, MailInterface, TemplateMailInterface } from './mail/MailDriverInterface';
@@ -16,8 +16,8 @@ export class Notification implements NotificationInterface {
   };
 
   constructor(
-    protected configProvider: ConfigProviderInterfaceResolver,
-    protected template: TemplateProviderInterfaceResolver,
+    protected configProvider: ConfigInterfaceResolver,
+    protected template: TemplateInterfaceResolver,
   ) {
     //
   }

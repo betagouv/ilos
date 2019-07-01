@@ -81,8 +81,8 @@
   "dependencies": {
     "@ilos/cli": "^0.0.2",
     "@ilos/core": "^0.0.3",
-    "@ilos/provider-config": "^0.0.2",
-    "@ilos/provider-env": "^0.0.2",
+    "@ilos/config": "^0.0.2",
+    "@ilos/env": "^0.0.2",
     "@ilos/transport-http": "^0.0.1",
     "@ilos/transport-redis": "^0.0.1"
   }

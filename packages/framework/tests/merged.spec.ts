@@ -11,7 +11,7 @@ import { ServiceProvider as StringServiceProvider } from './mock/StringService/S
 
 @Container.injectable()
 class MyKernel extends Kernel {
-  readonly serviceProviders = [
+  readonly children = [
     MathServiceProvider,
     StringServiceProvider,
   ];
@@ -50,7 +50,7 @@ let transport: Interfaces.TransportInterface;
 describe('Merged integration', () => {
   before(async () => {
     const kernel = new MyKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     transport = new HttpTransport(kernel);
     await transport.up(['8080']);
   });

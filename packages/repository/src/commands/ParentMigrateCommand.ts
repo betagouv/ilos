@@ -1,7 +1,7 @@
 import { Types as CliTypes, Interfaces as CliInterfaces } from '@ilos/cli';
 import { Types, Interfaces } from '@ilos/core';
 
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
 
 export type MigrationType = {
@@ -59,7 +59,7 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
   constructor(
     protected kernel: Interfaces.KernelInterfaceResolver,
     protected connection: MongoConnection,
-    protected config: ConfigProviderInterfaceResolver,
+    protected config: ConfigInterfaceResolver,
   ) {}
 
   public async call({ rollback, reset, status }) {

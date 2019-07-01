@@ -1,4 +1,6 @@
 import { Types, Interfaces, Container } from '@ilos/core';
+import { TemplateInterfaceResolver, HandlebarsTemplate } from '@ilos/template';
+
 import { CommandRegistry } from '../providers/CommandRegistry';
 import { CommandInterface } from '../interfaces';
 
@@ -14,6 +16,10 @@ export class CommandExtension implements Interfaces.RegisterHookInterface, Inter
   async register() {
     if (!this.container.isBound(CommandRegistry)) {
       this.container.bind(CommandRegistry).toSelf();
+    }
+
+    if (!this.container.isBound(TemplateInterfaceResolver)) {
+      this.container.bind(TemplateInterfaceResolver).to(HandlebarsTemplate);
     }
 
     for(const command of this.commands) {

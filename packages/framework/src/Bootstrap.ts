@@ -5,7 +5,7 @@ import { QueueTransport } from '@ilos/transport-redis';
 import { Kernel } from './Kernel';
 
 const defaultBootstrap: Types.BootstrapType = {
-  kernel: () => new Kernel(),
+  kernel: () => Kernel,
   transport: {
     cli: k => new CliTransport(k),
     http: k => new HttpTransport(k),

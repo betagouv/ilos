@@ -81,7 +81,7 @@
   },
   "peerDependencies": {
     "@ilos/core": "~0",
-    "@ilos/provider-config": "~0",
-    "@ilos/provider-env": "~0"
+    "@ilos/config": "~0",
+    "@ilos/env": "~0"
   }
 }

@@ -1,18 +1,23 @@
-import { Parents, Interfaces, Types } from '@ilos/core';
-import { EnvProvider, EnvProviderInterfaceResolver } from '@ilos/provider-env';
-import { ConfigProvider, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { CommandProvider } from '@ilos/cli';
-
-import { CommandServiceProvider } from './CommandServiceProvider';
+import { Parents, Extensions, Interfaces } from '@ilos/core';
+import { Env, EnvInterfaceResolver } from '@ilos/env';
+import { Config, ConfigInterfaceResolver } from '@ilos/config';
+import { Commands, CommandExtension } from '@ilos/cli';
 
 export class Kernel extends Parents.Kernel {
-  readonly alias = [
-    [EnvProviderInterfaceResolver, EnvProvider],
-    [ConfigProviderInterfaceResolver, ConfigProvider],
-    CommandProvider,
-  ];
-
-  readonly serviceProviders: Types.NewableType<Interfaces.ServiceProviderInterface>[] = [
-    CommandServiceProvider,
+  readonly extensions: Interfaces.ServiceContainerConstructorInterface[] = [
+    class extends Extensions.Bindings {
+      readonly alias = [
+        [EnvInterfaceResolver, Env],
+        [ConfigInterfaceResolver, Config],
+      ];    
+    },
+    class extends CommandExtension {
+      commands = [
+        Commands.CallCommand,
+        Commands.ListCommand,
+        Commands.ScaffoldCommand,
+      ];
+    },
   ];
 }
+

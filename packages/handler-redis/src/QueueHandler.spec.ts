@@ -3,8 +3,8 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { EnvProviderInterfaceResolver } from '@ilos/provider-env';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { EnvInterfaceResolver } from '@ilos/env';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
 import * as Bull from './helpers/bullFactory';
 import { queueHandlerFactory } from './helpers/queueHandlerFactory';
@@ -13,7 +13,7 @@ chai.use(chaiAsPromised);
 
 const { expect, assert } = chai;
 
-class FakeEnvProvider extends EnvProviderInterfaceResolver {
+class FakeEnv extends EnvInterfaceResolver {
   async boot() {
     return;
   }
@@ -23,7 +23,7 @@ class FakeEnvProvider extends EnvProviderInterfaceResolver {
   }
 }
 
-class FakeConfigProvider extends ConfigProviderInterfaceResolver {
+class FakeConfig extends ConfigInterfaceResolver {
   async boot() {
     return;
   }
@@ -31,8 +31,8 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
     return 'redis://localhost';
   }
 }
-const envProvider = new FakeEnvProvider();
-const configProvider = new FakeConfigProvider();
+const env = new FakeEnv();
+const config = new FakeConfig();
 
 const sandbox = sinon.createSandbox();
 
@@ -66,7 +66,7 @@ describe('Queue handler', () => {
     sandbox.restore();
   });
   it('works', async () => {
-    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(envProvider, configProvider);
+    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(env, config);
     queueProvider.boot();
     const result = await queueProvider.call({
       method: 'basic@latest:method',
@@ -83,7 +83,7 @@ describe('Queue handler', () => {
     });
   });
   it('raise error if fail', async () => {
-    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(envProvider, configProvider);
+    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(env, config);
     queueProvider.boot();
     return (<any>assert).isRejected(
       queueProvider.call({

@@ -1,11 +1,11 @@
 import { Types, Interfaces, Container } from '@ilos/core';
-import { ConfigProviderInterfaceResolver, ConfigProviderInterface } from '@ilos/provider-config';
+import { ConfigInterfaceResolver, ConfigInterface } from '@ilos/config';
 import { ConnectionDeclarationType, ConnectionInterface, ConnectionConfigurationType } from './ConnectionManagerInterfaces';
 
 export class ConnectionManager implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface, Interfaces.DestroyHookInterface {
   readonly connections: ConnectionDeclarationType[] = [];
 
-  protected config: ConfigProviderInterface;
+  protected config: ConfigInterface;
   protected connectionRegistry: Map<Symbol, Map<Symbol, ConnectionInterface>> = new Map();
 
   /* Register maps */
@@ -19,7 +19,7 @@ export class ConnectionManager implements Interfaces.RegisterHookInterface, Inte
   }
 
   async register(): Promise<void> {
-    this.config = this.getContainer().get(ConfigProviderInterfaceResolver);
+    this.config = this.getContainer().get(ConfigInterfaceResolver);
     for(const serviceConnectionDeclaration of this.connections) {
       if (Array.isArray(serviceConnectionDeclaration)) {
         const [connectionConstructor, connectionConfig, serviceConstructors] = serviceConnectionDeclaration;

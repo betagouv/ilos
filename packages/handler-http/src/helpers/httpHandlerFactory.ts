@@ -1,7 +1,7 @@
 
 import { HttpHandler } from '../HttpHandler';
 import { Container, Types, Interfaces } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 /**
 * httpHandlerFactory - Create a HttpHandler for a remote service
 * @export
@@ -23,7 +23,7 @@ export function httpHandlerFactory(service: string, url: string, version?: strin
   })
   class CustomHttpHandler extends HttpHandler {
     constructor(
-      private config: ConfigProviderInterfaceResolver,
+      private config: ConfigInterfaceResolver,
       ) {
       super();
     }

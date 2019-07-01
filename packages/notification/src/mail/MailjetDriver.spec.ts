@@ -2,14 +2,14 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { TemplateProviderInterfaceResolver } from '@ilos/provider-template';
+import { ConfigInterfaceResolver } from '@ilos/config';
+import { TemplateInterfaceResolver } from '@ilos/template';
 import { Notification } from '../Notification';
 
 chai.use(chaiNock);
 const { expect } = chai;
 
-class FakeTemplateProvider extends TemplateProviderInterfaceResolver {
+class FakeTemplate extends TemplateInterfaceResolver {
   getMetadata(key: string) {
     return {
       subject: 'Mot de passe oublié',
@@ -20,7 +20,7 @@ class FakeTemplateProvider extends TemplateProviderInterfaceResolver {
   }
 }
 
-class FakeConfigProvider extends ConfigProviderInterfaceResolver {
+class FakeConfig extends ConfigInterfaceResolver {
   get(key: string, fallback?: any) {
     return {
       mail: {
@@ -43,7 +43,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
     }
   }
 }
-const provider = new Notification(new FakeConfigProvider(), new FakeTemplateProvider());
+const provider = new Notification(new FakeConfig(), new FakeTemplate());
 let nockRequest;
 const url: RegExp = /mailjet/;
 const endpoint: RegExp = /send/;

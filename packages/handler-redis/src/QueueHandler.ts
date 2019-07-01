@@ -1,7 +1,7 @@
 import { Job, Queue } from 'bull';
 import { Interfaces, Types } from '@ilos/core';
-import { EnvProviderInterfaceResolver } from '@ilos/provider-env';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { EnvInterfaceResolver } from '@ilos/env';
+import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { bullFactory } from './helpers/bullFactory';
 
@@ -14,8 +14,8 @@ export class QueueHandler implements Interfaces.HandlerInterface {
   private client: Queue;
 
   constructor(
-    private env: EnvProviderInterfaceResolver,
-    private config: ConfigProviderInterfaceResolver,
+    private env: EnvInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
   }
 

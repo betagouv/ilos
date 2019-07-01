@@ -1,20 +1,23 @@
-import { Parents, Types, Interfaces } from '@ilos/core';
+import { Parents, Types, Interfaces, Extensions } from '@ilos/core';
 
 import { AddAction } from './actions/AddAction';
 import { CustomProvider } from '../Providers/CustomProvider';
 
 export class ServiceProvider extends Parents.ServiceProvider {
-  readonly alias = [
-    CustomProvider,
-  ];
+  readonly extensions = [
+    class extends Extensions.Bindings {
+      alias = [
+        CustomProvider,
+      ];
+    }
+  ]
 
   readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
     AddAction,
   ];
 
-  async boot() {
-    await super.boot();
-    const customProvider = this.getContainer().get(CustomProvider);
-    customProvider.set('math:');
+  async init() {
+    super.init();
+    this.getContainer().get(CustomProvider).set('math:');
   }
 }

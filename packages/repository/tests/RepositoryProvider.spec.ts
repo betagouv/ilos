@@ -2,7 +2,7 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
 import { Parents, Container } from '@ilos/core';
-import { ConfigProvider, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { Config, ConfigInterfaceResolver } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ConnectionManager as ParentConnectionManager, ConnectionDeclarationType } from '@ilos/connection-manager';
 
@@ -27,7 +27,7 @@ class User {
   }
 }
 @Container.provider()
-class FakeConfigProvider extends ConfigProvider {
+class FakeConfig extends Config {
   protected config: object = {
     //
   };
@@ -40,7 +40,7 @@ class FakeConfigProvider extends ConfigProvider {
 @Container.provider()
 class UserRepositoryProvider extends ParentRepositoryProvider {
   constructor(
-    protected config: ConfigProviderInterfaceResolver,
+    protected config: ConfigInterfaceResolver,
     protected mongoProvider: MongoConnection
   ) {
     super(config, mongoProvider);
@@ -85,7 +85,7 @@ class ConnectionManager extends ParentConnectionManager {
 
 class Kernel extends Parents.Kernel {
   alias = [
-    [ConfigProviderInterfaceResolver, FakeConfigProvider],
+    [ConfigInterfaceResolver, FakeConfig],
     UserRepositoryProvider
   ];
 
