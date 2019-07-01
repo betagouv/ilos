@@ -5,10 +5,10 @@ import { TemplateProviderInterfaceResolver } from '@ilos/provider-template';
 import { MailjetDriver } from './mail/MailjetDriver';
 import { MailDriverInterface, MailInterface, TemplateMailInterface } from './mail/MailDriverInterface';
 import { NotificationConfigurationType } from './NotificationConfigurationType';
-import { NotificationProviderInterface } from './NotificationProviderInterface';
+import { NotificationInterface } from './NotificationInterface';
 
 @Container.provider()
-export class NotificationProvider implements NotificationProviderInterface {
+export class Notification implements NotificationInterface {
   protected config: NotificationConfigurationType;
   protected mailDriver: MailDriverInterface;
   protected mailDrivers: { [key:string]: Types.NewableType<MailDriverInterface> } = {
@@ -37,7 +37,7 @@ export class NotificationProvider implements NotificationProviderInterface {
         from: this.config.mail.from,
         defaultSubject: this.config.mail.defaultSubject,
       },
-      <any>this.config.mail.driverOptions,
+      this.config.mail.driverOptions,
     );
   }
 

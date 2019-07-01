@@ -4,7 +4,7 @@ import nock from 'nock';
 import chaiNock from 'chai-nock';
 import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 import { TemplateProviderInterfaceResolver } from '@ilos/provider-template';
-import { NotificationProvider } from '../NotificationProvider';
+import { Notification } from '../Notification';
 
 chai.use(chaiNock);
 const { expect } = chai;
@@ -43,7 +43,7 @@ class FakeConfigProvider extends ConfigProviderInterfaceResolver {
     }
   }
 }
-const provider = new NotificationProvider(new FakeConfigProvider(), new FakeTemplateProvider());
+const provider = new Notification(new FakeConfigProvider(), new FakeTemplateProvider());
 let nockRequest;
 const url: RegExp = /mailjet/;
 const endpoint: RegExp = /send/;
