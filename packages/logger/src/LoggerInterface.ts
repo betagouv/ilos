@@ -1,7 +1,7 @@
 import { Interfaces } from '@ilos/core';
 import { LogMessageType } from './LogMessageType';
 
-export interface LoggerProviderInterface extends Interfaces.ProviderInterface {
+export interface LoggerInterface extends Interfaces.ProviderInterface {
   debug(message: string, meta?: any): void;
   info(message: string, meta?: any): void;
   warn(message: string, meta?: any): void;
@@ -10,7 +10,7 @@ export interface LoggerProviderInterface extends Interfaces.ProviderInterface {
   log(message: LogMessageType): void;
 }
 
-export abstract class LoggerProviderInterfaceResolver implements LoggerProviderInterface {
+export abstract class LoggerInterfaceResolver implements LoggerInterface {
   async boot() {
     return;
   }

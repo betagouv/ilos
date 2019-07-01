@@ -1,22 +1,22 @@
 import { Container } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 import * as winston from 'winston';
 
-import { LoggerProviderInterface } from './LoggerProviderInterface';
+import { LoggerInterface } from './LoggerInterface';
 import { LogMessageType } from './LogMessageType';
 
 /**
  * Logger provider
  * @export
- * @class LoggerProvider
- * @implements {LoggerProviderInterface}
+ * @class Logger
+ * @implements {LoggerInterface}
  */
 @Container.provider()
-export class LoggerProvider implements LoggerProviderInterface {
+export class Logger implements LoggerInterface {
   protected winston: winston.Logger;
 
   constructor(
-    protected config: ConfigProviderInterfaceResolver,
+    protected config: ConfigInterfaceResolver,
   ) {
     //
   }
