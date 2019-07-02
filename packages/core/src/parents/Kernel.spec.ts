@@ -3,10 +3,7 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { handler, provider } from '../container';
-import { HandlerInterface } from '../interfaces/HandlerInterface';
-import { NewableType } from '../types/NewableType';
-import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
+import { handler, provider, serviceProvider } from '../container';
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 import { Kernel } from './Kernel';
 import { ServiceProvider } from './ServiceProvider';
@@ -14,7 +11,6 @@ import { Action } from './Action';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
-import { Bindings } from '../extensions/Bindings';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -74,37 +70,35 @@ class BasicTwoAction extends Action {
   }
 }
 
-class BasicTwoServiceProvider extends ServiceProvider {
-  readonly extensions = [
-    class extends Bindings {
-      readonly alias = [
-        Test,
-      ];
-    }
-  ];
-  readonly handlers: NewableType<HandlerInterface>[] = [BasicTwoAction];
-}
+@serviceProvider({
+  providers: [
+    Test,
+  ],
+  handlers: [
+    BasicTwoAction,
+  ]
+})
+class BasicTwoServiceProvider extends ServiceProvider {}
 
-class BasicServiceProvider extends ServiceProvider {
-  readonly extensions = [
-    class extends Bindings {
-      readonly alias = [
-        Test,
-      ];
-    }
-  ];
-  readonly children: NewableType<ServiceProviderInterface>[] = [
+@serviceProvider({
+  providers: [
+    Test,
+  ],
+  children: [
     BasicTwoServiceProvider,
-  ];
-
-  readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
-}
+  ],
+  handlers: [
+    BasicAction
+  ]
+})
+class BasicServiceProvider extends ServiceProvider {}
 
 describe('Kernel', () => {
   it('should work with single call', async () => {
-    class BasicKernel extends Kernel {
-      children = [BasicServiceProvider];
-    }
+    @serviceProvider({
+      children: [BasicServiceProvider],
+    })
+    class BasicKernel extends Kernel {}
 
     const kernel = new BasicKernel();
     await kernel.bootstrap();
@@ -124,8 +118,10 @@ describe('Kernel', () => {
   });
 
   it('should work with a batch', async () => {
+    @serviceProvider({
+      children: [BasicServiceProvider],
+    })
     class BasicKernel extends Kernel {
-      children = [BasicServiceProvider];
     }
     const kernel = new BasicKernel();
     await kernel.bootstrap();
@@ -186,8 +182,10 @@ describe('Kernel', () => {
   });
 
   it('should return an error if method throw an error', async () => {
+    @serviceProvider({
+      children: [BasicServiceProvider],
+    })
     class BasicKernel extends Kernel {
-      children = [BasicServiceProvider];
     }
     const kernel = new BasicKernel();
     await kernel.bootstrap();
@@ -209,8 +207,10 @@ describe('Kernel', () => {
   });
 
   it('should work with contexted call', async () => {
+    @serviceProvider({
+      children: [BasicServiceProvider],
+    })
     class BasicKernel extends Kernel {
-      children = [BasicServiceProvider];
     }
 
     const kernel = new BasicKernel();
@@ -243,8 +243,10 @@ describe('Kernel', () => {
   });
 
   it('should work with notify call', async () => {
+    @serviceProvider({
+      children: [BasicServiceProvider],
+    })
     class BasicKernel extends Kernel {
-      children = [BasicServiceProvider];
     }
 
     const kernel = new BasicKernel();

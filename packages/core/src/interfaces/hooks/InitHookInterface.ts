@@ -1,4 +1,4 @@
-import { ServiceProviderInterface } from "../ServiceProviderInterface";
+import { ServiceContainerInterface } from '../ServiceContainerInterface';
 
 export interface InitHookInterface {
   /**
@@ -6,5 +6,5 @@ export interface InitHookInterface {
    * @returns {(Promise<void> | void)}
    * @memberof InitHookInterface
    */
-  init(): Promise<void> | void;
+  init(container?: ServiceContainerInterface): Promise<void> | void;
 }

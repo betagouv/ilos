@@ -3,15 +3,21 @@ import { interfaces } from 'inversify';
 
 import { Types, Interfaces } from '..';
 
-export type HandlerConfig = {
-  service?: string,
-  method?: string,
-  version?: string,
-  local?: boolean,
-  queue?: boolean,
-  signature?: string,
-  containerSignature?: string,
+export type AnyConfig = {
+  [k: string]: any,
 };
+
+export type HandlerConfig = {
+  service?: string;
+  method?: string;
+  version?: string;
+  local?: boolean;
+  queue?: boolean;
+  signature?: string;
+  containerSignature?: string;
+};
+
+export type HandlerContainerConfig = HandlerConfig | AnyConfig;
 
 export interface ContainerInterface extends interfaces.Container {
   setHandler(handler: Types.NewableType<Interfaces.HandlerInterface>): Interfaces.HandlerInterface;
@@ -31,3 +37,6 @@ export interface ContainerModuleConfigurator {
   isBound: IsBound;
   rebind: Rebind;
 }
+
+export type ServiceIdentifier<T = any> = interfaces.ServiceIdentifier<T>;
+export interface Factory<T> extends interfaces.Factory<T> {}

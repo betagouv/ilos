@@ -13,7 +13,7 @@ import { hasMultipleCall } from '../helpers/types/hasMultipleCall';
 import { isAnRPCException } from '../helpers/types/isAnRPCException';
 import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
 import { InvalidRequestException } from '../exceptions/InvalidRequestException';
-import { ServiceContainer } from './ServiceContainer';
+import { ServiceProvider } from './ServiceProvider';
 
 
 /**
@@ -24,7 +24,7 @@ import { ServiceContainer } from './ServiceContainer';
  * @extends {ServiceProvider}
  * @implements {KernelInterface}
  */
-export abstract class Kernel extends ServiceContainer implements KernelInterface {
+export abstract class Kernel extends ServiceProvider implements KernelInterface {
   /**
    * Creates an instance of Kernel.
    * @param {ContainerInterface} [container]

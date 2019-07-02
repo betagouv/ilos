@@ -1,18 +1,34 @@
 import {
   Container,
   ContainerInterface,
+  Factory,
 } from '../container';
 
 import {
   ServiceContainerInterface,
-  ServiceContainerConstructorInterface,
-  ServiceContainerInterfaceResolver
+  ServiceContainerInterfaceResolver,
+  StatusType,
+  BEFORE_CONSTRUCT,
+  AFTER_CONSTRUCT,
+  BEFORE_REGISTER,
+  AFTER_REGISTER,
+  BEFORE_INIT,
+  AFTER_INIT,
+  BEFORE_DESTROY,
+  AFTER_DESTROY,
 } from '../interfaces/ServiceContainerInterface';
 
 import { hasInterface } from '../helpers/types/hasInterface';
-import { DestroyHookInterface } from '../interfaces/hooks/DestroyHookInterface';
-import { InitHookInterface } from '../interfaces/hooks/InitHookInterface';
-import { RegisterHookInterface } from '../interfaces/hooks/RegisterHookInterface';
+
+import {
+  DestroyHookInterface,
+  InitHookInterface,
+  RegisterHookInterface,
+  HookInterface,
+} from '../interfaces/hooks';
+
+import { ExtensionInterface, ExtensionStaticInterface } from '../interfaces/ExtentionInterface';
+import { NewableType } from '../types';
 
 /**
  * Service container parent class
@@ -22,12 +38,12 @@ import { RegisterHookInterface } from '../interfaces/hooks/RegisterHookInterface
  * @implements {ServiceContainerInterface}
  */
 export abstract class ServiceContainer implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface {
-  readonly children: ServiceContainerConstructorInterface[] = [];
-  readonly extensions: ServiceContainerConstructorInterface[] = [];
+  readonly extensions: ExtensionStaticInterface[] = [];
+  protected status: StatusType = BEFORE_CONSTRUCT;
 
-  protected registerHookRegistry: Set<RegisterHookInterface> = new Set();
-  protected initHookRegistry: Set<InitHookInterface> = new Set();
-  protected destroyHookRegistry: Set<DestroyHookInterface> = new Set();
+  protected registerHookRegistry: Set<HookInterface> = new Set();
+  protected initHookRegistry: Set<HookInterface> = new Set();
+  protected destroyHookRegistry: Set<HookInterface> = new Set();
 
   protected container: ContainerInterface;
 
@@ -38,6 +54,7 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
       this.container = new Container();
       this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
     }
+    this.status = AFTER_CONSTRUCT;
   }
 
   /**
@@ -45,23 +62,26 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
    * @memberof ServiceContainer
    */
   async register() {
-    for (const extension of this.extensions) {
-      this.registerHooks(extension, this.getContainer());
-    }
+    this.registerExtensions(this.extensions);
+    this.applyExtensions();
 
-    for (const child of this.children) {
-      this.registerHooks(child, this.getContainer().createChild());
-    }
+    await this.registerChildren();
 
-    return this.dispatchRegisterHook();
+    this.status = BEFORE_REGISTER;
+    await this.dispatchRegisterHook();
+    this.status = AFTER_REGISTER;
   }
 
   async init() {
-    return this.dispatchInitHook();
+    this.status = BEFORE_INIT;
+    await this.dispatchInitHook();
+    this.status = AFTER_INIT;
   }
 
   async destroy() {
-    return this.dispatchDestroyHook();
+    this.status = BEFORE_DESTROY;
+    await this.dispatchDestroyHook();
+    this.status = AFTER_DESTROY;
   }
 
   /**
@@ -75,14 +95,14 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
 
   protected async dispatchRegisterHook() {
     for (const [hook] of this.registerHookRegistry.entries()) {
-      await hook.register();
+      await hook(this);
     }
     this.registerHookRegistry.clear();
   }
 
   protected async dispatchInitHook() {
     for (const [hook] of this.initHookRegistry.entries()) {
-      await hook.init();
+      await hook(this);
     }
     this.initHookRegistry.clear();
   }
@@ -90,26 +110,89 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
   protected async dispatchDestroyHook() {
     const destroyHookRegistry = [...this.destroyHookRegistry].reverse();
     for (const hook of destroyHookRegistry) {
-      await hook.destroy();
+      await hook(this);
     }
     this.destroyHookRegistry.clear();
   }
 
-  protected registerHooks(serviceContainerConstructor: ServiceContainerConstructorInterface, container: ContainerInterface): void {
-    const serviceContainer = new serviceContainerConstructor(container);
+  protected addRegisterHook(hook: HookInterface) {
+    if (this.status < BEFORE_REGISTER) {
+      this.registerHookRegistry.add(hook);
+    }
+  }
 
-    if (hasInterface<RegisterHookInterface>(serviceContainer, 'register')) {
-      this.registerHookRegistry.add(serviceContainer);
+  protected addInitHook(hook: HookInterface) {
+    if (this.status < BEFORE_INIT) {
+      this.initHookRegistry.add(hook);    
+    }
+  }
+
+  protected addDestroyHook(hook: HookInterface) {
+    if (this.status < BEFORE_DESTROY) {
+      this.destroyHookRegistry.add(hook);
+    }
+  }
+
+  public registerHooks(hooker: object, identifier?: NewableType<any>): void {
+    if (hasInterface<RegisterHookInterface>(hooker, 'register') && !identifier) {
+      this.addRegisterHook(async (container) => hooker.register(container));
     }
 
-    if (hasInterface<InitHookInterface>(serviceContainer, 'init')) {
-      this.initHookRegistry.add(serviceContainer);
+    if (hasInterface<InitHookInterface>(hooker, 'init')) {
+      let hook = async (container: ServiceContainerInterface) => hooker.init(container);
+      if (!!identifier) {
+        hook = async (container: ServiceContainerInterface) => container.getContainer().get<InitHookInterface>(identifier).init(container);
+      }
+      this.addInitHook(hook);
     }
 
-    if (hasInterface<DestroyHookInterface>(serviceContainer, 'destroy')) {
-      this.destroyHookRegistry.add(serviceContainer);
+    if (hasInterface<DestroyHookInterface>(hooker, 'destroy')) {
+      let hook = async (container: ServiceContainerInterface) => hooker.destroy(container);
+      if (!!identifier) {
+        hook = async (container: ServiceContainerInterface) => container.getContainer().get<DestroyHookInterface>(identifier).destroy(container);
+      }
+      this.addDestroyHook(hook);
     }
 
     return;
+  }
+
+  protected registerExtensions(extensions: ExtensionStaticInterface[]) {
+    const container = this.getContainer();
+    for(const index in extensions) {
+      const extension = extensions[index];
+      const containerExtensionKey = `extension:${extension.key}`;
+      if(!container.isBound(containerExtensionKey)) {
+        container.bind(containerExtensionKey).toFactory(() => (config) => new extension(config));
+        container.bind('extensions').toConstantValue({
+          index,
+          key: containerExtensionKey
+        });
+      }
+    }
+  }
+
+  protected applyExtensions() {
+    const container = this.getContainer();
+    const extensions = container
+      .getAll<{key: string, index: number}>('extensions')
+      .sort((a, b) => a.index - b.index);
+
+    for(const { key: extensionKey } of extensions) {
+      if (Reflect.hasMetadata(extensionKey, this.constructor)) {
+        const extensionConfig = Reflect.getMetadata(extensionKey, this.constructor);
+        const extension = container.get<Factory<ExtensionInterface>>(extensionKey)(extensionConfig);
+        this.registerHooks(extension);
+      }
+    }
+  }
+
+  protected registerChildren() {
+    if (Reflect.hasMetadata('extension:children', this.constructor)) {
+      const children = Reflect.getMetadata('extension:children', this.constructor);
+      for (const child of children) {
+        this.registerHooks(new child(this.getContainer().createChild()));
+      }
+    }
   }
 }

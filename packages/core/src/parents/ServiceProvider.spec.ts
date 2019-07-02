@@ -3,24 +3,22 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { handler, provider } from '../container';
+import { handler, provider, serviceProvider } from '../container';
 import { HandlerInterface } from '../interfaces/HandlerInterface';
 import { NewableType } from '../types/NewableType';
-import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
 import { ProviderInterface } from '../interfaces/ProviderInterface';
-import { ServiceProvider } from './ServiceProvider';
+import { ServiceProvider as ParentServiceProvider} from './ServiceProvider';
 import { Action } from './Action';
 import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
-import { Bindings } from '../extensions/Bindings';
 
 chai.use(chaiAsPromised);
 
 const { expect, assert } = chai;
 const defaultContext = { channel: { service: '' } };
 
-describe('Service provider', () => {
+describe('ServiceProvider', () => {
   it('should register handler', async () => {
     @handler({
       service: 'test',
@@ -38,16 +36,16 @@ describe('Service provider', () => {
         return count;
       }
     }
+    @serviceProvider({
+      handlers: [BasicAction],
+    })
+    class BasicServiceProvider extends ParentServiceProvider {}
 
-    class BasicServiceProvider extends ServiceProvider {
-      readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
-    }
+    const sp = new BasicServiceProvider();
+    await sp.register();
+    await sp.init();
 
-    const serviceProvider = new BasicServiceProvider();
-    await serviceProvider.register();
-    await serviceProvider.init();
-
-    const container = serviceProvider.getContainer();
+    const container = sp.getContainer();
     expect(container.getHandler({ service: 'test', method: 'add' })).be.instanceOf(BasicAction);
   });
 
@@ -85,22 +83,21 @@ describe('Service provider', () => {
       }
     }
 
-    class BasicServiceProvider extends ServiceProvider {
-      readonly extensions = [
-        class extends Bindings {
-          readonly alias = [
-            [TestResolver, Test],
-          ];
-        }
-      ];
-      readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
-    }
+    @serviceProvider({
+      providers: [
+        [TestResolver, Test],
+      ],
+      handlers: [
+        BasicAction,
+      ],
+    })
+    class BasicServiceProvider extends ParentServiceProvider {}
 
-    const serviceProvider = new BasicServiceProvider();
-    await serviceProvider.register();
-    await serviceProvider.init();
+    const sp = new BasicServiceProvider();
+    await sp.register();
+    await sp.init();
 
-    const container = serviceProvider.getContainer();
+    const container = sp.getContainer();
     const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
     const response = await handlerInstance.call({ method: 'fake', params: { name: 'Sam' }, context: defaultContext });
     expect(response).be.equal('Hello Sam');
@@ -113,7 +110,9 @@ describe('Service provider', () => {
       }
     }
 
-    @provider()
+    @provider({
+      identifier: TestResolver,
+    })
     class Test implements ProviderInterface {
       base: string;
       boot() {
@@ -162,37 +161,27 @@ describe('Service provider', () => {
       }
     }
 
-    class BasicTwoServiceProvider extends ServiceProvider {
-      readonly extensions = [
-        class extends Bindings {
-          readonly alias = [
-            [TestResolver, Test],
-          ];
-        }
-      ];
-      readonly handlers: NewableType<HandlerInterface>[] = [BasicTwoAction];
-    }
+    @serviceProvider({
+      providers: [Test],
+      handlers: [BasicTwoAction],
+    })
+    class BasicTwoServiceProvider extends ParentServiceProvider {}
 
-    class BasicServiceProvider extends ServiceProvider {
-      readonly extensions = [
-        class extends Bindings {
-          readonly alias = [
-            [TestResolver, Test],
-          ];
-        }
-      ];
-      readonly children: NewableType<ServiceProviderInterface>[] = [
+    @serviceProvider({
+      providers: [Test],
+      children: [
         BasicTwoServiceProvider,
-      ];
-
-      readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
+      ],
+      handlers: [BasicAction],
+    })
+    class BasicServiceProvider extends ParentServiceProvider {
     }
 
-    const serviceProvider = new BasicServiceProvider();
-    await serviceProvider.register();
-    await serviceProvider.init();
+    const sp = new BasicServiceProvider();
+    await sp.register();
+    await sp.init();
 
-    const container = serviceProvider.getContainer();
+    const container = sp.getContainer();
     const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
     const response = await handlerInstance.call({ method: 'fake', params: { name: 'Sam' }, context: defaultContext });
     expect(response).be.equal('Hello Sam');

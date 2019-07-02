@@ -1,10 +1,9 @@
 import { RPCCallType, RPCResponseType, ResultType, ContextType, ParamsType } from '../types';
-import { ServiceContainerInterface, ServiceContainerInterfaceResolver } from './ServiceContainerInterface';
+import { ServiceContainerInterface, ServiceContainerInterfaceResolver, ServiceContainerConstructorInterface } from './ServiceContainerInterface';
 import { BootstrapHookInterface } from './hooks/BootstrapHookInterface';
 import { ShutdownHookInterface } from './hooks/ShutdownHookInterface';
 
 export interface KernelInterface extends ServiceContainerInterface, BootstrapHookInterface, ShutdownHookInterface {
-
   /**
    * Handle an RPC call and provide an RPC response
    * @param {RPCCallType} call

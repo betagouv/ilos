@@ -8,6 +8,7 @@ import {
 import { Interfaces, Types } from '..';
 import { HandlerConfig, ContainerInterface } from './ContainerInterfaces';
 import { normalizeHandlerConfig } from './helpers/normalizeHandlerConfig';
+import { HANDLER_META } from './Metadata';
 
 export class Container extends InversifyContainer implements ContainerInterface {
   protected handlersRegistry: HandlerConfig[] = [];
@@ -157,11 +158,11 @@ export class Container extends InversifyContainer implements ContainerInterface 
    * @memberof Container
    */
   setHandler(handler: Types.NewableType<Interfaces.HandlerInterface>): Interfaces.HandlerInterface {
-    const service = Reflect.getMetadata('rpc:service', handler);
-    const method = Reflect.getMetadata('rpc:method', handler);
-    const version = Reflect.getMetadata('rpc:version', handler);
-    const local = Reflect.getMetadata('rpc:local', handler);
-    const queue = Reflect.getMetadata('rpc:queue', handler);
+    const service = Reflect.getMetadata(HANDLER_META.SERVICE, handler);
+    const method = Reflect.getMetadata(HANDLER_META.METHOD, handler);
+    const version = Reflect.getMetadata(HANDLER_META.VERSION, handler);
+    const local = Reflect.getMetadata(HANDLER_META.LOCAL, handler);
+    const queue = Reflect.getMetadata(HANDLER_META.QUEUE, handler);
 
     const handlerConfig = normalizeHandlerConfig({ service, method, version, local, queue });
     const resolvedHandler = this.get<Interfaces.HandlerInterface>(<any>handler);
