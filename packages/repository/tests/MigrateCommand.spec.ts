@@ -2,11 +2,11 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
 
-import { Parents, Container, Interfaces } from '@ilos/core';
+import { Parents, Container, Interfaces, Extensions } from '@ilos/core';
 import { Config, ConfigInterfaceResolver } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
 
-import { ConnectionManager as ParentConnectionManager, ConnectionDeclarationType } from '@ilos/connection-manager';
+import { ConnectionManager } from '@ilos/connection-manager';
 import { ParentMigrateCommand, ParentMigration } from '../src/commands/ParentMigrateCommand';
 
 let mongoServer;
@@ -38,20 +38,16 @@ class FakeConfig extends Config {
   }
 }
 
-class ConnectionManager extends ParentConnectionManager {
-  readonly connections: ConnectionDeclarationType[] = [
+@Container.kernel({
+  connections: [
     [MongoConnection, 'mongo'],
-  ];
-}
-
-class Kernel extends Parents.Kernel {
-  alias = [
+  ],
+  providers: [
     [ConfigInterfaceResolver, FakeConfig],
-  ];
-
-  serviceProviders = [
-    ConnectionManager,
-  ];
+  ],
+})
+class Kernel extends Parents.Kernel {
+  extensions = [Extensions.Providers, ConnectionManager];
 }
 
 const kernel = new Kernel();
@@ -120,7 +116,7 @@ describe('Repository provider: migrate', () => {
     config.mongo.connectionString = connectionString;
     config.mongo.db = dbName;
     config.migration.db = dbName;
-    await kernel.boot();
+    await kernel.bootstrap();
   });
 
   after(async () => {

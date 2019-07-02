@@ -1,29 +1,22 @@
-import { Parents, Types, Interfaces, Extensions } from '@ilos/core';
-import { ConfigExtension } from '@ilos/config';
+import { Parents, Container } from '@ilos/core';
 
 import { HelloAction } from './actions/HelloAction';
 import { ResultAction } from './actions/ResultAction';
 import { CustomProvider } from '../Providers/CustomProvider';
- 
-export class ServiceProvider extends Parents.ServiceProvider {
-  readonly extensions = [
-    class extends ConfigExtension {
-      workingPath = __dirname;
-    },
-    class extends Extensions.Bindings {
-      alias = [
-        CustomProvider,
-      ];
-    }
-  ]
 
-  readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
+@Container.serviceProvider({
+  config: __dirname,
+  providers: [
+    CustomProvider,
+  ],
+  handlers: [
     HelloAction,
     ResultAction,
-  ];
-
+  ]
+})
+export class ServiceProvider extends Parents.ServiceProvider {
   async init() {
-    super.init();
+    await super.init();
     this.getContainer().get(CustomProvider).set('string:');
   }
 }

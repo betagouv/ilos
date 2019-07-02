@@ -10,7 +10,7 @@ import { ConfigInterfaceResolver } from '@ilos/config';
 * @param {string} [version]
 * @returns {NewableType<HandlerInterface>}
 */
-export function httpHandlerFactory(service: string, url: string, version?: string): Types.NewableType<Interfaces.HandlerInterface> {
+export function httpHandlerFactory(service: string, url: string, version?: string): Types.NewableType<Interfaces.HandlerInterface&Interfaces.InitHookInterface> {
   let isFromConfig = false
   if (!/http/.test(url)) {
     isFromConfig = true
@@ -31,7 +31,7 @@ export function httpHandlerFactory(service: string, url: string, version?: strin
     protected readonly service: string = service;
     protected readonly version: string = version;
 
-    public boot(){
+    public init() {
       if(isFromConfig){
         this.createClient(this.config.get(url))
       } else {

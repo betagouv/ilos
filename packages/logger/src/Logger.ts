@@ -1,8 +1,5 @@
 import { Container } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
-import * as winston from 'winston';
-
-import { LoggerInterface } from './LoggerInterface';
+import { LoggerInterface, LoggerDriverInterface } from './LoggerInterface';
 import { LogMessageType } from './LogMessageType';
 
 /**
@@ -13,23 +10,15 @@ import { LogMessageType } from './LogMessageType';
  */
 @Container.provider()
 export class Logger implements LoggerInterface {
-  protected winston: winston.Logger;
-
   constructor(
-    protected config: ConfigInterfaceResolver,
+    protected logger: LoggerDriverInterface,
   ) {
     //
   }
 
-  async boot() {
-    this.winston = winston.createLogger(
-      this.config.get('logger.winston', {}),
-    );
-  }
-
   log(msg: LogMessageType): void {
     const { level, message, meta } = msg;
-    this.winston.log(level, message, meta);  
+    this.logger.log(level, message, meta);  
   }
 
   debug(message: string, meta?: any): void {

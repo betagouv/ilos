@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Parents, Interfaces, Types } from '@ilos/core';
+import { Parents, Interfaces, Types, Container } from '@ilos/core';
 
 import { CliTransport } from './transports/CliTransport';
 import { BootstrapType } from './types';
@@ -74,12 +74,11 @@ export class Bootstrap {
 
     const serviceProviders = 'serviceProviders' in bootstrap ? bootstrap.serviceProviders : [];
 
-    class Kernel extends kernelConstructor {
-      children = [
-        ...super.children,
-        ...bootstrap.serviceProviders,
-      ];
-    }
+    @Container.kernel({
+      children: serviceProviders,
+    })
+    class Kernel extends kernelConstructor {}
+
     const kernel = new Kernel();
     await kernel.bootstrap();
 

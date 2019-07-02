@@ -19,9 +19,9 @@ export class MongoConnection implements ConnectionInterface<MongoClient> {
     try {
       if (!this.connected) {
         await this.client.connect();
+        this.connected = true;
         return;
       }
-      this.connected = true;
     } catch (err) {
       throw err;
     }

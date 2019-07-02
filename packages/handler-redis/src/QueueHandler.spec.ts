@@ -3,36 +3,12 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { EnvInterfaceResolver } from '@ilos/env';
-import { ConfigInterfaceResolver } from '@ilos/config';
-
 import * as Bull from './helpers/bullFactory';
 import { queueHandlerFactory } from './helpers/queueHandlerFactory';
 
 chai.use(chaiAsPromised);
 
 const { expect, assert } = chai;
-
-class FakeEnv extends EnvInterfaceResolver {
-  async boot() {
-    return;
-  }
-
-  get(key: string, fallback?: any): any {
-    return 'prod';
-  }
-}
-
-class FakeConfig extends ConfigInterfaceResolver {
-  async boot() {
-    return;
-  }
-  get(key: string, fallback?: any): any {
-    return 'redis://localhost';
-  }
-}
-const env = new FakeEnv();
-const config = new FakeConfig();
 
 const sandbox = sinon.createSandbox();
 
@@ -66,8 +42,7 @@ describe('Queue handler', () => {
     sandbox.restore();
   });
   it('works', async () => {
-    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(env, config);
-    queueProvider.boot();
+    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))();
     const result = await queueProvider.call({
       method: 'basic@latest:method',
       params: { add: [1, 2] },
@@ -83,8 +58,7 @@ describe('Queue handler', () => {
     });
   });
   it('raise error if fail', async () => {
-    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(env, config);
-    queueProvider.boot();
+    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))();
     return (<any>assert).isRejected(
       queueProvider.call({
         method: 'nope',

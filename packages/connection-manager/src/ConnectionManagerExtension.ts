@@ -2,8 +2,8 @@ import { Types, Interfaces, Container } from '@ilos/core';
 import { ConfigInterfaceResolver, ConfigInterface } from '@ilos/config';
 import { ConnectionDeclarationType, ConnectionInterface, ConnectionConfigurationType } from './ConnectionManagerInterfaces';
 
-export class ConnectionManager implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface, Interfaces.DestroyHookInterface {
-  readonly connections: ConnectionDeclarationType[] = [];
+export class ConnectionManagerExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface, Interfaces.DestroyHookInterface {
+  static readonly key = 'connections';
 
   protected config: ConfigInterface;
   protected connectionRegistry: Map<Symbol, Map<Symbol, ConnectionInterface>> = new Map();
@@ -13,13 +13,14 @@ export class ConnectionManager implements Interfaces.RegisterHookInterface, Inte
   protected connectionMappingRegistry: Map<Types.NewableType<ConnectionInterface>, Map<Types.NewableType<any>, Symbol>> = new Map();
 
   constructor(
-    protected serviceContainer: Container.ContainerInterface
+    protected readonly connections: ConnectionDeclarationType[],
   ) {
     //
   }
 
-  async register(): Promise<void> {
-    this.config = this.getContainer().get(ConfigInterfaceResolver);
+  async register(serviceContainer: Interfaces.ServiceContainerInterface): Promise<void> {
+    const container = serviceContainer.getContainer();
+    this.config = container.get(ConfigInterfaceResolver);
     for(const serviceConnectionDeclaration of this.connections) {
       if (Array.isArray(serviceConnectionDeclaration)) {
         const [connectionConstructor, connectionConfig, serviceConstructors] = serviceConnectionDeclaration;
@@ -29,7 +30,7 @@ export class ConnectionManager implements Interfaces.RegisterHookInterface, Inte
         this.registerConnectionRequest(connectionConstructor, connectionConfig, serviceConstructors);
       }
     }
-    this.setUpContainer();
+    this.setUpContainer(container);
   }
 
   async init() {
@@ -60,13 +61,8 @@ export class ConnectionManager implements Interfaces.RegisterHookInterface, Inte
     }
   }
 
-  getContainer():Container.ContainerInterface {
-    return this.serviceContainer;
-  }
-
-  protected setUpContainer() {
+  protected setUpContainer(container: Container.ContainerInterface) {
     const connectionMappingRegistry = this.connectionMappingRegistry.entries();
-    const container = this.getContainer();
     for (const [ connectionConstructor, connectionMapRegistry] of connectionMappingRegistry) {
       const connectionSymbol = this.connectionConstructorSymbols.get(connectionConstructor);
 

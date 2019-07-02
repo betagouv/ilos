@@ -1,4 +1,4 @@
-export { ConnectionManager } from './ConnectionManager';
+export { ConnectionManagerExtension } from './ConnectionManagerExtension';
 export {
   ConnectionInterface,
   ConnectionDeclarationType,

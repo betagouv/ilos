@@ -5,33 +5,35 @@ import { CommandRegistry } from '../providers/CommandRegistry';
 import { CommandInterface } from '../interfaces';
 
 export class CommandExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
-  readonly commands: Types.NewableType<CommandInterface>[] = [];
+  static readonly key: string = 'commands';
 
   constructor(
-    readonly container: Container.ContainerInterface,
+    readonly commands: Types.NewableType<CommandInterface>[],
   ) {
     //
   }
 
-  async register() {
-    if (!this.container.isBound(CommandRegistry)) {
-      this.container.bind(CommandRegistry).toSelf();
+  async register(serviceContainer: Interfaces.ServiceContainerInterface) {
+    const container = serviceContainer.getContainer();
+    if (!container.isBound(CommandRegistry)) {
+      container.bind(CommandRegistry).toSelf();
     }
 
-    if (!this.container.isBound(TemplateInterfaceResolver)) {
-      this.container.bind(TemplateInterfaceResolver).to(HandlebarsTemplate);
+    if (!container.isBound(TemplateInterfaceResolver)) {
+      container.bind(TemplateInterfaceResolver).to(HandlebarsTemplate);
     }
 
     for(const command of this.commands) {
-      this.container.bind(command).toSelf();
+      container.bind(command).toSelf();
     }
   }
 
-  async init() {
-    const commandRegistry = this.container.get<CommandRegistry>(CommandRegistry);
+  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+    const container = serviceContainer.getContainer();
+    const commandRegistry = container.get<CommandRegistry>(CommandRegistry);
 
     for (const command of this.commands) {
-      const cmd = this.container.get(command);
+      const cmd = container.get(command);
       this.registerCommand(commandRegistry, cmd);
     }
   }

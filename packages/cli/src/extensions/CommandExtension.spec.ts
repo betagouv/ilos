@@ -27,12 +27,13 @@ class BasicCommand extends Command {
   }
 }
 
-class FakeCommandExtension extends CommandExtension {
-  public readonly commands = [BasicCommand];
-}
-
+@Container.serviceProvider({
+  commands: [
+    BasicCommand,
+  ]
+})
 class BasicServiceProvider extends Parents.ServiceProvider {
-  extensions = [FakeCommandExtension];
+  extensions = [CommandExtension];
 }
 
 describe('Command extension', () => {
@@ -57,8 +58,8 @@ describe('Command extension', () => {
   });
 
   it('should work', (done) => {
-    const container = new Container.Container();
-    const serviceProvider = new FakeCommandExtension(container);
+    const serviceProvider = new BasicServiceProvider();
+    const container = serviceProvider.getContainer();
     serviceProvider.register().then(() => {
       serviceProvider.init().then(() => {
         const commander = container.get<CommandRegistry>(CommandRegistry);

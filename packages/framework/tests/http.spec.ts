@@ -11,22 +11,28 @@ import { Kernel } from '../src/Kernel';
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
 
-class StringServiceProvider extends Parents.ServiceProvider {
-  readonly children = [ParentStringServiceProvider];
+@Container.serviceProvider({
+  children: [
+    ParentStringServiceProvider,
+  ],
+  handlers: [
+    httpHandlerFactory('math', 'http://127.0.0.1:8080'),
+  ]
+})
+class StringServiceProvider extends Parents.ServiceProvider {}
 
-  readonly handlers = [httpHandlerFactory('math', 'http://127.0.0.1:8080')];
-}
-
-@Container.injectable()
+@Container.kernel({
+  children: [MathServiceProvider],
+})
 class MathKernel extends Kernel {
   name = 'math';
-  readonly children = [MathServiceProvider];
 }
 
-@Container.injectable()
+@Container.kernel({
+  children: [StringServiceProvider],
+})
 class StringKernel extends Kernel {
   name = 'string';
-  readonly children = [StringServiceProvider];
 }
 
 function makeRPCCall(port: number, req: { method: string; params?: any }[]) {

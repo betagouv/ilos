@@ -65,6 +65,12 @@ export function serviceProvider(config: AnyConfig) {
   }
 }
 
+export function kernel(config: AnyConfig) {
+  return function(target) {
+    return extensionTag(config)(target);
+  }
+}
+
 export function command() { return injectable(); }
 export function middleware() { return injectable(); }
 export function lib() { return injectable(); }

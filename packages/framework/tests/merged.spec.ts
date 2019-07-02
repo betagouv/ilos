@@ -9,12 +9,13 @@ import { ServiceProvider as MathServiceProvider } from './mock/MathService/Servi
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
 
 
-@Container.injectable()
-class MyKernel extends Kernel {
-  readonly children = [
+@Container.kernel({
+  children: [
     MathServiceProvider,
     StringServiceProvider,
-  ];
+  ],
+})
+class MyKernel extends Kernel {
 }
 
 function makeRPCCall(port: number, req: { method: string; params?: any }[]) {

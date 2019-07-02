@@ -2,7 +2,7 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Parents, Container, Types } from '@ilos/core';
+import { Parents, Container, Types, Interfaces } from '@ilos/core';
 
 import { CommandExtension } from '../extensions/CommandExtension';
 import { Command } from '../parents/Command';
@@ -27,16 +27,14 @@ class BasicCommand extends Command {
     return `Hello ${name}`;
   }
 }
-class BasicCommandExtension extends CommandExtension {
-  public readonly commands = [BasicCommand];
-}
 
+@Container.kernel({
+  commands: [BasicCommand]
+})
 class BasicKernel extends Parents.Kernel {
-  alias = [
-    CommandRegistry,
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    CommandExtension,
   ];
-
-  extensions = [BasicCommandExtension];
 }
 
 describe('Cli transport', () => {

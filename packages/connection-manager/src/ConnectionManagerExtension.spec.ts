@@ -1,9 +1,9 @@
-import { Parents, Container } from '@ilos/core';
+import { Parents, Container, Extensions } from '@ilos/core';
 import { ConfigInterfaceResolver } from '@ilos/config';
 import { expect } from 'chai';
 
-import { ConnectionManager } from './ConnectionManager';
-import { ConnectionInterface, ConnectionDeclarationType } from './ConnectionManagerInterfaces';
+import { ConnectionManagerExtension } from './ConnectionManagerExtension';
+import { ConnectionInterface } from './ConnectionManagerInterfaces';
 
 class FakeDriverOne implements ConnectionInterface {
   constructor(public config: object) {
@@ -98,9 +98,11 @@ class FakeConfigProvider extends ConfigInterfaceResolver {
   }
 }
 
-
-class ConnectionExtension extends ConnectionManager {
-  readonly connections: ConnectionDeclarationType[] = [
+@Container.serviceProvider({
+  providers: [
+    [ConfigInterfaceResolver, FakeConfigProvider],
+  ],
+  connections: [
     {
       use: FakeDriverOne,
       withConfig: 'hello.world',
@@ -122,16 +124,13 @@ class ConnectionExtension extends ConnectionManager {
       inside: [FakeProviderOne],
     },
     [FakeDriverThree, 'hello.you'],
-  ];
-}
-
+  ],
+})
 class ServiceProvider extends Parents.ServiceProvider {
-  readonly extensions = [ConnectionExtension];
-
-  async register() {
-    this.getContainer().bind(ConfigInterfaceResolver).to(FakeConfigProvider);
-    return super.register();
-  }
+  readonly extensions = [
+    Extensions.Providers,
+    ConnectionManagerExtension,
+  ];
 }
 
 describe('Connection manager', () => {

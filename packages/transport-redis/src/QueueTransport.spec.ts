@@ -47,12 +47,17 @@ class BasicTwoAction extends Parents.Action {
   }
 }
 
-class BasicServiceProvider extends Parents.ServiceProvider {
-  readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [BasicAction, BasicTwoAction];
-}
+@Container.serviceProvider({
+  handlers: [
+    BasicAction, BasicTwoAction,
+  ],
+})
+class BasicServiceProvider extends Parents.ServiceProvider {}
 
+@Container.kernel({
+  children: [BasicServiceProvider],
+})
 class BasicKernel extends Parents.Kernel {
-  children = [BasicServiceProvider];
 }
 
 

@@ -1,7 +1,6 @@
 import { Job, Queue } from 'bull';
 import { Interfaces, Types } from '@ilos/core';
-import { EnvInterfaceResolver } from '@ilos/env';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { RedisConnection } from '@ilos/connection-redis';
 
 import { bullFactory } from './helpers/bullFactory';
 
@@ -14,24 +13,14 @@ export class QueueHandler implements Interfaces.HandlerInterface {
   private client: Queue;
 
   constructor(
-    private env: EnvInterfaceResolver,
-    private config: ConfigInterfaceResolver,
+    private redis: RedisConnection,
   ) {
-  }
-
-  public boot() {
-    const redisUrl = this.config.get('queue.connexionString');
-    const env = this.env.get('APP_ENV');
-
-    this.client = bullFactory(`${env}-${this.service}`, redisUrl);
+    this.client = bullFactory(this.service, this.redis);
   }
 
   public async call(call: Types.CallType): Promise<Job> {
     try {
       const { method, params, context } = call;
-      // TODO : add channel ?
-      await this.client.isReady();
-
       const job = await this.client.add(method, {
         method,
         jsonrpc: '2.0',

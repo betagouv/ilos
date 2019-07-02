@@ -10,10 +10,11 @@ export interface LoggerInterface extends Interfaces.ProviderInterface {
   log(message: LogMessageType): void;
 }
 
+export interface LoggerDriverInterface {
+  log(level: string, message: string, meta: any): void;
+}
+
 export abstract class LoggerInterfaceResolver implements LoggerInterface {
-  async boot() {
-    return;
-  }
   debug(message: string, meta?: any): void {
     throw new Error();
   }

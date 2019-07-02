@@ -1,12 +1,12 @@
 // tslint:disable max-classes-per-file
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
-import { Parents, Container } from '@ilos/core';
+import { Parents, Container, Extensions } from '@ilos/core';
 import { Config, ConfigInterfaceResolver } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
-import { ConnectionManager as ParentConnectionManager, ConnectionDeclarationType } from '@ilos/connection-manager';
+import { ConnectionManager } from '@ilos/connection-manager';
 
-import { ParentRepositoryProvider } from '../src/index';
+import { ParentRepository } from '../src/index';
 
 let mongoServer;
 let connectionString;
@@ -38,12 +38,12 @@ class FakeConfig extends Config {
 }
 
 @Container.provider()
-class UserRepositoryProvider extends ParentRepositoryProvider {
+class UserRepository extends ParentRepository {
   constructor(
     protected config: ConfigInterfaceResolver,
-    protected mongoProvider: MongoConnection
+    protected mongo: MongoConnection
   ) {
-    super(config, mongoProvider);
+    super(config, mongo);
   }
 
   public getKey(): string {
@@ -77,26 +77,22 @@ class UserRepositoryProvider extends ParentRepositoryProvider {
   }
 }
 
-class ConnectionManager extends ParentConnectionManager {
-  readonly connections: ConnectionDeclarationType[] = [
+@Container.kernel({
+  connections: [
     [MongoConnection, 'mongo'],
-  ];
-}
-
-class Kernel extends Parents.Kernel {
-  alias = [
+  ],
+  providers: [
+    UserRepository,
     [ConfigInterfaceResolver, FakeConfig],
-    UserRepositoryProvider
-  ];
-
-  serviceProviders = [
-    ConnectionManager,
-  ];
+  ],
+})
+class Kernel extends Parents.Kernel {
+  extensions = [Extensions.Providers, ConnectionManager];
 }
 
 const kernel = new Kernel();
 
-describe('Repository provider', () => {
+describe('Repository ', () => {
   before(async () => {
     mongoServer = new MongoMemoryServer();
     connectionString = await mongoServer.getConnectionString();
@@ -104,7 +100,7 @@ describe('Repository provider', () => {
     config.mongo.connectionString = connectionString;
     config.mongo.db = dbName;
 
-    await kernel.boot();
+    await kernel.bootstrap();
   });
 
   after(async () => {
@@ -113,12 +109,12 @@ describe('Repository provider', () => {
   });
 
   beforeEach(async () => {
-    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
+    const repository = <UserRepository>kernel.getContainer().get(UserRepository);
     await repository.clear();
   });
 
   it('should create new document', async () => {
-    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
+    const repository = <UserRepository>kernel.getContainer().get(UserRepository);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -126,7 +122,7 @@ describe('Repository provider', () => {
   });
 
   it('should list documents', async () => {
-    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
+    const repository = <UserRepository>kernel.getContainer().get(UserRepository);
     await repository.create({
       name: 'Tom',
     });
@@ -136,7 +132,7 @@ describe('Repository provider', () => {
   });
 
   it('should find document', async () => {
-    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
+    const repository = <UserRepository>kernel.getContainer().get(UserRepository);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -145,7 +141,7 @@ describe('Repository provider', () => {
   });
 
   it('should delete document', async () => {
-    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
+    const repository = <UserRepository>kernel.getContainer().get(UserRepository);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -155,7 +151,7 @@ describe('Repository provider', () => {
   });
 
   it('should patch document', async () => {
-    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
+    const repository = <UserRepository>kernel.getContainer().get(UserRepository);
     const r = await repository.create({
       name: 'Tom',
     });
@@ -164,7 +160,7 @@ describe('Repository provider', () => {
   });
 
   it('should replace document', async () => {
-    const repository = <UserRepositoryProvider>kernel.getContainer().get(UserRepositoryProvider);
+    const repository = <UserRepository>kernel.getContainer().get(UserRepository);
     const r = await repository.create({
       name: 'Tom',
     });

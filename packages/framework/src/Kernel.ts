@@ -1,23 +1,25 @@
-import { Parents, Extensions, Interfaces } from '@ilos/core';
-import { Env, EnvInterfaceResolver } from '@ilos/env';
-import { Config, ConfigInterfaceResolver } from '@ilos/config';
+import { Parents, Extensions, Interfaces, Container } from '@ilos/core';
 import { Commands, CommandExtension } from '@ilos/cli';
+import { ConfigExtension } from '@ilos/config';
+import { ConnectionManagerExtension } from '@ilos/connection-manager';
+import { LoggerExtension } from '@ilos/logger';
 
+@Container.kernel({
+  providers: [],
+  commands: [
+    Commands.CallCommand,
+    Commands.ListCommand,
+    Commands.ScaffoldCommand,
+  ]
+})
 export class Kernel extends Parents.Kernel {
-  readonly extensions: Interfaces.ServiceContainerConstructorInterface[] = [
-    class extends Extensions.Bindings {
-      readonly alias = [
-        [EnvInterfaceResolver, Env],
-        [ConfigInterfaceResolver, Config],
-      ];    
-    },
-    class extends CommandExtension {
-      commands = [
-        Commands.CallCommand,
-        Commands.ListCommand,
-        Commands.ScaffoldCommand,
-      ];
-    },
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    ConfigExtension,
+    LoggerExtension,
+    ConnectionManagerExtension,
+    CommandExtension,
+    Extensions.Middlewares,
+    Extensions.Providers,
+    Extensions.Handlers,
   ];
 }
-
