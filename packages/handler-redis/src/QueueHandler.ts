@@ -4,7 +4,7 @@ import { RedisConnection } from '@ilos/connection-redis';
 
 import { bullFactory } from './helpers/bullFactory';
 
-export class QueueHandler implements Interfaces.HandlerInterface {
+export class QueueHandler implements Interfaces.HandlerInterface, Interfaces.InitHookInterface {
   public readonly middlewares: (string|[string, any])[] = [];
 
   protected readonly service: string;
@@ -13,12 +13,18 @@ export class QueueHandler implements Interfaces.HandlerInterface {
   private client: Queue;
 
   constructor(
-    private redis: RedisConnection,
-  ) {
-    this.client = bullFactory(this.service, this.redis);
+    protected redis: RedisConnection,
+  ) {}
+
+  public async init() {
+    this.client = bullFactory(this.service, this.redis.getClient());
   }
 
   public async call(call: Types.CallType): Promise<Job> {
+    if (!this.client) {
+      throw new Error('Redis queue handler initialization error');
+    }
+
     try {
       const { method, params, context } = call;
       const job = await this.client.add(method, {
