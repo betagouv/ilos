@@ -21,6 +21,7 @@ export class ConnectionManagerExtension implements Interfaces.RegisterHookInterf
   async register(serviceContainer: Interfaces.ServiceContainerInterface): Promise<void> {
     const container = serviceContainer.getContainer();
     this.config = container.get(ConfigInterfaceResolver);
+
     for(const serviceConnectionDeclaration of this.connections) {
       if (Array.isArray(serviceConnectionDeclaration)) {
         const [connectionConstructor, connectionConfig, serviceConstructors] = serviceConnectionDeclaration;
@@ -30,6 +31,7 @@ export class ConnectionManagerExtension implements Interfaces.RegisterHookInterf
         this.registerConnectionRequest(connectionConstructor, connectionConfig, serviceConstructors);
       }
     }
+
     this.setUpContainer(container);
   }
 
@@ -83,22 +85,21 @@ export class ConnectionManagerExtension implements Interfaces.RegisterHookInterf
       } catch {
         // do nothings
       }
-
       if (fallback) {
         container
           .bind(connectionConstructor)
           .toConstantValue(fallback)
           .when((request) => {
             const parentRequest = request.parentRequest;
-            if (parentRequest !== null) {
-              const binding = parentRequest.bindings[0];
-              if (binding) {
-                const constructor = parentRequest.bindings[0].implementationType;
-                return !(connectionMapRegistry.has(constructor));
-              }
+            if (parentRequest === null) {
               return true;
             }
-            return true;
+            const binding = parentRequest.bindings[0];
+            if (!binding) {
+              return true;
+            }
+            const constructor = parentRequest.bindings[0].implementationType;
+            return !(connectionMapRegistry.has(constructor));
           });
       }
     }
@@ -114,7 +115,7 @@ export class ConnectionManagerExtension implements Interfaces.RegisterHookInterf
       this.getConfig(connectionConfigurationKey),
       constructors.length === 0,
     );
-    
+
     if (!(this.connectionMappingRegistry.has(connectionConstructor))) {
       this.connectionMappingRegistry.set(connectionConstructor, new Map());
     }
