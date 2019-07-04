@@ -158,7 +158,7 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
   }
 
   protected registerExtensions(extensions: ExtensionStaticInterface[]) {
-    const container = this.getContainer();
+    const container = this.getContainer().root;
     for(const index in extensions) {
       const extension = extensions[index];
       const containerExtensionKey = `extension:${extension.key}`;
@@ -177,7 +177,6 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
     const extensions = container
       .getAll<{key: string, index: number}>('extensions')
       .sort((a, b) => a.index - b.index);
-
     for(const { key: extensionKey } of extensions) {
       if (Reflect.hasMetadata(extensionKey, this.constructor)) {
         const extensionConfig = Reflect.getMetadata(extensionKey, this.constructor);
