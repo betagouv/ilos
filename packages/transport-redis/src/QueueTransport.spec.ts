@@ -2,12 +2,15 @@
 import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { Container, Types, Interfaces, Parents } from '@ilos/core';
+import { Container, Types, Interfaces, Parents, Extensions } from '@ilos/core';
+import { QueueExtension } from '@ilos/queue';
+import { EnvInterfaceResolver } from '@ilos/env';
 
 import * as Bull from './helpers/bullFactory';
 import { QueueTransport } from './QueueTransport';
 
 const sandbox = sinon.createSandbox();
+process.env.APP_WORKER = 'true';
 
 @Container.handler({
   service: 'math',
@@ -47,12 +50,31 @@ class BasicTwoAction extends Parents.Action {
   }
 }
 
+@Container.provider({
+  identifier: EnvInterfaceResolver,
+})
+class FakeEnvProvider extends EnvInterfaceResolver {
+  get() {
+    return true;
+  }
+}
+
 @Container.serviceProvider({
+  providers: [
+    [EnvInterfaceResolver, FakeEnvProvider],
+  ],
   handlers: [
     BasicAction, BasicTwoAction,
   ],
+  queues: ['math'],
 })
-class BasicServiceProvider extends Parents.ServiceProvider {}
+class BasicServiceProvider extends Parents.ServiceProvider {
+  extensions = [
+    Extensions.Providers,
+    Extensions.Handlers,
+    QueueExtension,
+  ];
+}
 
 @Container.kernel({
   children: [BasicServiceProvider],
@@ -84,9 +106,9 @@ describe('Queue transport', () => {
     const kernel = new BasicKernel();
     await kernel.bootstrap();
     const queueTransport = new QueueTransport(kernel);
-    await queueTransport.up(['redis://localhost', 'prod']);
+    await queueTransport.up(['redis://localhost']);
     expect(queueTransport.queues.length).to.equal(1);
-    expect(queueTransport.queues[0].name).to.equal('prod-math');
+    expect(queueTransport.queues[0].name).to.equal('math');
     const response = await queueTransport.queues[0].add({
       data: {
         id: null,
