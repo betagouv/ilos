@@ -14,6 +14,13 @@ export class Container extends InversifyContainer implements ContainerInterface 
   protected handlersRegistry: HandlerConfig[] = [];
   parent: Container | null;
 
+  get root(): Container {
+    if (this.parent) {
+      return this.parent.root;
+    }
+    return this;
+  }
+
   /**
    * Creates an instance of Container.
    * @param {interfaces.ContainerOptions} [containerOptions]

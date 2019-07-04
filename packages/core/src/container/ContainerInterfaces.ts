@@ -20,6 +20,7 @@ export type HandlerConfig = {
 export type HandlerContainerConfig = HandlerConfig | AnyConfig;
 
 export interface ContainerInterface extends interfaces.Container {
+  root: ContainerInterface;
   setHandler(handler: Types.NewableType<Interfaces.HandlerInterface>): Interfaces.HandlerInterface;
   getHandler(config: HandlerConfig): Interfaces.HandlerInterface;
   getHandlers(): HandlerConfig[];
