@@ -3,8 +3,13 @@ import { EnvInterfaceResolver } from '@ilos/env';
 import { queueHandlerFactory } from '@ilos/handler-redis';
 import { QueueConfigType, QueueTargetType } from './QueueTypes';
 
-export class QueueExtension {
-  static readonly key: string = 'queue';
+export class QueueExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
+  static readonly key: string = 'queues';
+
+  static get containerKey() {
+    return Symbol.for('queues');
+  }
+
   protected isWorker = false;
 
   constructor(
@@ -18,7 +23,6 @@ export class QueueExtension {
     if (container.isBound(EnvInterfaceResolver)) {
       this.isWorker = container.get(EnvInterfaceResolver).get('APP_WORKER', false);
     }
-
     const targets = this.filterTargets(
       [...(Array.isArray(this.config) ? this.config : this.config.for)],
       serviceContainer,
@@ -27,31 +31,47 @@ export class QueueExtension {
     this.registerQueue(targets, serviceContainer);
   }
 
-  protected filterTargets(
-    targets: QueueTargetType[],
+  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+    if (this.isWorker) {
+      this.isProcessable(serviceContainer);
+    }
+  }
+
+  protected isProcessable(
     serviceContainer: Interfaces.ServiceContainerInterface,
-  ): QueueTargetType[] {
-    const container = serviceContainer.getContainer();
+  ) {
+    const rootContainer = serviceContainer.getContainer().root;
     const registredHandlers = Array.from(
       new Set(
-        container
+        rootContainer
           .getHandlers()
           .filter((cfg) => 'local' in cfg && cfg.local && ('queue' in cfg && !cfg.queue))
           .map((cfg) => cfg.service),
       ),
     );
-    let registredQueues: QueueTargetType[] = [];
-    if (container.isBound(Symbol.for('queues'))) {
-      registredQueues = container.getAll<QueueTargetType>(Symbol.for('queues'));
-    }
+    const targets = rootContainer.getAll<string>(QueueExtension.containerKey);
+    const unprocessableTargets = targets.filter(
+      (service: string) => (registredHandlers.indexOf(service) < 0)
+    );
 
+    if (unprocessableTargets.length > 0 ) {
+      throw new Error(`Unprocessable queue listeners: ${unprocessableTargets.join(', ')}`);
+    }
+  }
+
+  protected filterTargets(
+    targets: QueueTargetType[],
+    serviceContainer: Interfaces.ServiceContainerInterface,
+  ): QueueTargetType[] {
+    const rootContainer = serviceContainer.getContainer().root;
+
+    let registredQueues: QueueTargetType[] = [];
+    if (rootContainer.isBound(QueueExtension.containerKey)) {
+      registredQueues = rootContainer.getAll<QueueTargetType>(QueueExtension.containerKey);
+    }
     return targets.filter((target) => {
       // if already registred, filter it
       if (registredQueues.indexOf(target) !== -1) {
-        return false;
-      }
-      // if no native handler is present, filter it
-      if (registredHandlers.indexOf(target) < 0) {
         return false;
       }
       return true;
@@ -63,8 +83,13 @@ export class QueueExtension {
     serviceContainer: Interfaces.ServiceContainerInterface
   ) {
     for(const target of targets) {
-      serviceContainer.getContainer().bind(Symbol.for('queues')).toConstantValue(target);
+      serviceContainer
+        .getContainer()
+        .root
+        .bind(QueueExtension.containerKey)
+        .toConstantValue(target);
     }
+
     if (!this.isWorker) {
       this.registerQueueHandlers(targets, serviceContainer);
     }

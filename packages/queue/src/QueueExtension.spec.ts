@@ -33,7 +33,7 @@ describe('Queue extension', () => {
     }
 
     @Container.serviceProvider({
-      queue: ['serviceA', 'serviceB'],
+      queues: ['serviceA', 'serviceB'],
       config: {
         redis: {},
       },
@@ -62,7 +62,7 @@ describe('Queue extension', () => {
     await service.register();
 
     const container = service.getContainer();
-    const queueRegistrySymbol = Symbol.for('queues');
+    const queueRegistrySymbol = QueueExtension.containerKey;
     expect(container.isBound(queueRegistrySymbol)).to.eq(true);
 
     const queueRegistry = container.getAll(queueRegistrySymbol);
@@ -78,7 +78,7 @@ describe('Queue extension', () => {
   it('should register queue name in container and handlers', async () => {
 
     @Container.serviceProvider({
-      queue: ['serviceA', 'serviceB'],
+      queues: ['serviceA', 'serviceB'],
       config: {
         redis: {},
       },
@@ -103,7 +103,7 @@ describe('Queue extension', () => {
     await service.register();
 
     const container = service.getContainer();
-    const queueRegistrySymbol = Symbol.for('queues');
+    const queueRegistrySymbol = QueueExtension.containerKey;
     expect(container.isBound(queueRegistrySymbol)).to.eq(true);
 
     const queueRegistry = container.getAll(queueRegistrySymbol);
