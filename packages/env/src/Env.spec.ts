@@ -18,19 +18,19 @@ describe('Env', () => {
 
   it('should work', async () => {
     const env = new Env();
-    await env.boot();
+    await env.init();
     expect(env.get('HELLO')).to.equal('world');
   });
 
   it('should raise exception if key is not found', async () => {
     const env = new Env();
-    await env.boot();
+    await env.init();
     expect(() => env.get('HELLO2')).throws(Error, 'Unknown env key HELLO2');
   });
 
   it('should return fallback if key not found', async () => {
     const env = new Env();
-    await env.boot();
+    await env.init();
     expect(env.get('HELLO2', 'world')).to.equal('world');
   });
 });

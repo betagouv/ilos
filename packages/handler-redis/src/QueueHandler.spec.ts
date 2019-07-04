@@ -3,6 +3,8 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { RedisConnection } from '@ilos/connection-redis';
+
 import * as Bull from './helpers/bullFactory';
 import { queueHandlerFactory } from './helpers/queueHandlerFactory';
 
@@ -17,6 +19,14 @@ const defaultContext = {
     service: '',
   },
 };
+
+class FakeRedis extends RedisConnection {
+  getClient() {
+    return null;
+  }
+}
+
+const fakeConnection = new FakeRedis({});
 
 describe('Queue handler', () => {
   beforeEach(() => {
@@ -42,7 +52,8 @@ describe('Queue handler', () => {
     sandbox.restore();
   });
   it('works', async () => {
-    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))();
+    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
+    await queueProvider.init();
     const result = await queueProvider.call({
       method: 'basic@latest:method',
       params: { add: [1, 2] },
@@ -58,7 +69,8 @@ describe('Queue handler', () => {
     });
   });
   it('raise error if fail', async () => {
-    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))();
+    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
+    await queueProvider.init();
     return (<any>assert).isRejected(
       queueProvider.call({
         method: 'nope',

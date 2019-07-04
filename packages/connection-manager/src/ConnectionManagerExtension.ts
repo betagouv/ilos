@@ -110,9 +110,10 @@ export class ConnectionManagerExtension implements Interfaces.RegisterHookInterf
     connectionConfigurationKey: string,
     constructors: Types.NewableType<any>[] = [],
   ): void {
+    const connectionConfiguration = this.getConfig(connectionConfigurationKey);
     const configurationToken = this.connectionRequest(
       connectionConstructor,
-      this.getConfig(connectionConfigurationKey),
+      connectionConfiguration,
       constructors.length === 0,
     );
 

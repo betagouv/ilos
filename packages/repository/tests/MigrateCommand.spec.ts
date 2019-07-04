@@ -3,10 +3,10 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
 
 import { Parents, Container, Interfaces, Extensions } from '@ilos/core';
-import { Config, ConfigInterfaceResolver } from '@ilos/config';
+import { Config, ConfigInterfaceResolver, ConfigExtension } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
 
-import { ConnectionManager } from '@ilos/connection-manager';
+import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { ParentMigrateCommand, ParentMigration } from '../src/commands/ParentMigrateCommand';
 
 let mongoServer;
@@ -29,25 +29,27 @@ const config = {
 
 @Container.provider()
 class FakeConfig extends Config {
-  protected config: object = {
-    //
-  };
-
-  async boot() {
-    this.config = config;
+  async init() {
+    // do nothing
+  }
+  get config() {
+    return config;
+  }
+  set config(_value) {
+    // do nothin
   }
 }
 
 @Container.kernel({
-  connections: [
-    [MongoConnection, 'mongo'],
-  ],
   providers: [
     [ConfigInterfaceResolver, FakeConfig],
   ],
+  connections: [
+    [MongoConnection, 'mongo'],
+  ],
 })
 class Kernel extends Parents.Kernel {
-  extensions = [Extensions.Providers, ConnectionManager];
+  extensions = [Extensions.Providers, ConnectionManagerExtension];
 }
 
 const kernel = new Kernel();

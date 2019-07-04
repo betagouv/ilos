@@ -28,7 +28,7 @@ import {
 } from '../interfaces/hooks';
 
 import { ExtensionInterface, ExtensionStaticInterface } from '../interfaces/ExtentionInterface';
-import { NewableType } from '../types';
+import { IdentifierType } from '../types';
 
 /**
  * Service container parent class
@@ -133,7 +133,7 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
     }
   }
 
-  public registerHooks(hooker: object, identifier?: NewableType<any>): void {
+  public registerHooks(hooker: object, identifier?: IdentifierType): void {
     if (hasInterface<RegisterHookInterface>(hooker, 'register') && !identifier) {
       this.addRegisterHook(async (container) => hooker.register(container));
     }

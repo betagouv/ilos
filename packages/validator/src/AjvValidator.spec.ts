@@ -28,7 +28,7 @@ class FakeObject {
 describe('Json Schema provider', () => {
   beforeEach(async () => {
     provider = new AjvValidator(fakeConfig);
-    await provider.boot();
+    provider.boot();
   });
 
   it('should work', async () => {

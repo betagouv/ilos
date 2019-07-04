@@ -15,7 +15,7 @@ import { EnvInterface } from './EnvInterfaces';
 export class Env implements EnvInterface {
   private env: Map<string, any> = new Map();
 
-  boot() {
+  async init() {
     const envPath = ('APP_ROOT_PATH' in process.env) ? process.env.APP_ROOT_PATH : process.cwd();
     this.loadFromProcess();
     this.loadEnvFile(envPath);

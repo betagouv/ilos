@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { Parents, Container, Extensions } from '@ilos/core';
 import { Config, ConfigInterfaceResolver } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
-import { ConnectionManager } from '@ilos/connection-manager';
+import { ConnectionManagerExtension } from '@ilos/connection-manager';
 
 import { ParentRepository } from '../src/index';
 
@@ -28,12 +28,14 @@ class User {
 }
 @Container.provider()
 class FakeConfig extends Config {
-  protected config: object = {
-    //
-  };
-
-  async boot() {
-    this.config = config;
+  async init() {
+    // do nothing
+  }
+  get config() {
+    return config;
+  }
+  set config(_value) {
+    // do nothin
   }
 }
 
@@ -87,7 +89,7 @@ class UserRepository extends ParentRepository {
   ],
 })
 class Kernel extends Parents.Kernel {
-  extensions = [Extensions.Providers, ConnectionManager];
+  extensions = [Extensions.Providers, ConnectionManagerExtension];
 }
 
 const kernel = new Kernel();
@@ -99,7 +101,6 @@ describe('Repository ', () => {
     dbName = await mongoServer.getDbName();
     config.mongo.connectionString = connectionString;
     config.mongo.db = dbName;
-
     await kernel.bootstrap();
   });
 

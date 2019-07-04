@@ -23,9 +23,7 @@ describe('Container', () => {
     class Test implements Interfaces.HandlerInterface {
       public readonly middlewares = [];
       constructor(public hello: Hello) {}
-      boot() {
-        //
-      }
+
       async call(call: Types.CallType) {
         return;
       }
@@ -68,9 +66,7 @@ describe('Container', () => {
     class Test implements Interfaces.HandlerInterface {
       public readonly middlewares = [];
       constructor(public hello: Hello) {}
-      boot() {
-        //
-      }
+
       async call(call: Types.CallType) {
         return;
       }
@@ -102,9 +98,7 @@ describe('Container', () => {
     class Test implements Interfaces.HandlerInterface {
       public readonly middlewares = [];
       constructor(public hello: Hello) {}
-      boot() {
-        //
-      }
+
       async call(call: Types.CallType) {
         return;
       }

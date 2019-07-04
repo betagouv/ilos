@@ -7,7 +7,7 @@ import { EnvInterfaceResolver } from '@ilos/env';
 import { Config } from './Config';
 
 class FakeEnv extends EnvInterfaceResolver {
-  async boot() {
+  async init() {
     return;
   }
 
@@ -26,7 +26,7 @@ describe('Config provider', () => {
     });
 
     const config = new Config(new FakeEnv());
-    await config.boot();
+    await config.init();
     expect(config.get('helloWorld')).to.deep.equal({
       hi: [
         { name: 'john' },
@@ -47,7 +47,7 @@ describe('Config provider', () => {
     });
 
     const config = new Config(new FakeEnv());
-    await config.boot();
+    await config.init();
     expect(config.get('helloWorld')).to.deep.include({
       hi: [
         { name: 'john' },
@@ -68,7 +68,7 @@ describe('Config provider', () => {
     });
 
     const config = new Config(new FakeEnv());
-    await config.boot();
+    await config.init();
     expect(config.get('hello', 'world')).to.equal('world');
 
     mockFs.restore();

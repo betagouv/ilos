@@ -63,7 +63,7 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
   ) {}
 
   public async call({ rollback, reset, status }) {
-    await this.boot();
+    this.getAvailableMigrations();
 
     if (status) {
       return this.status();
@@ -80,7 +80,7 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
     return this.process();
   }
 
-  protected boot() {
+  protected getAvailableMigrations() {
     const container = this.kernel.getContainer();
     this.migrations.forEach((migration) => {
       const migrationInstance = container.get(migration);

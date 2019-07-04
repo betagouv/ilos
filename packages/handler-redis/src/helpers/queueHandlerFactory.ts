@@ -1,9 +1,9 @@
-import { Container, Types, Interfaces } from '@ilos/core';
+import { Container, Types } from '@ilos/core';
 import { RedisConnection } from '@ilos/connection-redis';
 
 import { QueueHandler } from '../QueueHandler';
 
-export function queueHandlerFactory(service: string, version?: string): Types.NewableType<Interfaces.HandlerInterface> {
+export function queueHandlerFactory(service: string, version?: string): Types.NewableType<QueueHandler> {
   @Container.handler({
     service,
     version,

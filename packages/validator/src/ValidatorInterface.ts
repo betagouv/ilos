@@ -7,7 +7,7 @@ export interface ValidatorInterface extends Interfaces.ProviderInterface {
 }
 
 export abstract class ValidatorInterfaceResolver implements ValidatorInterface {
-  boot(): Promise<void> | void {
+  boot(): void {
     return;
   }
   registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorInterface {

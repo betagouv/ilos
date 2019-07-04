@@ -49,8 +49,8 @@ const url: RegExp = /mailjet/;
 const endpoint: RegExp = /send/;
 
 describe('Notification service', async () => {
-  before(async () => {
-    await provider.boot();
+  before(() => {
+    provider.boot();
   });
 
   afterEach(() => {

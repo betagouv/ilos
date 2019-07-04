@@ -21,7 +21,7 @@ export class Config implements ConfigInterface {
   private configPaths: Set<string> = new Set();
   constructor(protected env: EnvInterfaceResolver) {}
 
-  async boot() {
+  async init() {
     const defaultConfigFolder = this.env.get('APP_WORKING_PATH', process.cwd()); 
     const defaultConfigDir = this.env.get('APP_CONFIG_DIR', './config');
     try {
