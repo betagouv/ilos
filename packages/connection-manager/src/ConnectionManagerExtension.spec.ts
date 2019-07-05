@@ -140,8 +140,18 @@ describe('Connection manager', () => {
     await sp.init();
     const p1 = sp.getContainer().get(FakeProviderOne);
     const p2 = sp.getContainer().get(FakeProviderTwo);
+
+    // all instances are bound
+    expect(p1.driverOne).to.be.instanceOf(FakeDriverOne);
+    expect(p1.driverTwo).to.be.instanceOf(FakeDriverTwo);
+    expect(p1.driverThree).to.be.instanceOf(FakeDriverThree);
+
+    expect(p2.driverOne).to.be.instanceOf(FakeDriverOne);
+    expect(p2.driverTwo).to.be.instanceOf(FakeDriverTwo);
+    expect(p2.driverThree).to.be.instanceOf(FakeDriverThree);
+
     // shared = false
-    expect(p1.driverOne).not.to.eq(p2.driverTwo);
+    expect(p1.driverOne).not.to.eq(p2.driverOne);
     // shared = true
     expect(p1.driverTwo).to.eq(p2.driverTwo);
     // shared = true but config is different
