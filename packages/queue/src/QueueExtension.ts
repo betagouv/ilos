@@ -101,8 +101,8 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
   ) {
     for(const target of targets) {
       const handler: Types.NewableType<Interfaces.HandlerInterface> = queueHandlerFactory(target);
-      const handlerInstance = serviceContainer.getContainer().setHandler(handler);
-      serviceContainer.registerHooks(handlerInstance);
+      serviceContainer.getContainer().setHandler(handler);
+      serviceContainer.registerHooks(handler.prototype, handler);
     }
   }
 }

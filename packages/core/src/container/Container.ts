@@ -144,27 +144,23 @@ export class Container extends InversifyContainer implements ContainerInterface 
    * @returns
    * @memberof Container
    */
-  protected setHandlerFinal(handlerConfig: HandlerConfig, resolvedHandler: any) {
-    if (this.parent) {
-      this.parent.setHandlerFinal(handlerConfig, resolvedHandler);
-      return;
-    }
+  protected setHandlerFinal(handlerConfig: HandlerConfig, handlerResolver: () => Interfaces.HandlerInterface) {
+    const container = this.root;
     const normalizedHandlerConfig = normalizeHandlerConfig(handlerConfig);
 
     if (!normalizedHandlerConfig.containerSignature) {
       throw new Error('Oups');
     }
-    this.handlersRegistry.push(normalizedHandlerConfig);
-    this.bind<Interfaces.HandlerInterface>(normalizedHandlerConfig.containerSignature).toConstantValue(resolvedHandler);
+    container.handlersRegistry.push(normalizedHandlerConfig);
+    container.bind<Interfaces.HandlerInterface>(normalizedHandlerConfig.containerSignature).toDynamicValue(handlerResolver);
   }
-
 
   /**
    * Set an handler
    * @param {Types.NewableType<Interfaces.HandlerInterface>} handler
    * @memberof Container
    */
-  setHandler(handler: Types.NewableType<Interfaces.HandlerInterface>): Interfaces.HandlerInterface {
+  setHandler(handler: Types.NewableType<Interfaces.HandlerInterface>): void {
     const service = Reflect.getMetadata(HANDLER_META.SERVICE, handler);
     const method = Reflect.getMetadata(HANDLER_META.METHOD, handler);
     const version = Reflect.getMetadata(HANDLER_META.VERSION, handler);
@@ -172,13 +168,16 @@ export class Container extends InversifyContainer implements ContainerInterface 
     const queue = Reflect.getMetadata(HANDLER_META.QUEUE, handler);
 
     const handlerConfig = normalizeHandlerConfig({ service, method, version, local, queue });
-    const resolvedHandler = this.get<Interfaces.HandlerInterface>(<any>handler);
+
+    this.bind(handler).toSelf();
+    const handlerResolver = () => this.get<Interfaces.HandlerInterface>(handler);
+
     // TODO: throw error if not found
     // TODO: throw error if duplicate
 
-    this.setHandlerFinal(handlerConfig, resolvedHandler);
+    this.setHandlerFinal(handlerConfig, handlerResolver);
 
-    return resolvedHandler;
+    return;
   }
 
   createChild(containerOptions: interfaces.ContainerOptions = {}): Container {

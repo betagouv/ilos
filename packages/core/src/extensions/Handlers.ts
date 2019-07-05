@@ -10,8 +10,8 @@ export class Handlers implements RegisterHookInterface {
 
   public async register(serviceContainer: ServiceContainerInterface): Promise<void> {
     for (const handler of this.handlers) {
-      const handlerInstance = serviceContainer.getContainer().setHandler(handler);
-      serviceContainer.registerHooks(handlerInstance);
+      serviceContainer.getContainer().setHandler(handler);
+      serviceContainer.registerHooks(handler.prototype, handler);
     }
   }
 }
