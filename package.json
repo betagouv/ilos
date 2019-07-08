@@ -15,7 +15,7 @@
     "bootstrap": "lerna bootstrap",
     "lint": "lerna run lint",
     "clean": "rm -rf packages/*/dist",
-    "build": "run-s clean build:core build:provider:template build:cli build:provider:env build:provider:config build:connection:manager build:connections build:providers build:handlers build:packages build:queue build:transport build:framework",
+    "build": "run-s clean build:core build:provider:env build:provider:config build:provider:template build:cli build:connection:manager build:connections build:providers build:handlers build:packages build:queue build:transport build:framework",
     "build:core": "lerna run --scope @ilos/core build",
     "build:cli": "lerna run --scope @ilos/cli build",
     "build:queue": "lerna run --scope @ilos/queue build",
