@@ -52,7 +52,7 @@ class UserRepository extends ParentRepository {
     return 'user';
   }
 
-  public getDatabase(): string {
+  public getDbName(): string {
     return 'test';
   }
 

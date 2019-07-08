@@ -16,13 +16,15 @@ export class ConfigExtension implements Interfaces.RegisterHookInterface, Interf
     const container = serviceContainer.getContainer();
 
     if (!container.isBound(EnvInterfaceResolver)) {
-      container.bind(EnvInterfaceResolver).to(Env);
+      throw new Error('Unable to find env provider');
     }
 
-    container.bind(ConfigInterfaceResolver).to(Config);
+    container.bind(Config).toSelf();
+    container.bind(ConfigInterfaceResolver).toService(Config);
+
     serviceContainer.registerHooks(Config.prototype, ConfigInterfaceResolver);
   }
-
+  
   async init(serviceContainer: Interfaces.ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     const config = container.get(ConfigInterfaceResolver);

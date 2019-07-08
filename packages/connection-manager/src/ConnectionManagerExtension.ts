@@ -118,12 +118,6 @@ export class ConnectionManagerExtension implements Interfaces.RegisterHookInterf
     connectionConfigKey: string,
     serviceConstructors: Types.NewableType<any>[] = [],
   ): void {
-    console.log({
-      connectionConstructor,
-      connectionConfigKey,
-      serviceConstructors,
-    });
-
     const connectionConstructorSymbol = this.getConnectionConstructorSymbol(connectionConstructor);
     const instanceSymbol = this.getInstanceSymbol(connectionConfigKey, serviceConstructors.length === 0 ? connectionConstructorSymbol : undefined);
 
@@ -176,7 +170,6 @@ export class ConnectionManagerExtension implements Interfaces.RegisterHookInterf
     configKey: string | { [k:string]: any },
     instanceToken?: Symbol
   ): ConnectionInterface {
-
     const config = (typeof configKey === 'string') ? this.getConfig(configKey) : configKey;
     const connection = new connectionConstructor(config);
 

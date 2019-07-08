@@ -32,9 +32,10 @@ export class Config implements ConfigInterface {
   }
 
   loadConfigDirectory(workingPath: string, configDir?: string) {
+    const configSubFolder = configDir ? configDir : this.env.get('APP_CONFIG_DIR', './config');
     const configFolder = path.resolve(
       workingPath,
-      configDir ? configDir : this.env.get('APP_CONFIG_DIR', './config'),
+      configSubFolder,
     );
 
     if (!fs.existsSync(configFolder) || !fs.lstatSync(configFolder).isDirectory()) {
@@ -47,7 +48,7 @@ export class Config implements ConfigInterface {
 
     this.configPaths.add(configFolder);
     fs.readdirSync(configFolder, 'utf8').forEach((basename) => {
-      const filename = `${configFolder}/${basename}`;
+      const filename = path.join(configFolder, basename);
       const fileinfo = path.parse(filename);
       if (['.yaml', '.yml'].indexOf(fileinfo.ext) > -1) {
         this.set(camelCase(fileinfo.name), this.loadYmlFile(filename));

@@ -3,7 +3,7 @@ import { Parents, Container, Extensions } from '@ilos/core';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ConfigExtension } from '@ilos/config';
-import { EnvInterfaceResolver } from '@ilos/env';
+import { EnvInterfaceResolver, EnvExtension } from '@ilos/env';
 
 import { QueueExtension } from './QueueExtension';
 
@@ -78,6 +78,7 @@ describe('Queue extension', () => {
   it('should register queue name in container and handlers', async () => {
 
     @Container.serviceProvider({
+      env: null,
       queues: ['serviceA', 'serviceB'],
       config: {
         redis: {},
@@ -92,6 +93,7 @@ describe('Queue extension', () => {
     })
     class MyService extends Parents.ServiceProvider {
       extensions = [
+        EnvExtension,
         ConfigExtension,
         ConnectionManagerExtension,
         Extensions.Handlers,

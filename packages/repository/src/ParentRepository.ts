@@ -19,14 +19,14 @@ export abstract class ParentRepository implements ParentRepositoryInterface {
   ) {}
 
   public getDbName(): string {
-    return this.config.get('mongo.db');
+    throw new Error('Database not set');
   }
 
   public getKey(): string {
     throw new Error('Key not set');
   }
 
-  public getDatabase(): string {
+  public getDatabase(): string { // TODO : remove useless method
     throw new Error('Database not set');
   }
 
