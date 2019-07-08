@@ -190,7 +190,10 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
     if (Reflect.hasMetadata('extension:children', this.constructor)) {
       const children = Reflect.getMetadata('extension:children', this.constructor);
       for (const child of children) {
-        this.registerHooks(new child(this.getContainer().createChild()));
+        const childInstance = new child(this.getContainer().createChild());
+        this.getContainer().bind(child).toConstantValue(childInstance);
+        this.getContainer().bind('children').toConstantValue(child);
+        this.registerHooks(childInstance);
       }
     }
   }
