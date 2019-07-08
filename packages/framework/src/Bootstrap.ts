@@ -1,4 +1,4 @@
-import { Bootstrap, Types, CliTransport } from '@ilos/cli';
+import { bootstrap as baseBootstrap, Bootstrap, Types, CliTransport } from '@ilos/cli';
 import { HttpTransport } from '@ilos/transport-http';
 import { QueueTransport } from '@ilos/transport-redis';
 
@@ -14,5 +14,5 @@ const defaultBootstrap: Types.BootstrapType = {
   serviceProviders: [],
 };
 
-export const bootstrap = new Bootstrap(defaultBootstrap);
+export const bootstrap = baseBootstrap.create(defaultBootstrap);
 export { Bootstrap };

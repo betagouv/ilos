@@ -5,10 +5,11 @@ import { CommandRegistry } from './providers';
 import { CommandExtension } from './extensions/CommandExtension';
 import { CliTransport } from './transports/CliTransport';
 import * as Types from './types';
-import { Bootstrap } from './Bootstrap';
+import { Bootstrap, bootstrap } from './Bootstrap';
 
 export {
   Bootstrap,
+  bootstrap,
   CliTransport,
   CommandRegistry,
   Command,

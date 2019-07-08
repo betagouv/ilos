@@ -17,10 +17,14 @@ const defaultBootstrap: BootstrapType = {
 
 export class Bootstrap {
   constructor(
-    public defaultBootstrap: BootstrapType
+    public bootstrap: BootstrapType = {},
   )
   {
-    //
+
+  }
+
+  get serviceProviders() {
+    return this.bootstrap.serviceProviders;
   }
 
   setEnvironment():void {
@@ -60,16 +64,9 @@ export class Bootstrap {
     return bootstrapPath;
   }
 
-  async start(argv: string[], bootstrapPath?: string): Promise<Interfaces.TransportInterface> {
-    const fallbackBootstrap: BootstrapType = this.defaultBootstrap;
+  async start(command: string, ...opts: any[]): Promise<Interfaces.TransportInterface> {
+    const bootstrap = this.bootstrap;
 
-    const [_node, _script, command, ...opts] = argv;
-    let bootstrap = { ...fallbackBootstrap };
-
-    if (bootstrapPath) {
-      const currentBootstrap = await import(bootstrapPath);
-      bootstrap = { ...bootstrap, ...currentBootstrap };
-    }
     const kernelConstructor = bootstrap.kernel();
 
     const serviceProviders = 'serviceProviders' in bootstrap ? bootstrap.serviceProviders : [];
@@ -89,7 +86,12 @@ export class Bootstrap {
       await transport.up(opts);
     } else {
       transport = bootstrap.transport.cli(kernel);
-      await transport.up(argv);
+      await transport.up([
+        null,
+        null,
+        command,
+        opts,
+      ]);
     }
 
     this.registerShutdownHook(kernel, transport);
@@ -114,7 +116,7 @@ export class Bootstrap {
             });
         })
         .catch(() => {
-          process.exit(0);
+          process.exit(1);
         });
     }
 
@@ -122,10 +124,25 @@ export class Bootstrap {
     process.on('SIGTERM', handle);
   }
 
-  async boot(argv: string[]) {
+  async boot(command: string, ...opts: any[]) {
     this.setEnvironment();
+    return this.start(command, opts);
+  }
+
+  async createFromPath(): Promise<Bootstrap> {
     const bootstrapPath = this.getBootstrapFile();
-    return this.start(argv, bootstrapPath);
+    const defaultBootstrap: BootstrapType = {... this.bootstrap };
+
+    let currentBootstrap = {};
+
+    if (bootstrapPath) {
+      currentBootstrap = await import(bootstrapPath);
+    }
+    return new Bootstrap({ ...defaultBootstrap, ...currentBootstrap });
+  }
+
+  create(bootstrap: BootstrapType): Bootstrap {
+    return new Bootstrap({ ...this.bootstrap, ...bootstrap })
   }
 }
 
