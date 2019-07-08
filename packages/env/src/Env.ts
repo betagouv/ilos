@@ -16,9 +16,7 @@ export class Env implements EnvInterface {
   private env: Map<string, any> = new Map();
 
   async init() {
-    const envPath = ('APP_ROOT_PATH' in process.env) ? process.env.APP_ROOT_PATH : process.cwd();
     this.loadFromProcess();
-    this.loadEnvFile(envPath);
   }
 
   loadFromProcess() {
@@ -29,13 +27,18 @@ export class Env implements EnvInterface {
       });
   }
 
-  loadEnvFile(envDirectory: string, envFile?: string) {
-    const envPath = path.resolve(envDirectory, envFile ? envFile : '.env');
-
-    if (!fs.existsSync(envPath)) {
+  loadEnvFile(envFileOrDirectoryPath: string) {
+    let envFilePath = envFileOrDirectoryPath;
+    if (fs.existsSync(envFileOrDirectoryPath) && fs.lstatSync(envFileOrDirectoryPath).isDirectory()) {
+      envFilePath = path.resolve(envFileOrDirectoryPath, '.env');
+    }
+    
+    if (!fs.existsSync(envFilePath)) {
+      // throw new Error(`Unable to load env from ${envFileOrDirectoryPath}`);
       return;
     }
-    const result = dotenv.config({ path: envPath });
+
+    const result = dotenv.config({ path: envFilePath });
 
     if (!result.error) {
       Reflect.ownKeys(result.parsed).forEach((key: string) => {

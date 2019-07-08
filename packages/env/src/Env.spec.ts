@@ -19,6 +19,7 @@ describe('Env', () => {
   it('should work', async () => {
     const env = new Env();
     await env.init();
+    await env.loadEnvFile(process.cwd());
     expect(env.get('HELLO')).to.equal('world');
   });
 
