@@ -37,7 +37,7 @@ export class ExampleRepositoryProvider extends ParentRepositoryProvider implemen
     return #modelValidationSchema#;
   }
     
-  public getModel() {
+  public getModel(): #Model# {
     return #Model#;
   }
   

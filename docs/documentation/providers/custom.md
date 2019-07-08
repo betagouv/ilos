@@ -59,6 +59,15 @@ export abstract class CryptoProviderInterfaceResolver implements CryptoProviderI
 }
 ```
 
+## Export
+
+index.ts defines the exported classes
+
+```ts 
+export { CustomProvider } from './CustomProvider';
+export { CustomProviderInterfaceResolver } from './interfaces/CustomProviderInterface';
+```
+
 ## Name
 
 Name your provider in package.json and update versions 
@@ -74,6 +83,6 @@ Name your provider in package.json and update versions
 
 # Usage
 
-Add provider in constructor dependencies using Ilos IOC. 
+Add provider in constructor using Ilos IOC. 
 
 
