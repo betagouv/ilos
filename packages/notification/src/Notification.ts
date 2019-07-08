@@ -5,9 +5,11 @@ import { TemplateInterfaceResolver } from '@ilos/template';
 import { MailjetDriver } from './mail/MailjetDriver';
 import { MailDriverInterface, MailInterface, TemplateMailInterface } from './mail/MailDriverInterface';
 import { NotificationConfigurationType } from './NotificationConfigurationType';
-import { NotificationInterface } from './NotificationInterface';
+import { NotificationInterface, NotificationInterfaceResolver } from './NotificationInterface';
 
-@Container.provider()
+@Container.provider({
+  identifier: NotificationInterfaceResolver,
+})
 export class Notification implements NotificationInterface {
   protected config: NotificationConfigurationType;
   protected mailDriver: MailDriverInterface;
@@ -22,7 +24,7 @@ export class Notification implements NotificationInterface {
     //
   }
 
-  boot() {
+  async init() {
     this.config = this.configProvider.get('notification');
     this.registerMailDriver();
   }
