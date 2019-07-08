@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { Container } from '@ilos/core';
-import { HandlebarsProvider } from '@ilos/provider-template';
+import { TemplateInterfaceResolver } from '@ilos/template';
 
 import { Command } from '../parents/Command';
 import { CommandOptionType } from '../types/CommandOptionType';
@@ -19,7 +19,7 @@ export class ScaffoldCommand extends Command {
   public readonly options: CommandOptionType[] = [];
 
   constructor(
-    private template: HandlebarsProvider,
+    private template: TemplateInterfaceResolver,
   ) {
     super();
   }

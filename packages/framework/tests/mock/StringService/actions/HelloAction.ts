@@ -1,5 +1,5 @@
 import { Container, Parents, Types, Exceptions } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 import { CustomProvider } from '../../Providers/CustomProvider';
 
 @Container.handler({
@@ -9,7 +9,7 @@ import { CustomProvider } from '../../Providers/CustomProvider';
 export class HelloAction extends Parents.Action {
   constructor(
     public custom: CustomProvider,
-    private config: ConfigProviderInterfaceResolver,
+    private config: ConfigInterfaceResolver,
   ) {
     super();
   }

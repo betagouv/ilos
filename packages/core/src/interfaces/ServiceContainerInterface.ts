@@ -1,24 +1,14 @@
-import { ContainerModuleConfigurator, ContainerInterface } from '../container';
-import { ServiceProviderInterface } from './ServiceProviderInterface';
-import { NewableType } from '../types';
-import { ProviderInterface } from './ProviderInterface';
+import { ContainerInterface } from '../container';
+import { ExtensionStaticInterface } from './ExtentionInterface';
+import { IdentifierType } from '../types';
 
-export interface ServiceContainerInterface extends ProviderInterface {
-  /**
-   * Alias is a shortcut to registrer bindings
-   * @example [MyCustomService] will bind MyCustomService to self
-   * @example [['custom', MyCustomService]] will bind 'custom' to MyCustomService
-   * @type {any[]}
-   * @memberof ServiceProviderInterface
-   */
-  readonly alias: any[];
+export interface ServiceContainerConstructorInterface<T = any> {
+  new (container?: ContainerInterface) : T;
+}
 
-  /**
-   * List of Service providers constructor
-   * @type {NewableType<ServiceProviderInterface>[]}
-   * @memberof ServiceProviderInterface
-   */
-  readonly serviceProviders: NewableType<ServiceProviderInterface>[];
+export interface ServiceContainerInterface {
+  readonly extensions: ExtensionStaticInterface[];
+  registerHooks(hooker: object, identifier?: IdentifierType): void;
 
   /**
    * Get the container
@@ -26,41 +16,27 @@ export interface ServiceContainerInterface extends ProviderInterface {
    * @memberof ServiceProviderInterface
    */
   getContainer():ContainerInterface;
-
-  /**
-   * Declare a container module
-   * @param {ContainerModuleConfigurator} module
-   * @returns {(Promise<void> | void)}
-   * @memberof ProviderInterface
-   */
-  register?(module: ContainerModuleConfigurator): Promise<void> | void;
-
-  /**
-   * Register service providers
-   * @param {NewableType<ServiceProviderInterface>} serviceProviderConstructor
-   * @returns {Promise<void>}
-   * @memberof ServiceContainerInterface
-   */
-  registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void>;
 }
 
 export abstract class ServiceContainerInterfaceResolver implements ServiceContainerInterface {
-  readonly alias = [];
-  readonly serviceProviders = [];
+  readonly extensions: ExtensionStaticInterface[] = [];
+
+  registerHooks(hooker: object, identifier?: IdentifierType): void {
+    throw new Error();
+  }
 
   getContainer():ContainerInterface {
     throw new Error();
   }
-
-  async boot() {
-    return;
-  }
-
-  register(module: ContainerModuleConfigurator) {
-    throw new Error();
-  }
-
-  async registerServiceProvider(serviceProviderConstructor: NewableType<ServiceProviderInterface>): Promise<void> {
-    throw new Error();
-  }
 }
+
+export const BEFORE_CONSTRUCT = 0;
+export const AFTER_CONSTRUCT = 1;
+export const BEFORE_REGISTER = 2;
+export const AFTER_REGISTER = 3;
+export const BEFORE_INIT = 4;
+export const AFTER_INIT = 5;
+export const BEFORE_DESTROY = 6;
+export const AFTER_DESTROY = 7;
+
+export type StatusType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;

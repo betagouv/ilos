@@ -6,12 +6,20 @@ import {
 } from 'inversify';
 
 import { Interfaces, Types } from '..';
-import { HandlerConfig } from './ContainerInterfaces';
+import { HandlerConfig, ContainerInterface } from './ContainerInterfaces';
 import { normalizeHandlerConfig } from './helpers/normalizeHandlerConfig';
+import { HANDLER_META } from './Metadata';
 
-export class Container extends InversifyContainer {
+export class Container extends InversifyContainer implements ContainerInterface {
   protected handlersRegistry: HandlerConfig[] = [];
   parent: Container | null;
+
+  get root(): Container {
+    if (this.parent) {
+      return this.parent.root;
+    }
+    return this;
+  }
 
   /**
    * Creates an instance of Container.
@@ -39,37 +47,73 @@ export class Container extends InversifyContainer {
 
   /**
    * Get a particular handler
+   * [local, sync] => [local/sync, local/sync/*, remote/sync, remote/sync/*]
+   * [local, async] => [local/async, local/async/*, local/sync, local/sync/*, remote/sync, remote/sync/*]
+   * [remote, sync] => [remote/sync, remote/sync/*]
+   * [remote, async] => [remote/sync, remote/sync/*]
    * @param {HandlerConfig} config
    * @returns {Interfaces.HandlerInterface}
    * @memberof Container
    */
   getHandler(config: HandlerConfig): Interfaces.HandlerInterface {
     const normalizedHandlerConfig = normalizeHandlerConfig(config);
+
+    // local is true by default
     if (!('local' in normalizedHandlerConfig) || normalizedHandlerConfig.local === undefined) {
       normalizedHandlerConfig.local = true;
     }
 
-    /*
-      1. Try to get local or specific service:method
-      2. Try to get local or specific service:*
-      3. Try to get http service:method
-      4. Try to get http service:*
-    */
-
-    let result = this.getHandlerFinal(normalizedHandlerConfig);
-    if (result) {
-      return result;
+    // remote/async is not possible now
+    if ('local' in normalizedHandlerConfig 
+      && !normalizedHandlerConfig.local
+      && 'queue' in normalizedHandlerConfig
+      && normalizedHandlerConfig
+    ) {
+      normalizedHandlerConfig.queue = false;
     }
-    normalizedHandlerConfig.method = '*';
+
+    let result: Interfaces.HandlerInterface | undefined;
+
+    // 1. Try to get service:method
     result = this.getHandlerFinal(normalizedHandlerConfig);
     if (result) {
       return result;
     }
-    if (!normalizedHandlerConfig.local) {
-      return;
+
+    // 2. Try to get service:*
+    result = this.getHandlerFinal({
+      ...normalizedHandlerConfig,
+      method: '*',
+    });
+    if (result) {
+      return result;
     }
-    normalizedHandlerConfig.local = false;
-    return this.getHandler(normalizedHandlerConfig);
+
+    /*
+      Try with a new configuration :
+      - if the config is local and not a queue > try remote
+      - if the config is queue > try sync
+    */
+
+    if (normalizedHandlerConfig.local
+      && (!('queue' in normalizedHandlerConfig) || !normalizedHandlerConfig.queue)
+    ) {
+      // 3. Try to get remote call
+      return this.getHandler({
+        ...normalizedHandlerConfig,
+        local: false,
+      });
+    }
+
+    if (normalizedHandlerConfig.queue) {
+      // 3bis. Try to get sync call
+      return this.getHandler({
+        ...normalizedHandlerConfig,
+        queue: false,
+      });
+    }
+
+    return;
   }
 
   /**
@@ -100,41 +144,46 @@ export class Container extends InversifyContainer {
    * @returns
    * @memberof Container
    */
-  protected setHandlerFinal(handlerConfig: HandlerConfig, resolvedHandler: any) {
-    if (this.parent) {
-      this.parent.setHandlerFinal(handlerConfig, resolvedHandler);
-      return;
-    }
+  protected setHandlerFinal(handlerConfig: HandlerConfig, handlerResolver: () => Interfaces.HandlerInterface) {
+    const container = this.root;
     const normalizedHandlerConfig = normalizeHandlerConfig(handlerConfig);
 
     if (!normalizedHandlerConfig.containerSignature) {
       throw new Error('Oups');
     }
-    this.handlersRegistry.push(normalizedHandlerConfig);
-    this.bind<Interfaces.HandlerInterface>(normalizedHandlerConfig.containerSignature).toConstantValue(resolvedHandler);
+    container.handlersRegistry.push(normalizedHandlerConfig);
+    container.bind<Interfaces.HandlerInterface>(normalizedHandlerConfig.containerSignature).toDynamicValue(handlerResolver);
   }
-
 
   /**
    * Set an handler
    * @param {Types.NewableType<Interfaces.HandlerInterface>} handler
    * @memberof Container
    */
-  setHandler(handler: Types.NewableType<Interfaces.HandlerInterface>): Interfaces.HandlerInterface {
-    const service = Reflect.getMetadata('rpc:service', handler);
-    const method = Reflect.getMetadata('rpc:method', handler);
-    const version = Reflect.getMetadata('rpc:version', handler);
-    const local = Reflect.getMetadata('rpc:local', handler);
-    const queue = Reflect.getMetadata('rpc:queue', handler);
+  setHandler(handler: Types.NewableType<Interfaces.HandlerInterface>): void {
+    const service = Reflect.getMetadata(HANDLER_META.SERVICE, handler);
+    const method = Reflect.getMetadata(HANDLER_META.METHOD, handler);
+    const version = Reflect.getMetadata(HANDLER_META.VERSION, handler);
+    const local = Reflect.getMetadata(HANDLER_META.LOCAL, handler);
+    const queue = Reflect.getMetadata(HANDLER_META.QUEUE, handler);
 
     const handlerConfig = normalizeHandlerConfig({ service, method, version, local, queue });
-    const resolvedHandler = this.get<Interfaces.HandlerInterface>(<any>handler);
+
+    this.bind(handler).toSelf();
+    const handlerResolver = () => this.get<Interfaces.HandlerInterface>(handler);
+
     // TODO: throw error if not found
     // TODO: throw error if duplicate
 
-    this.setHandlerFinal(handlerConfig, resolvedHandler);
+    this.setHandlerFinal(handlerConfig, handlerResolver);
 
-    return resolvedHandler;
+    return;
+  }
+
+  createChild(containerOptions: interfaces.ContainerOptions = {}): Container {
+    const container = new Container(containerOptions);
+    container.parent = this;
+    return container;
   }
 }
 

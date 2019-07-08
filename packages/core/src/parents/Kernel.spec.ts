@@ -3,10 +3,7 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { handler, provider } from '../container';
-import { HandlerInterface } from '../interfaces/HandlerInterface';
-import { NewableType } from '../types/NewableType';
-import { ServiceProviderInterface } from '../interfaces/ServiceProviderInterface';
+import { handler, provider, serviceProvider } from '../container';
 import { ProviderInterface } from '../interfaces/ProviderInterface';
 import { Kernel } from './Kernel';
 import { ServiceProvider } from './ServiceProvider';
@@ -73,34 +70,38 @@ class BasicTwoAction extends Action {
   }
 }
 
-class BasicTwoServiceProvider extends ServiceProvider {
-  readonly alias = [
-    [Test, Test],
-  ];
-  readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [];
+@serviceProvider({
+  providers: [
+    Test,
+  ],
+  handlers: [
+    BasicTwoAction,
+  ]
+})
+class BasicTwoServiceProvider extends ServiceProvider {}
 
-  readonly handlers: NewableType<HandlerInterface>[] = [BasicTwoAction];
-}
-
-class BasicServiceProvider extends ServiceProvider {
-  readonly alias = [
-    [Test, Test],
-  ];
-  readonly serviceProviders: NewableType<ServiceProviderInterface>[] = [
+@serviceProvider({
+  providers: [
+    Test,
+  ],
+  children: [
     BasicTwoServiceProvider,
-  ];
-
-  readonly handlers: NewableType<HandlerInterface>[] = [BasicAction];
-}
+  ],
+  handlers: [
+    BasicAction
+  ]
+})
+class BasicServiceProvider extends ServiceProvider {}
 
 describe('Kernel', () => {
   it('should work with single call', async () => {
-    class BasicKernel extends Kernel {
-      serviceProviders = [BasicServiceProvider];
-    }
+    @serviceProvider({
+      children: [BasicServiceProvider],
+    })
+    class BasicKernel extends Kernel {}
 
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       id: 1,
@@ -117,11 +118,13 @@ describe('Kernel', () => {
   });
 
   it('should work with a batch', async () => {
+    @serviceProvider({
+      children: [BasicServiceProvider],
+    })
     class BasicKernel extends Kernel {
-      serviceProviders = [BasicServiceProvider];
     }
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle([
       {
         jsonrpc: '2.0',
@@ -158,7 +161,7 @@ describe('Kernel', () => {
     class BasicKernel extends Kernel {
     }
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       id: 1,
@@ -179,11 +182,13 @@ describe('Kernel', () => {
   });
 
   it('should return an error if method throw an error', async () => {
+    @serviceProvider({
+      children: [BasicServiceProvider],
+    })
     class BasicKernel extends Kernel {
-      serviceProviders = [BasicServiceProvider];
     }
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       id: 1,
@@ -202,12 +207,14 @@ describe('Kernel', () => {
   });
 
   it('should work with contexted call', async () => {
+    @serviceProvider({
+      children: [BasicServiceProvider],
+    })
     class BasicKernel extends Kernel {
-      serviceProviders = [BasicServiceProvider];
     }
 
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       id: 1,
@@ -236,12 +243,14 @@ describe('Kernel', () => {
   });
 
   it('should work with notify call', async () => {
+    @serviceProvider({
+      children: [BasicServiceProvider],
+    })
     class BasicKernel extends Kernel {
-      serviceProviders = [BasicServiceProvider];
     }
 
     const kernel = new BasicKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     const response = await kernel.handle({
       jsonrpc: '2.0',
       method: 'string:hi',
@@ -261,14 +270,6 @@ describe('Kernel', () => {
         },
       },
     });
-    expect(response).to.deep.equal({
-      jsonrpc: '2.0',
-      id: undefined,
-      error: {
-        code: -32601,
-        data: 'Unknown method or service string:hi',
-        message: 'Method not found',
-      },
-    });
+    expect(response).to.equal(undefined);
   });
 });

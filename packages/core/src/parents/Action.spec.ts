@@ -9,6 +9,7 @@ import { ResultType } from '../types/ResultType';
 import { ParamsType } from '../types/ParamsType';
 import { ContextType } from '../types/ContextType';
 import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
+import { ServiceContainer } from './ServiceContainer';
 
 chai.use(chaiAsPromised);
 
@@ -83,9 +84,9 @@ describe('Action', () => {
       }
     }
     const action = new BasicAction();
-    const container = new Container();
-    container.bind('minus').to(MinusMiddleware);
-    await action.boot(container);
+    const container = new (class extends ServiceContainer {})();
+    container.getContainer().bind('minus').to(MinusMiddleware);
+    await action.init(container);
     const result = await action.call({
       result: 0,
       method: '',
@@ -109,10 +110,10 @@ describe('Action', () => {
       }
     }
     const action = new BasicAction();
-    const container = new Container();
-    container.bind('hello').to(HelloMiddleware);
-    container.bind('world').to(WorldMiddleware);
-    await action.boot(container);
+    const container = new (class extends ServiceContainer {})();
+    container.getContainer().bind('hello').to(HelloMiddleware);
+    container.getContainer().bind('world').to(WorldMiddleware);
+    await action.init(container);
     const result = await action.call({
       result: '',
       method: '',

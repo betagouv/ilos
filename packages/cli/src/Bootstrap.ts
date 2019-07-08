@@ -1,14 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { Parents, Interfaces } from '@ilos/core';
+import { Parents, Interfaces, Types, Container } from '@ilos/core';
 
 import { CliTransport } from './transports/CliTransport';
 import { BootstrapType } from './types';
 
 const defaultBootstrap: BootstrapType = {
-  kernel(): Interfaces.KernelInterface {
-    class Kernel extends Parents.Kernel {}
-    return new Kernel();
+  kernel(): Types.NewableType<Interfaces.KernelInterface> {
+    return class extends Parents.Kernel {};
   },
   serviceProviders: [],
   transport: {
@@ -18,10 +17,14 @@ const defaultBootstrap: BootstrapType = {
 
 export class Bootstrap {
   constructor(
-    public defaultBootstrap: BootstrapType
+    public bootstrap: BootstrapType = {},
   )
   {
-    //
+
+  }
+
+  get serviceProviders() {
+    return this.bootstrap.serviceProviders;
   }
 
   setEnvironment():void {
@@ -61,39 +64,85 @@ export class Bootstrap {
     return bootstrapPath;
   }
 
-  async start(argv: string[], bootstrapPath?: string): Promise<Interfaces.TransportInterface> {
-    const fallbackBootstrap: BootstrapType = this.defaultBootstrap;
+  async start(command: string, ...opts: any[]): Promise<Interfaces.TransportInterface> {
+    const bootstrap = this.bootstrap;
 
-    const [_node, _script, command, ...opts] = argv;
-    let bootstrap = { ...fallbackBootstrap };
+    const kernelConstructor = bootstrap.kernel();
 
-    if (bootstrapPath) {
-      const currentBootstrap = await import(bootstrapPath);
-      bootstrap = { ...bootstrap, ...currentBootstrap };
-    }
-    const kernel = bootstrap.kernel();
-    await kernel.boot();
-    const serviceProviders = bootstrap.serviceProviders;
-    
-    for (const serviceProvider of serviceProviders) {
-      await kernel.registerServiceProvider(serviceProvider);
-    }
-    
+    const serviceProviders = 'serviceProviders' in bootstrap ? bootstrap.serviceProviders : [];
+
+    @Container.kernel({
+      children: serviceProviders,
+    })
+    class Kernel extends kernelConstructor {}
+
+    const kernel = new Kernel();
+    await kernel.bootstrap();
+
+    let transport;
+
     if (command !== 'cli' && (command in bootstrap.transport)) {
-      const transport = bootstrap.transport[command](kernel);
+      transport = bootstrap.transport[command](kernel);
       await transport.up(opts);
-      return transport;  
+    } else {
+      transport = bootstrap.transport.cli(kernel);
+      await transport.up([
+        null,
+        null,
+        command,
+        opts,
+      ]);
     }
 
-    const cli = bootstrap.transport.cli(kernel);
-    await cli.up(argv);
-    return cli;
+    this.registerShutdownHook(kernel, transport);
+    
+    return transport;  
   }
 
-  async boot(argv: string[]) {
+  registerShutdownHook(kernel: Interfaces.KernelInterface, transport: Interfaces.TransportInterface) {
+    function handle() {
+      setTimeout(() => {
+        process.exit(0);
+      }, 5000);
+
+      transport.down()
+        .then(() => {
+          kernel.shutdown()
+            .then(() => {
+              process.exit(0);
+            })
+            .catch(() => {
+              process.exit(1);
+            });
+        })
+        .catch(() => {
+          process.exit(1);
+        });
+    }
+
+    process.on('SIGINT', handle);
+    process.on('SIGTERM', handle);
+  }
+
+  async boot(command: string, ...opts: any[]) {
     this.setEnvironment();
+    return this.start(command, opts);
+  }
+
+  async createFromPath(): Promise<Bootstrap> {
     const bootstrapPath = this.getBootstrapFile();
-    return this.start(argv, bootstrapPath);
+    const defaultBootstrap: BootstrapType = {... this.bootstrap };
+
+    let currentBootstrap = {};
+
+    if (bootstrapPath) {
+      currentBootstrap = await import(bootstrapPath);
+    }
+    return new Bootstrap({ ...defaultBootstrap, ...currentBootstrap });
+  }
+
+  create(bootstrap: BootstrapType): Bootstrap {
+    return new Bootstrap({ ...this.bootstrap, ...bootstrap })
   }
 }
 

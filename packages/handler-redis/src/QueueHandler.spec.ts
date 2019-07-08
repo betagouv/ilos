@@ -3,8 +3,7 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { EnvProviderInterfaceResolver } from '@ilos/provider-env';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { RedisConnection } from '@ilos/connection-redis';
 
 import * as Bull from './helpers/bullFactory';
 import { queueHandlerFactory } from './helpers/queueHandlerFactory';
@@ -13,27 +12,6 @@ chai.use(chaiAsPromised);
 
 const { expect, assert } = chai;
 
-class FakeEnvProvider extends EnvProviderInterfaceResolver {
-  async boot() {
-    return;
-  }
-
-  get(key: string, fallback?: any): any {
-    return 'prod';
-  }
-}
-
-class FakeConfigProvider extends ConfigProviderInterfaceResolver {
-  async boot() {
-    return;
-  }
-  get(key: string, fallback?: any): any {
-    return 'redis://localhost';
-  }
-}
-const envProvider = new FakeEnvProvider();
-const configProvider = new FakeConfigProvider();
-
 const sandbox = sinon.createSandbox();
 
 const defaultContext = {
@@ -41,6 +19,14 @@ const defaultContext = {
     service: '',
   },
 };
+
+class FakeRedis extends RedisConnection {
+  getClient() {
+    return null;
+  }
+}
+
+const fakeConnection = new FakeRedis({});
 
 describe('Queue handler', () => {
   beforeEach(() => {
@@ -66,8 +52,8 @@ describe('Queue handler', () => {
     sandbox.restore();
   });
   it('works', async () => {
-    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(envProvider, configProvider);
-    queueProvider.boot();
+    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
+    await queueProvider.init();
     const result = await queueProvider.call({
       method: 'basic@latest:method',
       params: { add: [1, 2] },
@@ -83,8 +69,8 @@ describe('Queue handler', () => {
     });
   });
   it('raise error if fail', async () => {
-    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(envProvider, configProvider);
-    queueProvider.boot();
+    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
+    await queueProvider.init();
     return (<any>assert).isRejected(
       queueProvider.call({
         method: 'nope',

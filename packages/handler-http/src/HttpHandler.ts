@@ -8,7 +8,7 @@ import { Types, Interfaces, Exceptions } from '@ilos/core';
  * @class HttpHandler
  * @implements {HandlerInterface}
  */
-export class HttpHandler implements Interfaces.HandlerInterface {
+export class HttpHandler implements Interfaces.HandlerInterface, Interfaces.InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
 
   protected readonly service: string;
@@ -17,7 +17,7 @@ export class HttpHandler implements Interfaces.HandlerInterface {
 
   private client: AxiosInstance;
 
-  public boot() {
+  public init() {
     throw new Error('no url found');
   }
 

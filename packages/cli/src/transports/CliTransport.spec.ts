@@ -2,11 +2,11 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Parents, Container, Types } from '@ilos/core';
+import { Parents, Container, Types, Interfaces } from '@ilos/core';
 
-import { CommandServiceProvider } from '../parents/CommandServiceProvider';
+import { CommandExtension } from '../extensions/CommandExtension';
 import { Command } from '../parents/Command';
-import { CommandProvider } from '../providers/CommandProvider';
+import { CommandRegistry } from '../providers/CommandRegistry';
 
 import { CliTransport } from './CliTransport';
 
@@ -27,30 +27,29 @@ class BasicCommand extends Command {
     return `Hello ${name}`;
   }
 }
-class BasicServiceCommandProvider extends CommandServiceProvider {
-  public readonly commands = [BasicCommand];
-}
 
+@Container.kernel({
+  commands: [BasicCommand]
+})
 class BasicKernel extends Parents.Kernel {
-  alias = [
-    CommandProvider,
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    CommandExtension,
   ];
-  serviceProviders = [BasicServiceCommandProvider];
 }
 
 describe('Cli transport', () => {
   it('should work', (done) => {
     const kernel = new BasicKernel();
-    kernel.boot().then(() => {
+    kernel.bootstrap().then(() => {
       const cliTransport = new CliTransport(kernel);
       const container = kernel.getContainer();
-      const commander = container.get<CommandProvider>(CommandProvider);
+      const commander = container.get<CommandRegistry>(CommandRegistry);
       sinon.stub(commander, 'output').callsFake((...args: any[]) => {
         expect(args[0]).to.equal('Hello john');
         done();
       });
-      container.unbind(CommandProvider);
-      container.bind(CommandProvider).toConstantValue(commander);
+      container.unbind(CommandRegistry);
+      container.bind(CommandRegistry).toConstantValue(commander);
       cliTransport.up(['', '', 'hello', 'john']);
       sinon.restore();
     });

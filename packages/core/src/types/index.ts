@@ -2,6 +2,8 @@ export { CallType } from './CallType';
 export { ContextType } from './ContextType';
 export { IdType } from './IdType';
 export { NewableType } from './NewableType';
+export { AbstractType } from './AbstractType';
+export { IdentifierType } from './IdentifierType';
 export { ParamsType } from './ParamsType';
 export { ParamsWithContextType } from './ParamsWithContextType';
 export { ResultType } from './ResultType';

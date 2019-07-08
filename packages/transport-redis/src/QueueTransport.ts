@@ -1,5 +1,6 @@
 import { Queue } from 'bull';
 import { Container, Interfaces } from '@ilos/core';
+import { QueueExtension } from '@ilos/queue';
 
 import { bullFactory } from './helpers/bullFactory';
 
@@ -26,21 +27,19 @@ export class QueueTransport implements Interfaces.TransportInterface {
   }
 
   async up(opts: string[] = []) {
-    const [redisUrl, env] = opts;
+    const [redisUrl] = opts;
     // throw error
 
     const container = <Container.ContainerInterface>this.kernel.getContainer();
-    const services = Array.from(
-      new Set(
-        container
-          .getHandlers()
-          .filter((cfg) => 'local' in cfg && cfg.local && ('queue' in cfg && !cfg.queue))
-          .map((cfg) => cfg.service),
-      ),
-    );
 
-    for (const service of services) {
-      const key = `${env}-${service}`;
+    if (!container.isBound(QueueExtension.containerKey)) {
+      throw new Error('No queue declared');
+    }
+
+    const services = container.getAll<string>(QueueExtension.containerKey);
+
+    for(const service of services) {
+      const key = service;
       // TODO : add Sentry error handler
       const queue = bullFactory(key, redisUrl);
       await queue.isReady();

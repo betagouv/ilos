@@ -36,7 +36,7 @@ describe('Http handler', () => {
     );
 
     const provider = new (httpHandlerFactory('service', url))();
-    provider.boot();
+    provider.init();
     provider.call({
       method: 'service@latest:method',
       params: { param: true },
@@ -74,7 +74,7 @@ describe('Http handler', () => {
     );
 
     const provider = new (httpHandlerFactory('service', url))();
-    provider.boot();
+    provider.init();
     provider.call({
       method: 'service@latest:method',
       params: { param: true },
@@ -105,7 +105,7 @@ describe('Http handler', () => {
     );
 
     const provider = new (httpHandlerFactory('service', url))();
-    provider.boot();
+    provider.init();
     const promise = provider.call({
       method: 'service@latest:method',
       params: { param: true },
@@ -134,7 +134,7 @@ describe('Http handler', () => {
     );
 
     const provider = new (httpHandlerFactory('service', url))();
-    provider.boot();
+    provider.init();
     const promise = provider.call({
       method: 'service@latest:method',
       params: { param: true },

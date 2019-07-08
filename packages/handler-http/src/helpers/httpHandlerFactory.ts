@@ -1,7 +1,7 @@
 
 import { HttpHandler } from '../HttpHandler';
 import { Container, Types, Interfaces } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigInterfaceResolver } from '@ilos/config';
 /**
 * httpHandlerFactory - Create a HttpHandler for a remote service
 * @export
@@ -10,7 +10,7 @@ import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
 * @param {string} [version]
 * @returns {NewableType<HandlerInterface>}
 */
-export function httpHandlerFactory(service: string, url: string, version?: string): Types.NewableType<Interfaces.HandlerInterface> {
+export function httpHandlerFactory(service: string, url: string, version?: string): Types.NewableType<Interfaces.HandlerInterface&Interfaces.InitHookInterface> {
   let isFromConfig = false
   if (!/http/.test(url)) {
     isFromConfig = true
@@ -23,7 +23,7 @@ export function httpHandlerFactory(service: string, url: string, version?: strin
   })
   class CustomHttpHandler extends HttpHandler {
     constructor(
-      private config: ConfigProviderInterfaceResolver,
+      private config: ConfigInterfaceResolver,
       ) {
       super();
     }
@@ -31,7 +31,7 @@ export function httpHandlerFactory(service: string, url: string, version?: strin
     protected readonly service: string = service;
     protected readonly version: string = version;
 
-    public boot(){
+    public init() {
       if(isFromConfig){
         this.createClient(this.config.get(url))
       } else {

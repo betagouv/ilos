@@ -1,4 +1,5 @@
 import { Container, Parents, Types, Exceptions } from '@ilos/core';
+import { LoggerInterfaceResolver } from '@ilos/logger';
 import { CustomProvider } from '../../Providers/CustomProvider';
 
 @Container.handler({

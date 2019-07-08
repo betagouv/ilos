@@ -1,25 +1,22 @@
-import { Parents, Types, Interfaces } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { Parents, Container } from '@ilos/core';
 
 import { HelloAction } from './actions/HelloAction';
 import { ResultAction } from './actions/ResultAction';
 import { CustomProvider } from '../Providers/CustomProvider';
 
-export class ServiceProvider extends Parents.ServiceProvider {
-  readonly alias = [
+@Container.serviceProvider({
+  config: __dirname,
+  providers: [
     CustomProvider,
-  ];
-
-  readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
+  ],
+  handlers: [
     HelloAction,
     ResultAction,
-  ];
-
-  async boot() {
-    const config = this.getContainer().get(ConfigProviderInterfaceResolver);
-    config.loadConfigDirectory(__dirname);
-    await super.boot();
-
+  ]
+})
+export class ServiceProvider extends Parents.ServiceProvider {
+  async init() {
+    await super.init();
     this.getContainer().get(CustomProvider).set('string:');
   }
 }

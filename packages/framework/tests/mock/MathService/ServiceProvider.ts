@@ -1,20 +1,19 @@
-import { Parents, Types, Interfaces } from '@ilos/core';
+import { Parents, Container } from '@ilos/core';
 
 import { AddAction } from './actions/AddAction';
 import { CustomProvider } from '../Providers/CustomProvider';
 
-export class ServiceProvider extends Parents.ServiceProvider {
-  readonly alias = [
+@Container.serviceProvider({
+  providers: [
     CustomProvider,
-  ];
-
-  readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
+  ],
+  handlers: [
     AddAction,
-  ];
-
-  async boot() {
-    await super.boot();
-    const customProvider = this.getContainer().get(CustomProvider);
-    customProvider.set('math:');
+  ],
+})
+export class ServiceProvider extends Parents.ServiceProvider {
+  async init() {
+    await super.init();
+    this.getContainer().get(CustomProvider).set('math:');
   }
 }

@@ -1,18 +1,28 @@
-import { Parents, Interfaces, Types } from '@ilos/core';
-import { EnvProvider, EnvProviderInterfaceResolver } from '@ilos/provider-env';
-import { ConfigProvider, ConfigProviderInterfaceResolver } from '@ilos/provider-config';
-import { CommandProvider } from '@ilos/cli';
+import { Parents, Extensions, Interfaces, Container } from '@ilos/core';
+import { Commands, CommandExtension } from '@ilos/cli';
+import { ConfigExtension } from '@ilos/config';
+import { EnvExtension } from '@ilos/env';
+import { ConnectionManagerExtension } from '@ilos/connection-manager';
+import { LoggerExtension } from '@ilos/logger';
 
-import { CommandServiceProvider } from './CommandServiceProvider';
-
+@Container.kernel({
+  env: null,
+  config: process.cwd(),
+  commands: [
+    Commands.CallCommand,
+    Commands.ListCommand,
+    Commands.ScaffoldCommand,
+  ],
+})
 export class Kernel extends Parents.Kernel {
-  readonly alias = [
-    [EnvProviderInterfaceResolver, EnvProvider],
-    [ConfigProviderInterfaceResolver, ConfigProvider],
-    CommandProvider,
-  ];
-
-  readonly serviceProviders: Types.NewableType<Interfaces.ServiceProviderInterface>[] = [
-    CommandServiceProvider,
+  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+    EnvExtension,
+    ConfigExtension,
+    LoggerExtension,
+    ConnectionManagerExtension,
+    CommandExtension,
+    Extensions.Middlewares,
+    Extensions.Providers,
+    Extensions.Handlers,
   ];
 }

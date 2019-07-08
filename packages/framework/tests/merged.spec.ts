@@ -9,12 +9,13 @@ import { ServiceProvider as MathServiceProvider } from './mock/MathService/Servi
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
 
 
-@Container.injectable()
-class MyKernel extends Kernel {
-  readonly serviceProviders = [
+@Container.kernel({
+  children: [
     MathServiceProvider,
     StringServiceProvider,
-  ];
+  ],
+})
+class MyKernel extends Kernel {
 }
 
 function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
@@ -50,7 +51,7 @@ let transport: Interfaces.TransportInterface;
 describe('Merged integration', () => {
   before(async () => {
     const kernel = new MyKernel();
-    await kernel.boot();
+    await kernel.bootstrap();
     transport = new HttpTransport(kernel);
     await transport.up(['8080']);
   });
