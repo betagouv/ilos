@@ -9,7 +9,10 @@ footer: Apache 2.0 Licensed
 Check if the user making the request is authorized to proceed. 
 
 
-## Call middleware in service provider
+## Usage
+
+
+#### Call middleware in service provider
 
 
 ```ts
@@ -19,10 +22,10 @@ Check if the user making the request is authorized to proceed.
 
 ```
 
-In this case 'permissionName' must be among the user's permissions. You can specify more than one permission. 
+In this case 'permissionName' must be among the user's permissions, defined in the context. You can specify more than one permission. 
 
 
-## Register to middleware in service provider
+#### Register to middleware in service provider
 
 
 ```ts

@@ -5,6 +5,6 @@ footer: Apache 2.0 Licensed
 ---
 
 
-# Filter Content coming in
+# Filter Content
 
 
