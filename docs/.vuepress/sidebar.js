@@ -22,6 +22,7 @@ module.exports = {
         'middlewares/acl',
         'middlewares/content_filter',
         'middlewares/custom',
+        'middlewares/example',
       ]
     },
     {
