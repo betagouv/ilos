@@ -1,6 +1,6 @@
 {
   "name": "@ilos/connection-manager",
-  "version": "0.0.2",
+  "version": "0.2.0",
   "publishConfig": {
     "access": "public"
   },
@@ -77,7 +77,7 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/config": "~0"
+    "@ilos/config": "^0.2.0"
   },
   "peerDependencies": {
     "@ilos/core": "~0"

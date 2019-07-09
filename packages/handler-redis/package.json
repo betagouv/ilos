@@ -1,6 +1,6 @@
 {
   "name": "@ilos/handler-redis",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "publishConfig": {
     "access": "public"
   },
@@ -77,8 +77,8 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "bull": "^3.7.0",
-    "@ilos/connection-redis": "~0"
+    "@ilos/connection-redis": "^0.2.0",
+    "bull": "^3.7.0"
   },
   "peerDependencies": {
     "@ilos/env": "~0"

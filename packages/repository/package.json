@@ -1,6 +1,6 @@
 {
   "name": "@ilos/repository",
-  "version": "0.0.3",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
@@ -44,9 +44,9 @@
     "instrument": true
   },
   "dependencies": {
-    "@ilos/cli": "^0.0.2",
-    "@ilos/config": "^0.0.2",
-    "@ilos/connection-mongo": "~0"
+    "@ilos/cli": "^0.2.0",
+    "@ilos/config": "^0.2.0",
+    "@ilos/connection-mongo": "^0.2.0"
   },
   "peerDependencies": {
     "@ilos/core": "~0"

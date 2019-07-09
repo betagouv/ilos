@@ -1,6 +1,6 @@
 {
   "name": "@ilos/framework",
-  "version": "0.0.2",
+  "version": "0.2.0",
   "publishConfig": {
     "access": "public"
   },
@@ -79,11 +79,11 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/cli": "^0.0.2",
-    "@ilos/core": "^0.0.3",
-    "@ilos/config": "^0.0.2",
-    "@ilos/env": "^0.0.2",
-    "@ilos/transport-http": "^0.0.1",
-    "@ilos/transport-redis": "^0.0.1"
+    "@ilos/cli": "^0.2.0",
+    "@ilos/config": "^0.2.0",
+    "@ilos/core": "^0.2.0",
+    "@ilos/env": "^0.2.0",
+    "@ilos/transport-http": "^0.2.0",
+    "@ilos/transport-redis": "^0.2.0"
   }
 }

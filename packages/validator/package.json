@@ -1,6 +1,6 @@
 {
   "name": "@ilos/validator",
-  "version": "0.0.3",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
@@ -46,8 +46,8 @@
     "ajv": "^6.10.0"
   },
   "peerDependencies": {
-    "@ilos/core": "~0",
-    "@ilos/config": "~0"
+    "@ilos/config": "~0",
+    "@ilos/core": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
