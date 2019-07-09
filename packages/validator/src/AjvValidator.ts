@@ -1,8 +1,8 @@
 import ajv from 'ajv';
+import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
+
 import { Container, Types } from '@ilos/core';
 import { ConfigInterfaceResolver } from '@ilos/config';
-
-import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
 
 import { ValidatorInterface } from './ValidatorInterface';
 import { Cache } from './Cache';

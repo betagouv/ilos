@@ -31,8 +31,8 @@ export class Providers implements RegisterHookInterface {
           if (!Array.isArray(customIdentifier)) {
             container.bind(customIdentifier).toService(def);
           } else {
-            for(const id of customIdentifier) {
-              container.bind(id).toService(def);              
+            for (const id of customIdentifier) {
+              container.bind(id).toService(def);
             }
           }
         }

@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb';
+
 import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/connection-manager';
 
 export class MongoConnection implements ConnectionInterface<MongoClient> {
@@ -33,7 +34,7 @@ export class MongoConnection implements ConnectionInterface<MongoClient> {
         await this.client.close();
         this.connected = false;
       }
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }

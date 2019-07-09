@@ -1,5 +1,6 @@
 import { Interfaces } from '@ilos/core';
 import { ConfigInterfaceResolver } from '@ilos/config';
+
 import { TemplateInterfaceResolver } from './TemplateInterface';
 import { HandlebarsTemplate } from './HandlebarsTemplate';
 
@@ -20,7 +21,7 @@ export class TemplateExtension implements Interfaces.RegisterHookInterface, Inte
       throw new Error('Unable to find config provider');
     }
 
-    container.bind(HandlebarsTemplate).toSelf()
+    container.bind(HandlebarsTemplate).toSelf();
     container.bind(TemplateInterfaceResolver).toService(HandlebarsTemplate);
     serviceContainer.registerHooks(HandlebarsTemplate.prototype, TemplateInterfaceResolver);
   }
@@ -32,7 +33,7 @@ export class TemplateExtension implements Interfaces.RegisterHookInterface, Inte
         .get(TemplateInterfaceResolver)
         .loadTemplatesFromDirectory(
           this.config.path,
-          (typeof this.config.meta === 'string') ? 
+          (typeof this.config.meta === 'string') ?
             container
               .get(ConfigInterfaceResolver)
               .get(this.config.meta, {}) :

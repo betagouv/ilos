@@ -29,7 +29,7 @@ class BasicCommand extends Command {
 }
 
 @Container.kernel({
-  commands: [BasicCommand]
+  commands: [BasicCommand],
 })
 class BasicKernel extends Parents.Kernel {
   readonly extensions: Interfaces.ExtensionStaticInterface[] = [

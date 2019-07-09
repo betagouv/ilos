@@ -1,4 +1,5 @@
 import { Queue } from 'bull';
+
 import { Container, Interfaces } from '@ilos/core';
 import { QueueExtension } from '@ilos/queue';
 
@@ -38,7 +39,7 @@ export class QueueTransport implements Interfaces.TransportInterface {
 
     const services = container.getAll<string>(QueueExtension.containerKey);
 
-    for(const service of services) {
+    for (const service of services) {
       const key = service;
       // TODO : add Sentry error handler
       const queue = bullFactory(key, redisUrl);
@@ -47,7 +48,7 @@ export class QueueTransport implements Interfaces.TransportInterface {
       this.registerListeners(queue, key);
       this.queues.push(queue);
 
-      queue.process((job) =>
+      queue.process(job =>
         this.kernel.handle({
           jsonrpc: '2.0',
           id: 1,

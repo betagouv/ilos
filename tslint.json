@@ -157,7 +157,7 @@
         "matching-rules": [
           {
             "type": "project",
-            "matches": "^~",
+            "matches": "^@ilos",
             "imports-group": "common"
           },
           {

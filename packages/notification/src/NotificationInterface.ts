@@ -1,4 +1,5 @@
 import { Interfaces } from '@ilos/core';
+
 import { MailInterface, TemplateMailInterface } from './mail/MailDriverInterface';
 
 export interface NotificationInterface extends Interfaces.ProviderInterface, Interfaces.InitHookInterface {

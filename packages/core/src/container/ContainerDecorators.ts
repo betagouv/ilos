@@ -9,13 +9,13 @@ import { HandlerConfig, AnyConfig } from './ContainerInterfaces';
 import { HANDLER_META, PROVIDER_META } from './Metadata';
 
 function extensionTag(config: AnyConfig) {
-  return function(target) {
+  return function (target) {
     Reflect.ownKeys(config).forEach((key: string) => {
       // Reflect.defineMetadata(`extension:${key}`, config[key], target.prototype);
       Reflect.defineMetadata(`extension:${key}`, config[key], target);
     });
     return target;
-  }
+  };
 }
 
 export function provider(config: AnyConfig = {}) {
@@ -26,7 +26,7 @@ export function provider(config: AnyConfig = {}) {
     }
 
     return injectable()(
-      extensionTag(config)(target)
+      extensionTag(config)(target),
     );
   };
 }
@@ -54,21 +54,21 @@ export function handler(config: HandlerConfig) {
     Reflect.defineMetadata(HANDLER_META.LOCAL, local, target);
     Reflect.defineMetadata(HANDLER_META.QUEUE, queue, target);
     return injectable()(
-      extensionTag(other)(target)
+      extensionTag(other)(target),
     );
   };
 }
 
 export function serviceProvider(config: AnyConfig) {
-  return function(target) {
+  return function (target) {
     return extensionTag(config)(target);
-  }
+  };
 }
 
 export function kernel(config: AnyConfig) {
-  return function(target) {
+  return function (target) {
     return extensionTag(config)(target);
-  }
+  };
 }
 
 export function command() { return injectable(); }

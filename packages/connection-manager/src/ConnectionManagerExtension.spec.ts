@@ -1,6 +1,8 @@
+// tslint:disable max-classes-per-file
+import { expect } from 'chai';
+
 import { Parents, Container, Extensions } from '@ilos/core';
 import { ConfigInterfaceResolver } from '@ilos/config';
-import { expect } from 'chai';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
 import { ConnectionInterface } from './ConnectionManagerInterfaces';
@@ -157,4 +159,4 @@ describe('Connection manager', () => {
     // shared = true but config is different
     expect(p1.driverThree).not.to.eq(p2.driverThree);
   });
-})
+});

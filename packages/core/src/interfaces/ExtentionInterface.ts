@@ -1,4 +1,4 @@
-import { InitHookInterface, DestroyHookInterface, RegisterHookInterface } from "./hooks";
+import { InitHookInterface, DestroyHookInterface, RegisterHookInterface } from './hooks';
 
 export type ExtensionInterface = InitHookInterface | DestroyHookInterface | RegisterHookInterface;
 

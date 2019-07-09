@@ -23,7 +23,7 @@ export class CommandExtension implements Interfaces.RegisterHookInterface, Inter
       container.bind(TemplateInterfaceResolver).to(HandlebarsTemplate);
     }
 
-    for(const command of this.commands) {
+    for (const command of this.commands) {
       container.bind(command).toSelf();
     }
   }

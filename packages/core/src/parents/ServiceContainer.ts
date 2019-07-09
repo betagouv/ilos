@@ -127,7 +127,7 @@ export abstract class ServiceContainer
 
   public registerHooks(hooker: object, identifier?: IdentifierType): void {
     if (hasInterface<RegisterHookInterface>(hooker, 'register') && !identifier) {
-      this.addRegisterHook(async (container) => hooker.register(container));
+      this.addRegisterHook(async container => hooker.register(container));
     }
 
     if (hasInterface<InitHookInterface>(hooker, 'init')) {
@@ -164,7 +164,7 @@ export abstract class ServiceContainer
         const extension = extensions[index];
         const containerExtensionKey = `extension:${extension.key}`;
         if (!container.isBound(containerExtensionKey)) {
-          container.bind(containerExtensionKey).toFactory(() => (config) => new extension(config));
+          container.bind(containerExtensionKey).toFactory(() => config => new extension(config));
           container.bind('extensions').toConstantValue({
             index,
             key: containerExtensionKey,

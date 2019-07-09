@@ -57,7 +57,7 @@ export class Notification implements NotificationInterface {
     try {
       const meta = this.template.getMetadata(template);
       subject = meta.subject;
-    } catch(e) {
+    } catch (e) {
       subject = this.config.mail.defaultSubject;
     }
 

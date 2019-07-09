@@ -2,8 +2,10 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import nock from 'nock';
 import chaiNock from 'chai-nock';
+
 import { ConfigInterfaceResolver } from '@ilos/config';
 import { TemplateInterfaceResolver } from '@ilos/template';
+
 import { Notification } from '../Notification';
 
 chai.use(chaiNock);
@@ -40,7 +42,7 @@ class FakeConfig extends ConfigInterfaceResolver {
           email: 'test@fake.com',
         },
       },
-    }
+    };
   }
 }
 const provider = new Notification(new FakeConfig(), new FakeTemplate());

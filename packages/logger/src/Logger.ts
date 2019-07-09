@@ -1,4 +1,5 @@
 import { Container } from '@ilos/core';
+
 import { LoggerInterface, LoggerDriverInterface } from './LoggerInterface';
 import { LogMessageType } from './LogMessageType';
 
@@ -18,7 +19,7 @@ export class Logger implements LoggerInterface {
 
   log(msg: LogMessageType): void {
     const { level, message, meta } = msg;
-    this.logger.log(level, message, meta);  
+    this.logger.log(level, message, meta);
   }
 
   debug(message: string, meta?: any): void {

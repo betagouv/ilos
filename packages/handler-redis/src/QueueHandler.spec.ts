@@ -3,6 +3,7 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+
 import { RedisConnection } from '@ilos/connection-redis';
 
 import * as Bull from './helpers/bullFactory';

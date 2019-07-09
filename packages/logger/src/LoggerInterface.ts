@@ -1,4 +1,5 @@
 import { Interfaces } from '@ilos/core';
+
 import { LogMessageType } from './LogMessageType';
 
 export interface LoggerInterface extends Interfaces.ProviderInterface {
