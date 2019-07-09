@@ -1,8 +1,4 @@
-import {
-  Container,
-  ContainerInterface,
-  Factory,
-} from '../container';
+import { Container, ContainerInterface, Factory } from '../container';
 
 import {
   ServiceContainerInterface,
@@ -20,12 +16,7 @@ import {
 
 import { hasInterface } from '../helpers/types/hasInterface';
 
-import {
-  DestroyHookInterface,
-  InitHookInterface,
-  RegisterHookInterface,
-  HookInterface,
-} from '../interfaces/hooks';
+import { DestroyHookInterface, InitHookInterface, RegisterHookInterface, HookInterface } from '../interfaces/hooks';
 
 import { ExtensionInterface, ExtensionStaticInterface } from '../interfaces/ExtentionInterface';
 import { IdentifierType } from '../types';
@@ -37,7 +28,8 @@ import { IdentifierType } from '../types';
  * @class ServiceContainer
  * @implements {ServiceContainerInterface}
  */
-export abstract class ServiceContainer implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface {
+export abstract class ServiceContainer
+  implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface {
   readonly extensions: ExtensionStaticInterface[] = [];
   protected status: StatusType = BEFORE_CONSTRUCT;
 
@@ -89,7 +81,7 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
    * @returns {ContainerInterface}
    * @memberof ServiceProvider
    */
-  public getContainer():ContainerInterface {
+  public getContainer(): ContainerInterface {
     return this.container;
   }
 
@@ -123,7 +115,7 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
 
   protected addInitHook(hook: HookInterface) {
     if (this.status < BEFORE_INIT) {
-      this.initHookRegistry.add(hook);    
+      this.initHookRegistry.add(hook);
     }
   }
 
@@ -140,16 +132,24 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
 
     if (hasInterface<InitHookInterface>(hooker, 'init')) {
       let hook = async (container: ServiceContainerInterface) => hooker.init(container);
-      if (!!identifier) {
-        hook = async (container: ServiceContainerInterface) => container.getContainer().get<InitHookInterface>(identifier).init(container);
+      if (identifier) {
+        hook = async (container: ServiceContainerInterface) =>
+          container
+            .getContainer()
+            .get<InitHookInterface>(identifier)
+            .init(container);
       }
       this.addInitHook(hook);
     }
 
     if (hasInterface<DestroyHookInterface>(hooker, 'destroy')) {
       let hook = async (container: ServiceContainerInterface) => hooker.destroy(container);
-      if (!!identifier) {
-        hook = async (container: ServiceContainerInterface) => container.getContainer().get<DestroyHookInterface>(identifier).destroy(container);
+      if (identifier) {
+        hook = async (container: ServiceContainerInterface) =>
+          container
+            .getContainer()
+            .get<DestroyHookInterface>(identifier)
+            .destroy(container);
       }
       this.addDestroyHook(hook);
     }
@@ -159,25 +159,25 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
 
   protected registerExtensions(extensions: ExtensionStaticInterface[]) {
     const container = this.getContainer().root;
-    for(const index in extensions) {
-      const extension = extensions[index];
-      const containerExtensionKey = `extension:${extension.key}`;
-      if(!container.isBound(containerExtensionKey)) {
-        container.bind(containerExtensionKey).toFactory(() => (config) => new extension(config));
-        container.bind('extensions').toConstantValue({
-          index,
-          key: containerExtensionKey
-        });
+    for (const index in extensions) {
+      if (extensions.hasOwnProperty(index)) {
+        const extension = extensions[index];
+        const containerExtensionKey = `extension:${extension.key}`;
+        if (!container.isBound(containerExtensionKey)) {
+          container.bind(containerExtensionKey).toFactory(() => (config) => new extension(config));
+          container.bind('extensions').toConstantValue({
+            index,
+            key: containerExtensionKey,
+          });
+        }
       }
     }
   }
 
   protected applyExtensions() {
     const container = this.getContainer();
-    const extensions = container
-      .getAll<{key: string, index: number}>('extensions')
-      .sort((a, b) => a.index - b.index);
-    for(const { key: extensionKey } of extensions) {
+    const extensions = container.getAll<{ key: string; index: number }>('extensions').sort((a, b) => a.index - b.index);
+    for (const { key: extensionKey } of extensions) {
       if (Reflect.hasMetadata(extensionKey, this.constructor)) {
         const extensionConfig = Reflect.getMetadata(extensionKey, this.constructor);
         const extension = container.get<Factory<ExtensionInterface>>(extensionKey)(extensionConfig);
@@ -191,8 +191,12 @@ export abstract class ServiceContainer implements ServiceContainerInterface, Ini
       const children = Reflect.getMetadata('extension:children', this.constructor);
       for (const child of children) {
         const childInstance = new child(this.getContainer().createChild());
-        this.getContainer().bind(child).toConstantValue(childInstance);
-        this.getContainer().bind('children').toConstantValue(child);
+        this.getContainer()
+          .bind(child)
+          .toConstantValue(childInstance);
+        this.getContainer()
+          .bind('children')
+          .toConstantValue(child);
         this.registerHooks(childInstance);
       }
     }

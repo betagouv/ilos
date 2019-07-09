@@ -3,11 +3,11 @@ import vm from 'vm';
 import path from 'path';
 import jsYaml from 'js-yaml';
 import { camelCase, get, set, has } from 'lodash';
+
 import { Container } from '@ilos/core';
 import { EnvInterfaceResolver } from '@ilos/env';
 
 import { ConfigInterface } from './ConfigInterfaces';
-
 
 /**
  * Config provider
@@ -22,24 +22,17 @@ export class Config implements ConfigInterface {
   constructor(protected env: EnvInterfaceResolver) {}
 
   async init() {
-    const defaultConfigFolder = this.env.get('APP_WORKING_PATH', process.cwd()); 
+    const defaultConfigFolder = this.env.get('APP_WORKING_PATH', process.cwd());
     const defaultConfigDir = this.env.get('APP_CONFIG_DIR', './config');
-    try {
-      this.loadConfigDirectory(defaultConfigFolder, defaultConfigDir);
-    } catch {
-      // do nothing
-    }
+    this.loadConfigDirectory(defaultConfigFolder, defaultConfigDir);
   }
 
   loadConfigDirectory(workingPath: string, configDir?: string) {
     const configSubFolder = configDir ? configDir : this.env.get('APP_CONFIG_DIR', './config');
-    const configFolder = path.resolve(
-      workingPath,
-      configSubFolder,
-    );
+    const configFolder = path.resolve(workingPath, configSubFolder);
 
     if (!fs.existsSync(configFolder) || !fs.lstatSync(configFolder).isDirectory()) {
-      throw new Error(`Config path ${configFolder} is not a directory`);
+      return;
     }
 
     if (this.configPaths.has(configFolder)) {
@@ -55,9 +48,13 @@ export class Config implements ConfigInterface {
       }
 
       if (['.js'].indexOf(fileinfo.ext) > -1) {
-        const configExport = this.loadJsFile(filename);
-        if (configExport) {
-          this.set(camelCase(fileinfo.name), configExport);
+        const { error, data } = this.loadJsFile(filename);
+        if (error) {
+          throw new Error(data);
+        }
+
+        if (data) {
+          this.set(camelCase(fileinfo.name), data);
         }
       }
     });
@@ -89,7 +86,8 @@ export class Config implements ConfigInterface {
     };
 
     const script = fs.readFileSync(filename, 'utf8');
-    let configExport;
+    let configExport: object;
+
     try {
       vm.runInNewContext(script, sandbox);
       if (Reflect.ownKeys(sandbox.module.exports).length > 0) {
@@ -97,9 +95,16 @@ export class Config implements ConfigInterface {
       } else if (Reflect.ownKeys(sandbox.exports).length > 0) {
         configExport = sandbox.exports;
       }
-      return configExport;
+
+      return {
+        error: false,
+        data: configExport,
+      };
     } catch (e) {
-      throw e;
+      return {
+        error: true,
+        data: e.message,
+      };
     }
   }
 
