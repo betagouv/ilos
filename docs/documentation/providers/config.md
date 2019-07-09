@@ -3,11 +3,13 @@ title: Config
 lang: en-US
 footer: Apache 2.0 Licensed
 ---
-# Config provider
+# Configuration
 The config provider aims to provide an access to config files.
 
 ## Installation
-`yarn add @ilos/provider-config`
+`yarn add @ilos/config`
+
+Note: this package is already loaded by the framework.
 
 ## Configuration
 By default, the config provider will search config file from #APP_WORKING_PATH/config. You can use ts/js file or yaml files.
@@ -18,26 +20,22 @@ declare function env(key: string, fallback?: string): any;
 export const hi = env('APP_HI');
 ```
 
-In your service provider, you may bind `ConfigProviderInterfaceResolver` with the implementation of your choice.
-`/services/greeting/src/ServiceProvider.ts`
+In your service provider, you may bind use the `config` keyword to configure the provider.
+
 ```ts
-import { Parents, Interfaces, Types } from '@ilos/core';
-import { ConfigProviderInterfaceResolver, ConfigProvider } from '@ilos/provider-config';
+import { Parents, Container } from '@ilos/core';
 import { HelloAction } from './action/HelloAction';
 
-export class ServiceProvider extends Parents.ServiceProvider {
-  readonly alias: any[] = [
-    [ConfigProviderInterfaceResolver, ConfigProvider],
-  ];
-
-  readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
-    HelloAction
-  ];
-}
+@Container.serviceProvider({
+  config: __dirname,
+  handlers: [
+    HelloAction,
+  ]
+})
+export class ServiceProvider extends Parents.ServiceProvider {}
 ```
 
-You can also force config provider to load a specific directory by using the following method : `loadConfigDirectory(workingPath: string, configDir?: string): void;`
-
+The config keyword accept a base path as string (ie. `__dirname`), a path configuration (`{ workingPath: string, configDir: string }`) or a config object ({ [k: string]: any }).
 
 ## Usage
 In order get config provider from IOC, you must add it in the constructor. Then, you can do
@@ -51,7 +49,7 @@ The first argument is the config key, the second is the fallback. You can omit t
 ## Example
 ```ts
 import { Parents, Container, Types } from '@ilos/core';
-import { ConfigProviderInterfaceResolver } from '@ilos/provider-config';
+import { ConfigProviderInterfaceResolver } from '@ilos/config';
 
 type HelloParamsType = {
   name: string,
@@ -78,3 +76,6 @@ export class HelloAction extends Parents.Action {
   }
 }
 ```
+
+## Custom implementation
+You can replace the packaged config provider with your own implementation by binding the `ConfigInterfaceResolver` with a class which implements `ConfigInterface`.

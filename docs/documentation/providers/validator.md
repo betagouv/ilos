@@ -3,65 +3,35 @@ title: Validator
 lang: en-US
 footer: Apache 2.0 Licensed
 ---
-# Validator provider
+# Validator
 The validator provider provide method to validate input data.
 
 ## Installation
-`yarn add @ilos/provider-validator`
+`yarn add @ilos/validator`
+Note: this package is already loaded by the framework.
 
 ## Configuration
 The packaged implementation of the validator provider use JSON Schema validation (with [ajv](http://ajv.js.org)).
 
-In your service provider, you may bind `ValidatorProviderInterfaceResolver` with the implementation of your choice. You can register validators with the following method: 
-`registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorProviderInterface;`
-By example, in the packaged implementation, you can register a schema with a key by doing this: 
-```ts
-registerValidator(mySchema, 'myKey');
-```
-
-You can also register custom keywords with `registerCustomKeyword(definition: any): ValidatorProviderInterface;`.
-By example, in the packaged implementation, you can add a json schema string format with : 
-```ts
-registerCustomKeyword({
-  name: 'id'
-  type: 'format',
-  definition: (data:string):boolean => true,
-});
-```
 ### Configuration example
 `/services/greeting/src/ServiceProvider.ts`
 ```ts
-import { Parents, Interfaces, Types } from '@ilos/core';
-import { ValidatorProviderInterfaceResolver, AjvProvider } from '@ilos/provider-validator';
+import { Parents, Container } from '@ilos/core';
 import { HelloAction } from './actions/HelloAction';
 import { helloActionParamsSchema } from './schemas/helloActionParamsSchema';
 
-export class ServiceProvider extends Parents.ServiceProvider {
-  readonly alias: any[] = [
-    [ValidatorProviderInterfaceResolver, AjvProvider],
-  ];
-
-  readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
-    HelloAction
-  ];
-
-  protected readonly validators: [string, any][] = [
+@Container.serviceProvider({
+  handlers: [
+    HelloAction,
+  ],
+  validator: [
     ['greeting.hello', helloActionParamsSchema],
-  ];
-
-  public async boot() {
-    await super.boot();
-    this.registerValidators();
-  }
-
-  protected registerValidators() {
-    const validator = this.getContainer().get(ValidatorProviderInterfaceResolver);
-    this.validators.forEach(([name, schema]) => {
-      validator.registerValidator(schema, name);
-    });
-  }
-}
+  ],
+})
+export class ServiceProvider extends Parents.ServiceProvider {}
 ```
+
+The `validator` keyword may receive custom validators as array `[string, any][]` or validator or/and keywords as an object `{ validators?: [string, any][], keywords?: any[] }`.
 
 ## Usage
 In order get validator provider from IOC, you must add it in the constructor. Then, you can do
@@ -75,7 +45,7 @@ The first argument is the data, the second is the key.
 ## Example
 ```ts
 import { Parents, Container, Types } from '@ilos/core';
-import { ValidatorProviderInterfaceResolver } from '@ilos/provider-validator';
+import { ValidatorInterfaceResolver } from '@ilos/validator';
 
 type HelloParamsType = {
   name: string,
@@ -87,7 +57,7 @@ type HelloParamsType = {
 })
 export class HelloAction extends Parents.Action {
   constructor(
-    private validator: ValidatorProviderInterfaceResolver,
+    private validator: ValidatorInterfaceResolver,
   ) {
     super();
   }
@@ -102,4 +72,21 @@ export class HelloAction extends Parents.Action {
     return `Hello ${params.name}`;
   }
 }
+```
+## Custom implementation
+In your service provider, you may bind `ValidatorInterfaceResolver` with the implementation of your choice. You can register validators with the following method: 
+`registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorInterface;`
+By example, in the packaged implementation, you can register a schema with a key by doing this: 
+```ts
+registerValidator(mySchema, 'myKey');
+```
+
+You can also register custom keywords with `registerCustomKeyword(definition: any): ValidatorInterface;`.
+By example, in the packaged implementation, you can add a json schema string format with : 
+```ts
+registerCustomKeyword({
+  name: 'id'
+  type: 'format',
+  definition: (data:string):boolean => true,
+});
 ```

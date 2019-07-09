@@ -16,17 +16,18 @@ module.exports = {
     'service_provider',
     {
       title: 'Middlewares',
-      path: '/documentation/middlewares/',
+      path: '/documentation/middlewares/basics',
       children: [
         'middlewares/basics',
         'middlewares/acl',
         'middlewares/content_filter',
         'middlewares/custom',
+        'middlewares/example',
       ]
     },
     {
       title: 'Transports',
-      path: '/documentation/transports/',
+      path: '/documentation/transports/basics',
       children: [
         'transports/basics',
         'transports/http',

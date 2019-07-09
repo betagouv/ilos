@@ -56,8 +56,8 @@ You can use the ioc engine to get providers (among others) in your handler. Just
   }
 ```
 
-### Boot method
-The boot method is called after instanciation of the class, if you want to initialize some stuff. You get the current container as first (and only) argument.
+### Hooks
+The handler can have hooks by implementing `RegisterHookInterface`, `InitHookInterface`, or `DestroyHookInterface`. See hooks.
 
 ### Call/Handle
 
@@ -87,3 +87,12 @@ export class HelloAction extends Parents.Action {
   }
 }
 ```
+
+### Middlewares
+```ts
+  public readonly middlewares: (string|[string, any])[] = [
+    'isConnected',
+    ['can', ['user.list']]
+  ];
+```
+You can add middlewares to you handler by adding a middlewares property. This will use middlewares bindings declared in your service provider. You can pass arguments with a tuple.
