@@ -14,15 +14,17 @@ A middleware is a class that implement MiddlewareInterface. This interface have 
 ## How to use it
 - Step 1 : add a binding to your service provider : 
 ```ts
-  readonly middlewares: [string, NewableType<MiddlewareInterface>][] = [
+@Container.serviceProvider({
+  middlewares: [
     ['can', PermissionMiddleware],
-  ];
+  ],
+})
 ```
 - Step 2 : add this middleware to your actions : 
 ```ts
-  readonly middlewares: (string|[string, any])[] = [
-    ['can', ['user.list']]
-  ];
+readonly middlewares: (string|[string, any])[] = [
+  ['can', ['user.list']]
+];
 ```
 
 That's all! You can create your own middleware, find [how](custom)

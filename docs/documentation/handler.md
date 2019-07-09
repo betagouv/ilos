@@ -56,8 +56,8 @@ You can use the ioc engine to get providers (among others) in your handler. Just
   }
 ```
 
-### Boot method
-The boot method is called after instanciation of the class, if you want to initialize some stuff. You get the current container as first (and only) argument.
+### Hooks
+The handler can have hooks by implementing `RegisterHookInterface`, `InitHookInterface`, or `DestroyHookInterface`. See hooks.
 
 ### Call/Handle
 

@@ -12,6 +12,6 @@ A provider is a reusable package with a specific function, you should make a pro
 
 ### Examples
 
-* [notification provider](/documentation/providers/notification) 
-* [config provider](/documentation/providers/config) 
-* [template provider](/documentation/providers/template) 
+* [Config](/documentation/providers/config) 
+* [Notification](/documentation/providers/notification) 
+* [Template](/documentation/providers/template) 

@@ -14,12 +14,13 @@ Now you've a file in `src/ServiceProvider.ts`. The service provider is an orches
 
 ## Example
 ```ts
-import { Parents, Interfaces, Types } from '@ilos/core';
+import { Container, Parents } from '@ilos/core';
 import { HelloAction } from './action/HelloAction';
 
-export class ServiceProvider extends Parents.ServiceProvider {
-  readonly handlers: Types.NewableType<Interfaces.HandlerInterface>[] = [
-    HelloAction
-  ];
-}
+@Container.serviceProvider({
+  handlers: [
+    HelloAction,
+  ]
+})
+export class ServiceProvider extends Parents.ServiceProvider {}
 ```
