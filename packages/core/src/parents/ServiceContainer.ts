@@ -1,25 +1,15 @@
-import { Container, ContainerInterface, Factory } from '../container';
+import { Container, ContainerInterface, Factory, ServiceIdentifier } from '../container';
 
 import {
   ServiceContainerInterface,
   ServiceContainerInterfaceResolver,
-  StatusType,
-  BEFORE_CONSTRUCT,
-  AFTER_CONSTRUCT,
-  BEFORE_REGISTER,
-  AFTER_REGISTER,
-  BEFORE_INIT,
-  AFTER_INIT,
-  BEFORE_DESTROY,
-  AFTER_DESTROY,
 } from '../interfaces/ServiceContainerInterface';
 
-import { hasInterface } from '../helpers/types/hasInterface';
-
-import { DestroyHookInterface, InitHookInterface, RegisterHookInterface, HookInterface } from '../interfaces/hooks';
+import { DestroyHookInterface, InitHookInterface, RegisterHookInterface } from '../interfaces/hooks';
 
 import { ExtensionInterface, ExtensionStaticInterface } from '../interfaces/ExtentionInterface';
-import { IdentifierType } from '../types';
+import { IdentifierType, NewableType } from '../types';
+import { HookRegistry } from '../container/HookRegistry';
 
 /**
  * Service container parent class
@@ -31,11 +21,10 @@ import { IdentifierType } from '../types';
 export abstract class ServiceContainer
   implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface {
   readonly extensions: ExtensionStaticInterface[] = [];
-  protected status: StatusType = BEFORE_CONSTRUCT;
 
-  protected registerHookRegistry: Set<HookInterface> = new Set();
-  protected initHookRegistry: Set<HookInterface> = new Set();
-  protected destroyHookRegistry: Set<HookInterface> = new Set();
+  protected registerHookRegistry = new HookRegistry<RegisterHookInterface>('register', false);
+  protected initHookRegistry = new HookRegistry<InitHookInterface>('init');
+  protected destroyHookRegistry = new HookRegistry<DestroyHookInterface>('destroy');
 
   protected container: ContainerInterface;
 
@@ -46,7 +35,6 @@ export abstract class ServiceContainer
       this.container = new Container();
       this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
     }
-    this.status = AFTER_CONSTRUCT;
   }
 
   /**
@@ -56,24 +44,16 @@ export abstract class ServiceContainer
   async register() {
     this.registerExtensions(this.extensions);
     this.applyExtensions();
-
     await this.registerChildren();
-
-    this.status = BEFORE_REGISTER;
-    await this.dispatchRegisterHook();
-    this.status = AFTER_REGISTER;
+    await this.registerHookRegistry.dispatch(this);
   }
 
   async init() {
-    this.status = BEFORE_INIT;
-    await this.dispatchInitHook();
-    this.status = AFTER_INIT;
+    await this.initHookRegistry.dispatch(this);
   }
 
   async destroy() {
-    this.status = BEFORE_DESTROY;
-    await this.dispatchDestroyHook();
-    this.status = AFTER_DESTROY;
+    await this.destroyHookRegistry.dispatch(this);
   }
 
   /**
@@ -85,75 +65,11 @@ export abstract class ServiceContainer
     return this.container;
   }
 
-  protected async dispatchRegisterHook() {
-    for (const [hook] of this.registerHookRegistry.entries()) {
-      await hook(this);
-    }
-    this.registerHookRegistry.clear();
-  }
-
-  protected async dispatchInitHook() {
-    for (const [hook] of this.initHookRegistry.entries()) {
-      await hook(this);
-    }
-    this.initHookRegistry.clear();
-  }
-
-  protected async dispatchDestroyHook() {
-    const destroyHookRegistry = [...this.destroyHookRegistry].reverse();
-    for (const hook of destroyHookRegistry) {
-      await hook(this);
-    }
-    this.destroyHookRegistry.clear();
-  }
-
-  protected addRegisterHook(hook: HookInterface) {
-    if (this.status < BEFORE_REGISTER) {
-      this.registerHookRegistry.add(hook);
-    }
-  }
-
-  protected addInitHook(hook: HookInterface) {
-    if (this.status < BEFORE_INIT) {
-      this.initHookRegistry.add(hook);
-    }
-  }
-
-  protected addDestroyHook(hook: HookInterface) {
-    if (this.status < BEFORE_DESTROY) {
-      this.destroyHookRegistry.add(hook);
-    }
-  }
 
   public registerHooks(hooker: object, identifier?: IdentifierType): void {
-    if (hasInterface<RegisterHookInterface>(hooker, 'register') && !identifier) {
-      this.addRegisterHook(async container => hooker.register(container));
-    }
-
-    if (hasInterface<InitHookInterface>(hooker, 'init')) {
-      let hook = async (container: ServiceContainerInterface) => hooker.init(container);
-      if (identifier) {
-        hook = async (container: ServiceContainerInterface) =>
-          container
-            .getContainer()
-            .get<InitHookInterface>(identifier)
-            .init(container);
-      }
-      this.addInitHook(hook);
-    }
-
-    if (hasInterface<DestroyHookInterface>(hooker, 'destroy')) {
-      let hook = async (container: ServiceContainerInterface) => hooker.destroy(container);
-      if (identifier) {
-        hook = async (container: ServiceContainerInterface) =>
-          container
-            .getContainer()
-            .get<DestroyHookInterface>(identifier)
-            .destroy(container);
-      }
-      this.addDestroyHook(hook);
-    }
-
+    this.registerHookRegistry.register(hooker, identifier);
+    this.initHookRegistry.register(hooker, identifier);
+    this.destroyHookRegistry.register(hooker, identifier);
     return;
   }
 
@@ -200,5 +116,49 @@ export abstract class ServiceContainer
         this.registerHooks(childInstance);
       }
     }
+  }
+
+  public get(identifier: ServiceIdentifier) {
+    return this.container.get(identifier);
+  }
+
+  public bind(constructor: NewableType<any>, identifier?: ServiceIdentifier) {
+    this.container.bind(constructor).toSelf();
+    if (identifier) {
+      this.container.bind(identifier).toService(constructor);
+    }
+
+    const taggedIdentifier = <ServiceIdentifier | ServiceIdentifier[]>Reflect.getMetadata('extension:identifier', constructor);
+    if (taggedIdentifier) {
+      if (!Array.isArray(taggedIdentifier)) {
+        this.container.bind(taggedIdentifier).toService(constructor);
+      } else {
+        for (const id of taggedIdentifier) {
+          this.container.bind(id).toService(constructor);
+        }
+      }
+    }
+  }
+
+  public ensureIsBound(identifier: ServiceIdentifier, fallback?: NewableType<any>) {
+    if (this.container.isBound(identifier)) {
+      return;
+    }
+
+    if (fallback) {
+      this.bind(fallback, identifier);
+      return;
+    }
+
+    const name = (typeof identifier === 'string') ? identifier : (typeof identifier === 'function' )? identifier.name : identifier.toString();
+    throw new Error(`Unable to find bindings for ${name}`);
+  }
+
+  public overrideBinding(identifier: ServiceIdentifier, constructor: NewableType<any>) {
+    if (this.container.isBound(identifier)) {
+      this.container.unbind(identifier);
+    }
+
+    this.bind(constructor, identifier);
   }
 }
