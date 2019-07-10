@@ -78,9 +78,10 @@
   },
   "dependencies": {
     "@ilos/connection-redis": "^0.2.0",
+    "@ilos/env": "^0.2.0",
     "bull": "^3.7.0"
   },
   "peerDependencies": {
-    "@ilos/env": "~0"
+    "@ilos/core": "^0.2.0"
   }
 }

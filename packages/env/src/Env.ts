@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
+
 import { Container } from '@ilos/core';
 
 import { EnvInterface } from './EnvInterfaces';
@@ -32,7 +33,7 @@ export class Env implements EnvInterface {
     if (fs.existsSync(envFileOrDirectoryPath) && fs.lstatSync(envFileOrDirectoryPath).isDirectory()) {
       envFilePath = path.resolve(envFileOrDirectoryPath, '.env');
     }
-    
+
     if (!fs.existsSync(envFilePath)) {
       // throw new Error(`Unable to load env from ${envFileOrDirectoryPath}`);
       return;

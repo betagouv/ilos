@@ -19,14 +19,14 @@ export class NotificationExtension implements Interfaces.RegisterHookInterface, 
     const container = serviceContainer.getContainer();
 
     if (!container.isBound(TemplateInterfaceResolver)) {
-      throw new Error('Unable to find template provider');    
+      throw new Error('Unable to find template provider');
     }
 
     if (!container.isBound(ConfigInterfaceResolver)) {
       throw new Error('Unable to find config provider');
     }
 
-    container.bind(Notification).toSelf()
+    container.bind(Notification).toSelf();
     container.bind(NotificationInterfaceResolver).toService(Notification);
     serviceContainer.registerHooks(Notification.prototype, NotificationInterfaceResolver);
   }
@@ -38,7 +38,7 @@ export class NotificationExtension implements Interfaces.RegisterHookInterface, 
         .get(TemplateInterfaceResolver)
         .loadTemplatesFromDirectory(
           this.config.template,
-          (typeof this.config.templateMeta === 'string') ? 
+          (typeof this.config.templateMeta === 'string') ?
             container
               .get(ConfigInterfaceResolver)
               .get(this.config.templateMeta) :

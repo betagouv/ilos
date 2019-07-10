@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
+
 import { Types, Exceptions } from '@ilos/core';
 
 import { RoleMiddleware } from './RoleMiddleware';

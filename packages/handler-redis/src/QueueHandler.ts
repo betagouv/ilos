@@ -1,4 +1,5 @@
 import { Job, Queue } from 'bull';
+
 import { Interfaces, Types } from '@ilos/core';
 import { RedisConnection } from '@ilos/connection-redis';
 

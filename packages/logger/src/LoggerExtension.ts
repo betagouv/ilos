@@ -1,6 +1,8 @@
 import * as winston from 'winston';
+
 import { Interfaces } from '@ilos/core';
 import { ConfigInterfaceResolver } from '@ilos/config';
+
 import { Logger } from './Logger';
 import { LoggerInterfaceResolver } from './LoggerInterface';
 
@@ -9,11 +11,11 @@ export class LoggerExtension implements Interfaces.RegisterHookInterface {
 
   constructor(protected configKey: string) {
   }
-  
+
   async register(serviceContainer: Interfaces.ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     const config = container.get(ConfigInterfaceResolver);
-    if(!container.isBound(LoggerInterfaceResolver)) {
+    if (!container.isBound(LoggerInterfaceResolver)) {
       container
         .bind(LoggerInterfaceResolver)
         .toConstantValue(
@@ -23,7 +25,7 @@ export class LoggerExtension implements Interfaces.RegisterHookInterface {
                 new winston.transports.Console(),
               ],
             }),
-          ))
+          )),
         );
     }
   }

@@ -1,6 +1,7 @@
 import { Interfaces, Types } from '@ilos/core';
 import { EnvInterfaceResolver } from '@ilos/env';
 import { queueHandlerFactory } from '@ilos/handler-redis';
+
 import { QueueConfigType, QueueTargetType } from './QueueTypes';
 
 export class QueueExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
@@ -27,7 +28,7 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
       [...(Array.isArray(this.config) ? this.config : this.config.for)],
       serviceContainer,
     );
-    
+
     this.registerQueue(targets, serviceContainer);
   }
 
@@ -45,16 +46,16 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
       new Set(
         rootContainer
           .getHandlers()
-          .filter((cfg) => 'local' in cfg && cfg.local && ('queue' in cfg && !cfg.queue))
-          .map((cfg) => cfg.service),
+          .filter(cfg => 'local' in cfg && cfg.local && ('queue' in cfg && !cfg.queue))
+          .map(cfg => cfg.service),
       ),
     );
     const targets = rootContainer.getAll<string>(QueueExtension.containerKey);
     const unprocessableTargets = targets.filter(
-      (service: string) => (registredHandlers.indexOf(service) < 0)
+      (service: string) => (registredHandlers.indexOf(service) < 0),
     );
 
-    if (unprocessableTargets.length > 0 ) {
+    if (unprocessableTargets.length > 0) {
       throw new Error(`Unprocessable queue listeners: ${unprocessableTargets.join(', ')}`);
     }
   }
@@ -80,9 +81,9 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
 
   protected registerQueue(
     targets: QueueTargetType[],
-    serviceContainer: Interfaces.ServiceContainerInterface
+    serviceContainer: Interfaces.ServiceContainerInterface,
   ) {
-    for(const target of targets) {
+    for (const target of targets) {
       serviceContainer
         .getContainer()
         .root
@@ -97,9 +98,9 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
 
   protected registerQueueHandlers(
     targets: QueueTargetType[],
-    serviceContainer: Interfaces.ServiceContainerInterface
+    serviceContainer: Interfaces.ServiceContainerInterface,
   ) {
-    for(const target of targets) {
+    for (const target of targets) {
       const handler: Types.NewableType<Interfaces.HandlerInterface> = queueHandlerFactory(target);
       serviceContainer.getContainer().setHandler(handler);
       serviceContainer.registerHooks(handler.prototype, handler);

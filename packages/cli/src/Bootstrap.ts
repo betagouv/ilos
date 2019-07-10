@@ -1,30 +1,19 @@
+// tslint:disable max-classes-per-file
 import fs from 'fs';
 import path from 'path';
+
 import { Parents, Interfaces, Types, Container } from '@ilos/core';
 
 import { CliTransport } from './transports/CliTransport';
 import { BootstrapType } from './types';
 
-const defaultBootstrap: BootstrapType = {
-  kernel(): Types.NewableType<Interfaces.KernelInterface> {
-    return class extends Parents.Kernel {};
-  },
-  serviceProviders: [],
-  transport: {
-    cli(k: Interfaces.KernelInterface): Interfaces.TransportInterface { return new CliTransport(k); },
-  },
-};
-
 export class Bootstrap {
   constructor(
-    public bootstrap: BootstrapType = {},
-  )
-  {
-
-  }
+    public bootstrapObject: BootstrapType = {},
+  ) {}
 
   get serviceProviders() {
-    return this.bootstrap.serviceProviders;
+    return this.bootstrapObject.serviceProviders;
   }
 
   setEnvironment():void {
@@ -52,8 +41,8 @@ export class Bootstrap {
 
   getBootstrapFile():string {
     const basePath = process.cwd();
-    const bootstrapFile = ('npm_package_config_bootstrap' in process.env) ? process.env.npm_package_config_bootstrap : './bootstrap.ts';
-
+    const bootstrapFile = ('npm_package_config_bootstrap' in process.env) ?
+      process.env.npm_package_config_bootstrap : './bootstrapObject.ts';
 
     const bootstrapPath = path.resolve(basePath, bootstrapFile);
 
@@ -65,11 +54,11 @@ export class Bootstrap {
   }
 
   async start(command: string, ...opts: any[]): Promise<Interfaces.TransportInterface> {
-    const bootstrap = this.bootstrap;
+    const bootstrapObject = this.bootstrapObject;
 
-    const kernelConstructor = bootstrap.kernel();
+    const kernelConstructor = bootstrapObject.kernel();
 
-    const serviceProviders = 'serviceProviders' in bootstrap ? bootstrap.serviceProviders : [];
+    const serviceProviders = 'serviceProviders' in bootstrapObject ? bootstrapObject.serviceProviders : [];
 
     @Container.kernel({
       children: serviceProviders,
@@ -81,11 +70,11 @@ export class Bootstrap {
 
     let transport;
 
-    if (command !== 'cli' && (command in bootstrap.transport)) {
-      transport = bootstrap.transport[command](kernel);
+    if (command !== 'cli' && (command in bootstrapObject.transport)) {
+      transport = bootstrapObject.transport[command](kernel);
       await transport.up(opts);
     } else {
-      transport = bootstrap.transport.cli(kernel);
+      transport = bootstrapObject.transport.cli(kernel);
       await transport.up([
         null,
         null,
@@ -95,15 +84,18 @@ export class Bootstrap {
     }
 
     this.registerShutdownHook(kernel, transport);
-    
-    return transport;  
+
+    return transport;
   }
 
   registerShutdownHook(kernel: Interfaces.KernelInterface, transport: Interfaces.TransportInterface) {
     function handle() {
-      setTimeout(() => {
-        process.exit(0);
-      }, 5000);
+      setTimeout(
+        () => {
+          process.exit(0);
+        },
+        5000,
+      );
 
       transport.down()
         .then(() => {
@@ -131,7 +123,7 @@ export class Bootstrap {
 
   async createFromPath(): Promise<Bootstrap> {
     const bootstrapPath = this.getBootstrapFile();
-    const defaultBootstrap: BootstrapType = {... this.bootstrap };
+    const defaultBootstrap: BootstrapType = { ...this.bootstrapObject };
 
     let currentBootstrap = {};
 
@@ -141,9 +133,17 @@ export class Bootstrap {
     return new Bootstrap({ ...defaultBootstrap, ...currentBootstrap });
   }
 
-  create(bootstrap: BootstrapType): Bootstrap {
-    return new Bootstrap({ ...this.bootstrap, ...bootstrap })
+  create(bootstrapObject: BootstrapType): Bootstrap {
+    return new Bootstrap({ ...this.bootstrapObject, ...bootstrapObject });
   }
 }
 
-export const bootstrap = new Bootstrap(defaultBootstrap);
+export const bootstrap = new Bootstrap({
+  kernel(): Types.NewableType<Interfaces.KernelInterface> {
+    return class extends Parents.Kernel {};
+  },
+  serviceProviders: [],
+  transport: {
+    cli(k: Interfaces.KernelInterface): Interfaces.TransportInterface { return new CliTransport(k); },
+  },
+});

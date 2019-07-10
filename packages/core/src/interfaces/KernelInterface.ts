@@ -1,5 +1,5 @@
 import { RPCCallType, RPCResponseType, ResultType, ContextType, ParamsType } from '../types';
-import { ServiceContainerInterface, ServiceContainerInterfaceResolver, ServiceContainerConstructorInterface } from './ServiceContainerInterface';
+import { ServiceContainerInterface, ServiceContainerInterfaceResolver } from './ServiceContainerInterface';
 import { BootstrapHookInterface } from './hooks/BootstrapHookInterface';
 import { ShutdownHookInterface } from './hooks/ShutdownHookInterface';
 
@@ -18,7 +18,7 @@ export interface KernelInterface extends ServiceContainerInterface, BootstrapHoo
 }
 
 export abstract class KernelInterfaceResolver extends ServiceContainerInterfaceResolver implements KernelInterface {
-   async handle(call: RPCCallType): Promise<RPCResponseType|void> {
+  async handle(call: RPCCallType): Promise<RPCResponseType|void> {
     throw new Error();
   }
 

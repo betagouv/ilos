@@ -1,5 +1,7 @@
+// tslint:disable import-name no-duplicate-imports
 import { Redis as RedisInterface } from 'ioredis';
 import Redis from 'ioredis';
+
 import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/connection-manager';
 
 export class RedisConnection implements ConnectionInterface<RedisInterface> {
@@ -41,7 +43,7 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
         await this.client.disconnect();
         this.connected = false;
       }
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }

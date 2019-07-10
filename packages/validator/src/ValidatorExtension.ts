@@ -1,4 +1,5 @@
-import { Interfaces } from "@ilos/core";
+import { Interfaces } from '@ilos/core';
+
 import { AjvValidator } from './AjvValidator';
 import { ValidatorInterfaceResolver } from './ValidatorInterface';
 

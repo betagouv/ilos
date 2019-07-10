@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
+
 import { ConfigInterfaceResolver } from '@ilos/config';
 
 import { AjvValidator } from './AjvValidator';

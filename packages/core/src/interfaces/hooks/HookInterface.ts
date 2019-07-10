@@ -1,5 +1,3 @@
-import { ServiceContainerInterface } from "../ServiceContainerInterface";
+import { ServiceContainerInterface } from '../ServiceContainerInterface';
 
-export interface HookInterface {
-  (container?: ServiceContainerInterface): Promise<void> | void;
-}
+export type HookInterface = (container?: ServiceContainerInterface) => Promise<void> | void;

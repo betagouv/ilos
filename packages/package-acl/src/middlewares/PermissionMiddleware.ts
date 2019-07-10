@@ -21,8 +21,8 @@ export class PermissionMiddleware implements Interfaces.MiddlewareInterface {
 
     let permissions = [];
 
-    if (!!context.call 
-      && !!context.call.user 
+    if (!!context.call
+      && !!context.call.user
       && !!context.call.user.permissions
       && !!context.call.user.permissions.length
     ) {

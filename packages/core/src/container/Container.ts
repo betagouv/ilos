@@ -64,7 +64,7 @@ export class Container extends InversifyContainer implements ContainerInterface 
     }
 
     // remote/async is not possible now
-    if ('local' in normalizedHandlerConfig 
+    if ('local' in normalizedHandlerConfig
       && !normalizedHandlerConfig.local
       && 'queue' in normalizedHandlerConfig
       && normalizedHandlerConfig

@@ -1,7 +1,7 @@
-
-import { HttpHandler } from '../HttpHandler';
 import { Container, Types, Interfaces } from '@ilos/core';
 import { ConfigInterfaceResolver } from '@ilos/config';
+
+import { HttpHandler } from '../HttpHandler';
 /**
 * httpHandlerFactory - Create a HttpHandler for a remote service
 * @export
@@ -10,10 +10,14 @@ import { ConfigInterfaceResolver } from '@ilos/config';
 * @param {string} [version]
 * @returns {NewableType<HandlerInterface>}
 */
-export function httpHandlerFactory(service: string, url: string, version?: string): Types.NewableType<Interfaces.HandlerInterface&Interfaces.InitHookInterface> {
-  let isFromConfig = false
+export function httpHandlerFactory(
+    service: string,
+    url: string,
+    version?: string,
+  ): Types.NewableType<Interfaces.HandlerInterface&Interfaces.InitHookInterface> {
+  let isFromConfig = false;
   if (!/http/.test(url)) {
-    isFromConfig = true
+    isFromConfig = true;
   }
   @Container.handler({
     service,
@@ -32,13 +36,12 @@ export function httpHandlerFactory(service: string, url: string, version?: strin
     protected readonly version: string = version;
 
     public init() {
-      if(isFromConfig){
-        this.createClient(this.config.get(url))
+      if (isFromConfig) {
+        this.createClient(this.config.get(url));
       } else {
-        this.createClient(url)
+        this.createClient(url);
       }
     }
-
   }
 
   return CustomHttpHandler;

@@ -30,7 +30,7 @@ class BasicCommand extends Command {
 @Container.serviceProvider({
   commands: [
     BasicCommand,
-  ]
+  ],
 })
 class BasicServiceProvider extends Parents.ServiceProvider {
   extensions = [CommandExtension];
@@ -41,9 +41,9 @@ describe('Command extension', () => {
     const serviceProvider = new BasicServiceProvider();
     await serviceProvider.register();
     await serviceProvider.init();
-    
+
     const command = serviceProvider.getContainer().get(CommandRegistry).commands[0];
-  
+
     expect(command.name()).to.equal('hello');
     expect(command.options).to.have.length(1);
     expect(command.options[0]).to.deep.include({
@@ -71,7 +71,7 @@ describe('Command extension', () => {
         container.bind(CommandRegistry).toConstantValue(commander);
         commander.parse(['', '', 'hello', 'john']);
         sinon.restore();
-      })
+      });
     });
   });
 });

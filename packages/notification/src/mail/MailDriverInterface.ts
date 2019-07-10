@@ -6,10 +6,10 @@ export interface MailInterface {
 }
 
 export interface TemplateMailInterface {
-  email: string,
-  fullname: string,
-  template: string,
-  opts: any,
+  email: string;
+  fullname: string;
+  template: string;
+  opts: any;
 }
 
 

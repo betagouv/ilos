@@ -2,9 +2,7 @@ import { ContainerInterface } from '../container';
 import { ExtensionStaticInterface } from './ExtentionInterface';
 import { IdentifierType } from '../types';
 
-export interface ServiceContainerConstructorInterface<T = any> {
-  new (container?: ContainerInterface) : T;
-}
+export type ServiceContainerConstructorInterface<T = any> = new (container?: ContainerInterface) => T;
 
 export interface ServiceContainerInterface {
   readonly extensions: ExtensionStaticInterface[];

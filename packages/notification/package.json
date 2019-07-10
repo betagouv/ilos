@@ -58,6 +58,7 @@
     "@types/nock": "^10.0.3",
     "@types/node-mailjet": "^3.3.0",
     "chai": "^4.2.0",
+    "chai-nock": "^1.1.0",
     "chai-as-promised": "^7.1.1",
     "mocha": "^6.1.4",
     "nock": "^10.0.6",
