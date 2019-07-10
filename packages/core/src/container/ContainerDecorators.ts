@@ -33,6 +33,7 @@ export function provider(config: AnyConfig = {}) {
 
 export function handler(config: HandlerConfig) {
   const { service } = config;
+  // tslint:disable-next-line:prefer-const
   let { method, version, local, queue, ...other } = config;
 
   if (!('method' in config)) {

@@ -1,3 +1,4 @@
+// tslint:disable import-name no-duplicate-imports
 import { Redis as RedisInterface } from 'ioredis';
 import Redis from 'ioredis';
 
