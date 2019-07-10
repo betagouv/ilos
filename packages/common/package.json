@@ -51,6 +51,10 @@
     "sourceMap": true,
     "instrument": true
   },
+  "dependencies": {
+    "inversify": "^5.0.1",
+    "reflect-metadata": "^0.1.13"
+  },
   "devDependencies": {
     "@types/node": "^11.13.7",
     "ts-node": "^8.1.0",
