@@ -14,7 +14,6 @@ jobs:
       NODE_ENV: test
       APP_MONGO_URL: mongodb://127.0.0.1:27017
       APP_REDIS_URL: redis://127.0.0.1:6379
-      CC_TEST_REPORTER_ID: $CC_TEST_REPORTER_ID_ILOS
 
     steps:
       - checkout
