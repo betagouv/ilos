@@ -16,7 +16,7 @@ export class Bootstrap {
     return this.bootstrapObject.serviceProviders;
   }
 
-  setEnvironment():void {
+  setEnvironment(): void {
     process.env.APP_ROOT_PATH = process.cwd();
 
     if ('npm_package_config_workingDir' in process.env) {
@@ -27,19 +27,20 @@ export class Bootstrap {
 
     // Define config from npm package
     Reflect.ownKeys(process.env)
-    .filter((key: string) => /npm_package_config_app/.test(key))
-    .forEach((key: string) => {
-      const oldKey = key;
-      const newKey = key.replace('npm_package_config_', '').toUpperCase();
-      if (!(newKey in process.env)) {
-        process.env[newKey] = process.env[oldKey];
-      }
-    });
+      .filter((key: string) => /npm_package_config_app/.test(key))
+      .forEach((key: string) => {
+        const oldKey = key;
+        const newKey = key.replace('npm_package_config_', '').toUpperCase();
+        if (!(newKey in process.env)) {
+          process.env[newKey] = process.env[oldKey];
+        }
+      });
 
-    process.env.APP_ENV = ('NODE_ENV' in process.env && process.env.NODE_ENV !== undefined) ? process.env.NODE_ENV : 'dev';
+    process.env.APP_ENV =
+      'NODE_ENV' in process.env && process.env.NODE_ENV !== undefined ? process.env.NODE_ENV : 'dev';
   }
 
-  getBootstrapFile():string {
+  getBootstrapFile(): string {
     const basePath = process.cwd();
     const bootstrapFile = ('npm_package_config_bootstrap' in process.env) ?
       process.env.npm_package_config_bootstrap : './bootstrapObject.ts';
@@ -47,7 +48,7 @@ export class Bootstrap {
     const bootstrapPath = path.resolve(basePath, bootstrapFile);
 
     if (!fs.existsSync(bootstrapPath)) {
-      console.error('No bootstrap file provided');
+      console.error(`No bootstrap file provided: ${bootstrapPath}`);
       return;
     }
     return bootstrapPath;
