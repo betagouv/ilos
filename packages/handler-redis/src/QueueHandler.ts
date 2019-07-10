@@ -38,6 +38,7 @@ export class QueueHandler implements Interfaces.HandlerInterface, Interfaces.Ini
           _context: context,
         },
       });
+
       return job;
     } catch (e) {
       throw new Error('An error occured');

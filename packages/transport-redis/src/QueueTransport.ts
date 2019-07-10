@@ -47,8 +47,8 @@ export class QueueTransport implements Interfaces.TransportInterface {
 
       this.registerListeners(queue, key);
       this.queues.push(queue);
-      queue.process(async (job) => {
-        return this.kernel.handle({
+      queue.process(async job =>
+        this.kernel.handle({
           jsonrpc: '2.0',
           id: 1,
           method: job.data.method,
@@ -61,8 +61,8 @@ export class QueueTransport implements Interfaces.TransportInterface {
               },
             },
           },
-        });
-      });
+        }),
+      );
     }
   }
 

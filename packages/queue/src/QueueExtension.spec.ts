@@ -74,7 +74,7 @@ describe('Queue extension', () => {
       'serviceB',
     ]);
 
-    expect(container.getHandlers().length).to.eq(2);
+    expect(container.getHandlers().length).to.eq(4);
   });
 
   it('should register queue name in container and handlers', async () => {

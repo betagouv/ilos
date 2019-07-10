@@ -64,13 +64,11 @@ describe('Queue integration', () => {
   before(async () => {
     stringCallerKernel = new StringKernel();
     await stringCallerKernel.bootstrap();
-    console.log(stringCallerKernel.getContainer().getHandlers());
     stringTransport = new HttpTransport(stringCallerKernel);
     await stringTransport.up(['8081']);
 
     stringCalleeKernel = new StringKernel();
     await stringCalleeKernel.bootstrap();
-    console.log(stringCalleeKernel.getContainer().getHandlers());
     queueTransport = new QueueTransport(stringCalleeKernel);
     await queueTransport.up([redisUrl]);
   });
