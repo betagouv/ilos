@@ -1,130 +1,199 @@
-// import { describe } from 'mocha';
+// tslint:disable max-classes-per-file
+import { expect } from 'chai';
+import fs from 'fs';
+import os from 'os';
+import axios from 'axios';
+import path from 'path';
+
+import { HttpTransport } from '@ilos/transport-http';
+import { QueueTransport } from '@ilos/transport-redis';
+
+import { Container, Interfaces } from '@ilos/core';
+
+import { Kernel } from '../src/Kernel';
+import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
+
+// process.env.APP_REDIS_URL = 'redis://127.0.0.1:6379';
+
+const logPath = path.join(os.tmpdir(), 'ilos-test-' + new Date().getTime());
+process.env.APP_LOG_PATH = logPath;
+
+const redisUrl = process.env.APP_REDIS_URL;
+
+@Container.serviceProvider({
+  config: {
+    redis: {
+      connectionString: process.env.APP_REDIS_URL,
+      connectionOptions: {},
+    },
+    log: {
+      path: process.env.APP_LOG_PATH
+    },
+  }
+})
+class StringServiceProvider extends ParentStringServiceProvider {}
+
+@Container.kernel({
+  children: [StringServiceProvider],
+})
+class StringKernel extends Kernel {
+  name = 'string';
+}
+
+function makeRPCNotify(port: number, req: { method: string; params?: any }) {
+  const data = {
+    jsonrpc: '2.0',
+    method: req.method,
+    params: req.params,
+  };
+
+  return axios.post(`http://127.0.0.1:${port}`, data, {
+    headers: {
+      Accept: 'application/json',
+      'Content-type': 'application/json',
+    },
+  });
+}
+
+let stringTransport: Interfaces.TransportInterface;
+let queueTransport: Interfaces.TransportInterface;
+let stringCallerKernel: Interfaces.KernelInterface;
+let stringCalleeKernel: Interfaces.KernelInterface;
+
+describe('Queue integration', () => {
+  before(async () => {
+    stringCallerKernel = new StringKernel();
+    await stringCallerKernel.bootstrap();
+    console.log(stringCallerKernel.getContainer().getHandlers());
+    stringTransport = new HttpTransport(stringCallerKernel);
+    await stringTransport.up(['8081']);
+
+    stringCalleeKernel = new StringKernel();
+    await stringCalleeKernel.bootstrap();
+    console.log(stringCalleeKernel.getContainer().getHandlers());
+    queueTransport = new QueueTransport(stringCalleeKernel);
+    await queueTransport.up([redisUrl]);
+  });
+
+  after(async () => {
+    await stringTransport.down();
+    await queueTransport.down();
+    await stringCalleeKernel.shutdown();
+    await stringCallerKernel.shutdown();
+  });
+
+  it('should works', (done) => {
+    const data = { name: 'sam' };
+    makeRPCNotify(8081, { method: 'string:log', params: data })
+      .then(responseString => {
+        expect(responseString.data).to.equal('');
+        setTimeout(() => {
+          const content = fs.readFileSync(logPath,  { encoding:'utf8', flag: 'r' });
+          expect(content).to.eq(JSON.stringify(data));
+          done();
+        }, 1000);
+      })
+  });
+});
+
+
+// // tslint:disable max-classes-per-file
 // import { expect } from 'chai';
-// import axios from 'axios';
 
-// import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
-// import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
-// import { QueueTransport } from '../src/transports/QueueTransport';
-// import { HttpTransport } from '../src/transports/HttpTransport';
-// import { Kernel } from '../src/Kernel';
-// import { ServiceProviderConstructorInterface } from '../src/interfaces/ServiceProviderConstructorInterface';
-// import { httpServiceProviderFactory } from '../src/helpers/httpServiceProviderFactory';
-// import { KernelInterface } from '../src/interfaces/KernelInterface';
+// import { Parents, Container, Interfaces, Extensions } from '@ilos/core';
+// import { ConfigExtension } from '@ilos/config';
+// import { RedisConnection } from '@ilos/connection-redis';
 
-// class MathKernel extends Kernel {
-//   services: ServiceProviderConstructorInterface[] = [
-//     MathServiceProvider,
-//   ];
-// }
+// import { ConnectionManagerExtension } from '@ilos/connection-manager';
+// import { QueueExtension } from '@ilos/queue';
+// import { QueueTransport } from '@ilos/transport-redis';
+// import { EnvExtension } from '@ilos/env';
 
-// class StringKernel extends Kernel {
-//   services: ServiceProviderConstructorInterface[] = [
-//     StringServiceProvider,
-//     httpServiceProviderFactory('math', 'http://127.0.0.1:8080'),
-//   ];
-// }
 
-// function makeRPCCall(port: number, req: { method: string, params?: any }[]) {
-//   let data;
+// const config = {
+//   redis: {
+//     connectionString: process.env.APP_REDIS_URL,
+//     connectionOptions: {},
+//   },
+// };
 
-//   if (req.length === 1) {
-//     data = {
-//       jsonrpc: '2.0',
-//       method: req[0].method,
-//       params: req[0].params,
-//       id: 0,
+// function createKernel(done, testParams) {
+//   @Container.handler({
+//     service: 'hello',
+//     method: 'world',
+//   })
+//   class HelloWorldAction extends Parents.Action {
+//     constructor(
+//       protected kernel: Interfaces.KernelInterfaceResolver,
+//     ) {
+//       super();
 //     }
-//   } else {
-//     data = [];
-//     for (const i in req) {
-//       data.push({
-//         jsonrpc: '2.0',
-//         method: req[i].method,
-//         params: req[i].params,
-//         id: Number(i),
+//     protected async handle(params):Promise<void> {
+//       this.kernel.notify('hello:asyncWorld', params, {
+//         channel: {
+//           service: 'hello',
+//         },
 //       });
 //     }
 //   }
-//   return axios.post(`http://127.0.0.1:${port}`, data, {
-//     headers: {
-//       'Accept': 'application/json',
-//       'Content-type': 'application/json',
-//     },
-//   });
+
+//   @Container.handler({
+//     service: 'hello',
+//     method: 'asyncWorld',
+//   })
+//   class HelloAsyncWorldAction extends Parents.Action {
+//     protected async handle(params):Promise<void> {
+//       expect(params).to.deep.eq(testParams);
+//       done();
+//       return;
+//     }
+//   }
+  
+//   @Container.kernel({
+//     config,
+//     env: null,
+//     connections: [
+//       [RedisConnection, 'redis'],
+//     ],
+//     handlers: [
+//       HelloWorldAction,
+//       HelloAsyncWorldAction,
+//     ],
+//     queues: ['hello'],
+//   })
+//   class Kernel extends Parents.Kernel {
+//     extensions = [
+//       EnvExtension,
+//       ConfigExtension,
+//       Extensions.Providers,
+//       ConnectionManagerExtension,
+//       Extensions.Handlers,
+//       QueueExtension,
+//     ];
+//   }
+//   return Kernel;
 // }
 
-// let httpMathKernel: KernelInterface;
-// let httpStringKernel: KernelInterface;
-// let queueMathKernel: KernelInterface;
-// let queueStringKernel: KernelInterface;
+// async function bootKernel(kernelConstructor) {
+//   const callerKernel = new kernelConstructor();
+//   const calleeKernel = new kernelConstructor();
+//   await callerKernel.bootstrap();
+//   await calleeKernel.bootstrap();
+//   const redis = new QueueTransport(calleeKernel);
+//   await redis.up();
 
-// describe(('Queue integration'), (() => {
-//     // before(async () => {
-//     //     httpMathKernel = new MathKernel();
-//     //     await httpMathKernel.boot();
-//     //     await httpMathKernel.up(HttpTransport, [ '8080' ]);
+//   return callerKernel;
+// }
 
-//     //     httpStringKernel = new StringKernel();
-//     //     await httpStringKernel.boot();
-//     //     await httpStringKernel.up(HttpTransport, [ '8081' ]);
-
-//     //     queueMathKernel = new MathKernel();
-//     //     await queueMathKernel.boot();
-//     //     await queueMathKernel.up(QueueTransport, [ 'redis://127.0.0.1:6379/0', 'test' ]);
-
-//     //     queueStringKernel = new StringKernel();
-//     //     await queueStringKernel.boot();
-//     //     await queueStringKernel.up(QueueTransport, [ 'redis://127.0.0.1:6379/0', 'test' ]);
-//     // });
-
-//     // after(async () => {
-//     //     await httpMathKernel.down();
-//     //     await httpStringKernel.down();
-//     //     await queueMathKernel.down();
-//     //     await queueStringKernel.down();
-//     // });
-
-//     // it('should works', async () => {
-//     //   const responseMath = await makeRPCCall(8080, [{ method: 'math:add', params: [1, 1]}]);
-//     //   expect(responseMath.data).to.deep.equal({
-//     //     jsonrpc: '2.0',
-//     //     id: 0,
-//     //     result: 2,
-//     //   });
-
-//     //   const responseString = await makeRPCCall(8081, [{ method: 'string:hello', params: { name: 'sam' }}]);
-//     //   expect(responseString.data).to.deep.equal({
-//     //     jsonrpc: '2.0',
-//     //     id: 0,
-//     //     result: 'Hello world sam',
-//     //   });
-//     // });
-
-//     // it('should works with internal service call', async () => {
-//     //   const response = await makeRPCCall(8081, [{ method: 'string:result', params: { name: 'sam', add: [1, 1]}}]);
-//     //   expect(response.data).to.deep.equal({
-//     //     jsonrpc: '2.0',
-//     //     id: 0,
-//     //     result: 'Hello world sam, result is 2',
-//     //   });
-//     // });
-
-//     // it('should works with batch call', async () => {
-//     //   const response = await makeRPCCall(8081, [
-//     //     { method: 'string:result', params: { name: 'sam', add: [1, 1]}},
-//     //     { method: 'string:result', params: { name: 'john', add: [1, 10]}},
-//     //   ]);
-//     //   expect(response.data).to.deep.equal([
-//     //     {
-//     //       jsonrpc: '2.0',
-//     //       id: 0,
-//     //       result: 'Hello world sam, result is 2',
-//     //     },
-//     //     {
-//     //       jsonrpc: '2.0',
-//     //       id: 1,
-//     //       result: 'Hello world john, result is 11',
-//     //     },
-//     //   ]);
-//     // });
-// }));
+// describe('Queue extension', () => {
+//   it('should work', (done) => {
+//     const testParams = {
+//       message: 'it works',
+//     };
+//     const kernelConstructor = createKernel(done, testParams);
+//     bootKernel(kernelConstructor)
+//       .then((kernel) => {
+//         kernel.call('hello:world', testParams, { channel: { service: 'test' } });
+//       });
+//   });
+// });

@@ -28,7 +28,8 @@ export class QueueHandler implements Interfaces.HandlerInterface, Interfaces.Ini
 
     try {
       const { method, params, context } = call;
-      const job = await this.client.add(method, {
+
+      const job = await this.client.add({
         method,
         jsonrpc: '2.0',
         id: null,
@@ -37,7 +38,6 @@ export class QueueHandler implements Interfaces.HandlerInterface, Interfaces.Ini
           _context: context,
         },
       });
-
       return job;
     } catch (e) {
       throw new Error('An error occured');

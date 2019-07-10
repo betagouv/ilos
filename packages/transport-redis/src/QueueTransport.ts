@@ -38,18 +38,17 @@ export class QueueTransport implements Interfaces.TransportInterface {
     }
 
     const services = container.getAll<string>(QueueExtension.containerKey);
-
     for (const service of services) {
       const key = service;
       // TODO : add Sentry error handler
+      // TODO : add named job
       const queue = bullFactory(key, redisUrl);
       await queue.isReady();
 
       this.registerListeners(queue, key);
       this.queues.push(queue);
-
-      queue.process(job =>
-        this.kernel.handle({
+      queue.process(async (job) => {
+        return this.kernel.handle({
           jsonrpc: '2.0',
           id: 1,
           method: job.data.method,
@@ -57,10 +56,13 @@ export class QueueTransport implements Interfaces.TransportInterface {
             params: job.data.params.params,
             _context: {
               ...job.data.params._context,
+              channel: {
+                transport: 'queue',
+              },
             },
           },
-        }),
-      );
+        });
+      });
     }
   }
 
@@ -103,6 +105,7 @@ export class QueueTransport implements Interfaces.TransportInterface {
 
     queue.on('failed', (job, err) => {
       console.log(`🐮/${name}: failed ${job.id} ${job.data.type}`, err.message);
+      console.log(job, err);
       if (errorHandler && typeof errorHandler === 'function') {
         errorHandler(err);
       }

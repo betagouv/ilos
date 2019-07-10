@@ -11,6 +11,8 @@ import { Kernel } from '../src/Kernel';
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
 
+// process.env.APP_REDIS_URL = 'redis://127.0.0.1:6379';
+
 @Container.serviceProvider({
   children: [
     ParentStringServiceProvider,
@@ -65,16 +67,18 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
 }
 let mathTransport: Interfaces.TransportInterface;
 let stringTransport: Interfaces.TransportInterface;
+let mathKernel: Interfaces.KernelInterface;
+let stringKernel: Interfaces.KernelInterface;
 
 describe('Http only integration', () => {
   before(async () => {
-    const mathKernel = new MathKernel();
+    mathKernel = new MathKernel();
     await mathKernel.bootstrap();
 
     mathTransport = new HttpTransport(mathKernel);
     await mathTransport.up(['8080']);
 
-    const stringKernel = new StringKernel();
+    stringKernel = new StringKernel();
     await stringKernel.bootstrap();
     stringTransport = new HttpTransport(stringKernel);
     await stringTransport.up(['8081']);
@@ -83,6 +87,8 @@ describe('Http only integration', () => {
   after(async () => {
     await mathTransport.down();
     await stringTransport.down();
+    await mathKernel.shutdown();
+    await stringKernel.shutdown();
   });
 
   it('should works', async () => {
