@@ -20,10 +20,6 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
   }
 
   register(serviceContainer: Interfaces.ServiceContainerInterface) {
-    const container = serviceContainer.getContainer();
-    if (container.isBound(EnvInterfaceResolver)) {
-      this.isWorker = container.get(EnvInterfaceResolver).get('APP_WORKER', false);
-    }
     const targets = this.filterTargets(
       [...(Array.isArray(this.config) ? this.config : this.config.for)],
       serviceContainer,
@@ -33,6 +29,11 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
   }
 
   async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+    const container = serviceContainer.getContainer();
+    if (container.isBound(EnvInterfaceResolver)) {
+      this.isWorker = container.get(EnvInterfaceResolver).get('APP_WORKER', false);
+    }
+
     if (this.isWorker) {
       this.isProcessable(serviceContainer);
     }
@@ -90,10 +91,7 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
         .bind(QueueExtension.containerKey)
         .toConstantValue(target);
     }
-
-    if (!this.isWorker) {
-      this.registerQueueHandlers(targets, serviceContainer);
-    }
+    this.registerQueueHandlers(targets, serviceContainer);
   }
 
   protected registerQueueHandlers(

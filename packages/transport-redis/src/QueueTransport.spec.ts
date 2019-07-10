@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 
 import { Container, Types, Interfaces, Parents, Extensions } from '@ilos/core';
-import { QueueExtension } from '@ilos/queue';
+import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
 import { EnvInterfaceResolver } from '@ilos/env';
 
 import * as Bull from './helpers/bullFactory';
@@ -12,6 +12,12 @@ import { QueueTransport } from './QueueTransport';
 
 const sandbox = sinon.createSandbox();
 process.env.APP_WORKER = 'true';
+
+class QueueExtension extends ParentQueueExtension {
+  registerQueueHandlers() {
+    return;
+  }
+}
 
 @Container.handler({
   service: 'math',

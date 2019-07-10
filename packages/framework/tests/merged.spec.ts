@@ -8,6 +8,7 @@ import { Kernel } from '../src/Kernel';
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
 
+// process.env.APP_REDIS_URL = 'redis://127.0.0.1:6379';
 
 @Container.kernel({
   children: [
@@ -47,10 +48,11 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
   });
 }
 let transport: Interfaces.TransportInterface;
+let kernel: Interfaces.KernelInterface;
 
 describe('Merged integration', () => {
   before(async () => {
-    const kernel = new MyKernel();
+    kernel = new MyKernel();
     await kernel.bootstrap();
     transport = new HttpTransport(kernel);
     await transport.up(['8080']);
@@ -58,6 +60,7 @@ describe('Merged integration', () => {
 
   after(async () => {
     await transport.down();
+    await kernel.shutdown();
   });
 
   it('should works', async () => {

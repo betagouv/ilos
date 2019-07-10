@@ -1,29 +1,29 @@
 // tslint:disable max-classes-per-file
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
 
 import { Parents, Container, Interfaces, Extensions } from '@ilos/core';
-import { Config, ConfigInterfaceResolver, ConfigExtension } from '@ilos/config';
+import { Config, ConfigInterfaceResolver } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
 
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { ParentMigrateCommand, ParentMigration } from '../src/commands/ParentMigrateCommand';
 
-let mongoServer;
-let connectionString;
-let dbName;
-const targetDb = 'test';
+// process.env.APP_MONGO_URL = ' mongodb://mongo:mongo@127.0.0.1:27017';
+
+const targetDb = 'ilos-test-' + new Date().getTime();
+const migrationDb = 'ilos-test-migration-' + new Date().getTime();
+
 const targetCollection = 'mytestcollection';
-const collectionName = 'mymigrations';
+const migrationCollection = 'mymigrations';
 const config = {
   mongo: {
-    connectionString: null,
+    connectionString: process.env.APP_MONGO_URL,
     connectionOptions: {},
-    db: null,
+    db: targetDb,
   },
   migration: {
-    db: null,
-    collection: collectionName,
+    db: migrationDb,
+    collection: migrationCollection,
   }
 };
 
@@ -112,23 +112,16 @@ class MigrateCommand extends ParentMigrateCommand {
 
 describe('Repository provider: migrate', () => {
   before(async () => {
-    mongoServer = new MongoMemoryServer();
-    connectionString = await mongoServer.getConnectionString();
-    dbName = await mongoServer.getDbName();
-    config.mongo.connectionString = connectionString;
-    config.mongo.db = dbName;
-    config.migration.db = dbName;
     await kernel.bootstrap();
   });
 
   after(async () => {
     await kernel.shutdown();
-    await mongoServer.stop();
   });
 
   afterEach(async () => {
     const mongo = <MongoConnection>kernel.getContainer().get(MongoConnection);
-    const collection = await mongo.getClient().db(dbName).collection(collectionName);
+    const collection = await mongo.getClient().db(migrationDb).collection(migrationCollection);
     try {
       await collection.drop();
     } catch {
@@ -146,10 +139,10 @@ describe('Repository provider: migrate', () => {
     const command = <MigrateCommand>kernel.getContainer().get(MigrateCommand);
     const mongo = <MongoConnection>kernel.getContainer().get(MongoConnection);
     const db = await mongo.getClient().db(targetDb);
-    const migrationCollection = await mongo.getClient().db(dbName).collection(collectionName);
+    const migrationCollectionInstance = await mongo.getClient().db(migrationDb).collection(migrationCollection);
     const result = await command.call({ status: false, rollback: false, reset: false });
     expect(result).to.eq(`${FirstMigration.signature}: success\n${SecondMigration.signature}: success\n`);
-    const migrations = await migrationCollection.find({}).toArray();
+    const migrations = await migrationCollectionInstance.find({}).toArray();
     expect(migrations.length).to.eq(2);
     expect(migrations.map((m) => ({ signature: m._id, success: m.success }))).to.deep.equal([
       {
@@ -176,13 +169,13 @@ describe('Repository provider: migrate', () => {
     const command = <MigrateCommand>kernel.getContainer().get(MigrateCommand);
     const mongo = <MongoConnection>kernel.getContainer().get(MongoConnection);
     const db = await mongo.getClient().db(targetDb);
-    const migrationCollection = await mongo.getClient().db(dbName).collection(collectionName);
+    const migrationCollectionInstance = await mongo.getClient().db(migrationDb).collection(migrationCollection);
     await command.call({ status: false, rollback: false, reset: false });
     const result = await command.call({ status: false, rollback: 1, reset: false });
 
     expect(result).to.eq(`${SecondMigration.signature}: success\n`);
 
-    const migrations = await migrationCollection.find({}).toArray();
+    const migrations = await migrationCollectionInstance.find({}).toArray();
     expect(migrations.length).to.eq(1);
     expect(migrations.map((m) => ({ signature: m._id, success: m.success }))).to.deep.equal([
       {
@@ -202,12 +195,12 @@ describe('Repository provider: migrate', () => {
     const command = <MigrateCommand>kernel.getContainer().get(MigrateCommand);
     const mongo = <MongoConnection>kernel.getContainer().get(MongoConnection);
     const db = await mongo.getClient().db(targetDb);
-    const migrationCollection = await mongo.getClient().db(dbName).collection(collectionName);
+    const migrationCollectionInstance = await mongo.getClient().db(migrationDb).collection(migrationCollection);
     await command.call({ status: false, rollback: false, reset: false });
     const result = await command.call({ status: false, rollback: false, reset: 1 });
     expect(result).to.eq(`${SecondMigration.signature}: success\n${FirstMigration.signature}: success\n`);
 
-    const migrations = await migrationCollection.find({}).toArray();
+    const migrations = await migrationCollectionInstance.find({}).toArray();
     expect(migrations.length).to.eq(0);
 
     const collections = await db.listCollections().toArray();

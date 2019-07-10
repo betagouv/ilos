@@ -8,7 +8,7 @@ export function queueHandlerFactory(service: string, version?: string): Types.Ne
     service,
     version,
     method: '*',
-    local: false,
+    local: true,
     queue: true,
   })
   class CustomQueueHandler extends QueueHandler {

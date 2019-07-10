@@ -35,12 +35,9 @@ describe('Queue handler', () => {
       // @ts-ignore
       () => ({
       // @ts-ignore
-        async add(name, opts) {
-          if (name !== 'nope') {
-            return {
-              name,
-              opts,
-            };
+        async add(data) {
+          if (!!data.method && data.method !== 'nope') {
+            return data;
           }
           throw new Error('Nope');
         },
@@ -61,18 +58,16 @@ describe('Queue handler', () => {
       context: defaultContext,
     });
     expect(result).to.deep.equal({
-      name: 'basic@latest:method',
-      opts: {
-        jsonrpc: '2.0',
-        id: null,
-        method: 'basic@latest:method',
-        params: { params: { add: [1, 2] }, _context: defaultContext } },
+      jsonrpc: '2.0',
+      id: null,
+      method: 'basic@latest:method',
+      params: { params: { add: [1, 2] }, _context: defaultContext },
     });
   });
   it('raise error if fail', async () => {
     const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
     await queueProvider.init();
-    return (<any>assert).isRejected(
+    return assert.isRejected(
       queueProvider.call({
         method: 'nope',
         params: { add: [1, 2] },

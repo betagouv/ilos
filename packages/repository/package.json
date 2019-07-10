@@ -60,7 +60,6 @@
     "chai-as-promised": "^7.1.1",
     "mocha": "^6.1.4",
     "mock-fs": "^4.9.0",
-    "mongodb-memory-server": "^5.1.1",
     "nyc": "^14.1.1",
     "sinon": "^7.3.2",
     "ts-node": "^8.1.0",

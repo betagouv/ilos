@@ -4,6 +4,7 @@ import { ConfigExtension } from '@ilos/config';
 import { EnvExtension } from '@ilos/env';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { LoggerExtension } from '@ilos/logger';
+import { QueueExtension } from '@ilos/queue';
 
 @Container.kernel({
   env: null,
@@ -24,5 +25,6 @@ export class Kernel extends Parents.Kernel {
     Extensions.Middlewares,
     Extensions.Providers,
     Extensions.Handlers,
+    QueueExtension,
   ];
 }

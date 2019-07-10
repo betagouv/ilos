@@ -1,6 +1,7 @@
+// tslint:disable import-name
 import path from 'path';
 import fs from 'fs';
-import handlebars from 'handlebars';
+import Handlebars from 'handlebars';
 
 import { Container } from '@ilos/core';
 
