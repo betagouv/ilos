@@ -1,5 +1,4 @@
 // tslint:disable max-classes-per-file
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { expect } from 'chai';
 import { Parents, Container, Extensions } from '@ilos/core';
 import { Config, ConfigInterfaceResolver } from '@ilos/config';
@@ -8,17 +7,18 @@ import { ConnectionManagerExtension } from '@ilos/connection-manager';
 
 import { ParentRepository } from '../src/index';
 
-let mongoServer;
-let connectionString;
-let dbName;
+// process.env.APP_MONGO_URL = 'mongodb://mongo:mongo@127.0.0.1:27017';
+
+const targetDb = 'ilos-test-' + new Date().getTime();
+
+const targetCollection = 'mytestcollection';
 const config = {
   mongo: {
-    connectionString: null,
+    connectionString: process.env.APP_MONGO_URL,
     connectionOptions: {},
-    db: null,
+    db: targetDb,
   },
 };
-
 class User {
   constructor(data) {
     Reflect.ownKeys(data).forEach((key) => {
@@ -49,11 +49,11 @@ class UserRepository extends ParentRepository {
   }
 
   public getKey(): string {
-    return 'user';
+    return targetCollection;
   }
 
   public getDbName(): string {
-    return 'test';
+    return this.config.get('mongo.db');
   }
 
   public getSchema(): object | null {
@@ -96,17 +96,11 @@ const kernel = new Kernel();
 
 describe('Repository ', () => {
   before(async () => {
-    mongoServer = new MongoMemoryServer();
-    connectionString = await mongoServer.getConnectionString();
-    dbName = await mongoServer.getDbName();
-    config.mongo.connectionString = connectionString;
-    config.mongo.db = dbName;
     await kernel.bootstrap();
   });
 
   after(async () => {
     await kernel.shutdown();
-    await mongoServer.stop();
   });
 
   beforeEach(async () => {
