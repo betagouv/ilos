@@ -2,10 +2,14 @@
 
 import { describe } from 'mocha';
 import { expect } from 'chai';
+import {
+  MiddlewareInterface,
+  ContextType,
+  ResultType,
+  ParamsType,
+} from '@ilos/common';
 
 import { compose } from './compose';
-import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
-import { ContextType, ResultType, ParamsType } from '../types';
 
 class MiddlewareOne implements MiddlewareInterface {
   async process(params: { name: string }, context: ContextType, next?: Function, options?: any):Promise<ResultType> {

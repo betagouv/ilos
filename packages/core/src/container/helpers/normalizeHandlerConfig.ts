@@ -1,4 +1,4 @@
-import { HandlerConfig } from '..';
+import { HandlerConfigType } from '@ilos/common';
 
 import { Exceptions } from '../..';
 
@@ -35,7 +35,7 @@ export function getSignatureByConfig(method: { service: string, method: string, 
   return `${method.service}@${('version' in method && method.version) ? method.version : 'latest'}:${method.method}`;
 }
 
-export function normalizeHandlerConfig(handlerConfig: HandlerConfig): HandlerConfig {
+export function normalizeHandlerConfig(handlerConfig: HandlerConfigType): HandlerConfigType {
   let {
     service,
     method,

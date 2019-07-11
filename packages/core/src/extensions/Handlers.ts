@@ -1,6 +1,9 @@
-import { RegisterHookInterface } from '../interfaces/hooks/RegisterHookInterface';
-import { NewableType } from '../types';
-import { ServiceContainerInterface, HandlerInterface } from '../interfaces';
+import {
+  RegisterHookInterface,
+  NewableType,
+  ServiceContainerInterface,
+  HandlerInterface,
+} from '@ilos/common';
 
 export class Handlers implements RegisterHookInterface {
   static readonly key = 'handlers';

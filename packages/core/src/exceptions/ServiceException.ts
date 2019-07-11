@@ -1,4 +1,4 @@
-import { RPCErrorType } from '../types/RPCErrorType';
+import { RPCErrorType } from '@ilos/common';
 
 export class ServiceException extends Error {
   serviceError = true;

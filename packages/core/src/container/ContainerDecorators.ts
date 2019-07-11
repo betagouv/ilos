@@ -2,11 +2,12 @@ import {
   injectable,
   METADATA_KEY,
 } from 'inversify';
-
 import { Metadata } from 'inversify/lib/planning/metadata';
+import { HandlerConfigType } from '@ilos/common';
 
-import { HandlerConfig, AnyConfig } from './ContainerInterfaces';
-import { HANDLER_META, PROVIDER_META } from './Metadata';
+import { HANDLER_META } from './Metadata';
+
+type AnyConfig = { [k: string]: any };
 
 function extensionTag(config: AnyConfig) {
   return function (target) {
@@ -31,7 +32,7 @@ export function provider(config: AnyConfig = {}) {
   };
 }
 
-export function handler(config: HandlerConfig) {
+export function handler(config: HandlerConfigType) {
   const { service } = config;
   // tslint:disable-next-line:prefer-const
   let { method, version, local, queue, ...other } = config;
