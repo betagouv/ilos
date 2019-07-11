@@ -1,9 +1,9 @@
-import { Parents, Container } from '@ilos/core';
-
+import { Parents } from '@ilos/core';
+import { serviceProvider } from '@ilos/common';
 import { AddAction } from './actions/AddAction';
 import { CustomProvider } from '../Providers/CustomProvider';
 
-@Container.serviceProvider({
+@serviceProvider({
   providers: [
     CustomProvider,
   ],

@@ -2,7 +2,9 @@
 import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { Container, handler } from '.';
+import { handler } from '@ilos/common';
+
+import { Container } from '.';
 import { Action } from '../parents';
 import { HandlerRegistry } from './HandlerRegistry';
 

@@ -1,13 +1,13 @@
-import { Parents, Extensions, Container } from '@ilos/core';
+import { Parents, Extensions } from '@ilos/core';
 import { Commands, CommandExtension } from '@ilos/cli';
 import { ConfigExtension } from '@ilos/config';
 import { EnvExtension } from '@ilos/env';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { LoggerExtension } from '@ilos/logger';
 import { QueueExtension } from '@ilos/queue';
-import { ExtensionStaticInterface } from '@ilos/common';
+import { kernel, ExtensionStaticInterface } from '@ilos/common';
 
-@Container.kernel({
+@kernel({
   env: null,
   config: process.cwd(),
   commands: [

@@ -1,5 +1,5 @@
-import { Container } from '@ilos/core';
-import { 
+import {
+  handler,
   ConfigInterfaceResolver,
   NewableType,
   HandlerInterface,
@@ -24,7 +24,7 @@ export function httpHandlerFactory(
   if (!/http/.test(url)) {
     isFromConfig = true;
   }
-  @Container.handler({
+  @handler({
     service,
     version,
     method: '*',

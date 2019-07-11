@@ -1,12 +1,13 @@
-import { Parents, Container } from '@ilos/core';
+import { Parents } from '@ilos/core';
 import { RedisConnection } from '@ilos/connection-redis';
+import { serviceProvider } from '@ilos/common';
 
 import { HelloAction } from './actions/HelloAction';
 import { ResultAction } from './actions/ResultAction';
 import { LogAction } from './actions/LogAction';
 import { CustomProvider } from '../Providers/CustomProvider';
 
-@Container.serviceProvider({
+@serviceProvider({
   config: __dirname,
   providers: [
     CustomProvider,

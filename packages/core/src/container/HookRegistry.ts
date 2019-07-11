@@ -13,8 +13,7 @@ export class HookRegistry<T> {
   constructor(
     protected method: string,
     protected authorizeIdentifierLookup = true,
-  )
-  {
+  ) {
     //
   }
 
@@ -31,8 +30,7 @@ export class HookRegistry<T> {
         hook = async (container: ServiceContainerInterface) =>
           container
             .getContainer()
-            .get<T>(identifier)
-            [this.method](container);
+            .get<T>(identifier)[this.method](container);
       }
       this.add(hook);
     }

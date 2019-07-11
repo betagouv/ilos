@@ -84,8 +84,8 @@ export class HandlerRegistry {
       config.queue = false;
     }
 
-    const handlers = this.all().filter((hconfig) => {
-      return (
+    const handlers = this.all().filter(hconfig =>
+      (
         // same service
         config.service === hconfig.service
         // same method or *
@@ -103,8 +103,8 @@ export class HandlerRegistry {
           config.queue
           || !hconfig.queue
         )
-      );
-    }).sort((hconfig1, hconfig2) => {
+      ),
+    ).sort((hconfig1, hconfig2) => {
       if (hconfig1.local !== hconfig2.local) {
         return (hconfig1.local === config.local) ? -1 : 1;
       }

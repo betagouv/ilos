@@ -1,10 +1,14 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
 
-import { Parents, Container, Extensions } from '@ilos/core';
+import { Parents, Extensions } from '@ilos/core';
 import {
   ConfigInterfaceResolver,
   KernelInterfaceResolver,
+  provider,
+  kernel,
+  injectable,
+  command,
 } from '@ilos/common';
 import { Config } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
@@ -31,7 +35,7 @@ const config = {
   }
 };
 
-@Container.provider()
+@provider()
 class FakeConfig extends Config {
   async init() {
     // do nothing
@@ -44,7 +48,7 @@ class FakeConfig extends Config {
   }
 }
 
-@Container.kernel({
+@kernel({
   providers: [
     [ConfigInterfaceResolver, FakeConfig],
   ],
@@ -58,7 +62,7 @@ class Kernel extends Parents.Kernel {
 
 const kernel = new Kernel();
 
-@Container.injectable()
+@injectable()
 class FirstMigration extends ParentMigration {
   readonly signature = '20190527.FirstMigration';
   static signature = '20190527.FirstMigration';
@@ -78,7 +82,7 @@ class FirstMigration extends ParentMigration {
   }
 }
 
-@Container.injectable()
+@injectable()
 class SecondMigration extends ParentMigration {
   readonly signature = '20190527.SecondMigration';
   static signature = '20190527.SecondMigration';
@@ -100,7 +104,7 @@ class SecondMigration extends ParentMigration {
   }
 }
 
-@Container.command()
+@command()
 class MigrateCommand extends ParentMigrateCommand {
   entity = 'test';
   migrations = [FirstMigration, SecondMigration];

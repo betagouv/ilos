@@ -1,8 +1,8 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
 
-import { Parents, Container, Extensions } from '@ilos/core';
-import { ConfigInterfaceResolver, ConnectionInterface } from '@ilos/common';
+import { Parents, Extensions } from '@ilos/core';
+import { provider, serviceProvider, ConfigInterfaceResolver, ConnectionInterface } from '@ilos/common';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
 
@@ -60,7 +60,7 @@ class FakeDriverThree implements ConnectionInterface {
   }
 }
 
-@Container.provider()
+@provider()
 class FakeProviderOne {
   constructor(
     public driverOne: FakeDriverOne,
@@ -71,7 +71,7 @@ class FakeProviderOne {
   }
 }
 
-@Container.provider()
+@provider()
 class FakeProviderTwo {
   constructor(
     public driverOne: FakeDriverOne,
@@ -82,7 +82,7 @@ class FakeProviderTwo {
   }
 }
 
-@Container.provider()
+@provider()
 class FakeConfigProvider extends ConfigInterfaceResolver {
   get(key: string) {
     if (key === 'hello.world') {
@@ -99,7 +99,7 @@ class FakeConfigProvider extends ConfigInterfaceResolver {
   }
 }
 
-@Container.serviceProvider({
+@serviceProvider({
   providers: [
     [ConfigInterfaceResolver, FakeConfigProvider],
   ],

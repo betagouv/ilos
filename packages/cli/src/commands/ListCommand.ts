@@ -1,5 +1,4 @@
-import { Container } from '@ilos/core';
-import { KernelInterfaceResolver, CommandOptionType } from '@ilos/common';
+import { command, KernelInterfaceResolver, CommandOptionType } from '@ilos/common';
 
 import { Command } from '../parents/Command';
 
@@ -9,7 +8,7 @@ import { Command } from '../parents/Command';
  * @class CallCommand
  * @extends {Command}
  */
-@Container.command()
+@command()
 export class ListCommand extends Command {
   public readonly signature: string = 'list';
   public readonly description: string = 'List RPC methods';

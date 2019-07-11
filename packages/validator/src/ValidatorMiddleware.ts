@@ -1,6 +1,7 @@
-import { Container, Exceptions } from '@ilos/core';
+import { Exceptions } from '@ilos/core';
 
 import {
+  middleware,
   ValidatorInterfaceResolver,
   ParamsType,
   ContextType,
@@ -8,7 +9,7 @@ import {
   MiddlewareInterface,
 } from '@ilos/common';
 
-@Container.middleware()
+@middleware()
 export class ValidatorMiddleware implements MiddlewareInterface {
   constructor(private validator: ValidatorInterfaceResolver) {}
 

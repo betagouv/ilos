@@ -1,8 +1,8 @@
 import ajv from 'ajv';
 import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
 
-import { Container } from '@ilos/core';
 import {
+  provider,
   ConfigInterfaceResolver,
   NewableType,
   ValidatorInterface,
@@ -10,7 +10,7 @@ import {
 
 import { Cache } from './Cache';
 
-@Container.provider()
+@provider()
 export class AjvValidator implements ValidatorInterface {
   protected ajv: ajv.Ajv;
   protected bindings: Map<any, ajv.ValidateFunction> = new Map();

@@ -37,17 +37,20 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
     try {
       const { method, params, context } = call;
 
-      const job = await this.client.add({
-        method,
-        jsonrpc: '2.0',
-        id: null,
-        params: {
-          params,
-          _context: context,
+      const job = await this.client.add(
+        {
+          method,
+          jsonrpc: '2.0',
+          id: null,
+          params: {
+            params,
+            _context: context,
+          },
         },
-      }, {
-        ...this.defaultJobOptions,
-      });
+        {
+          ...this.defaultJobOptions,
+        },
+      );
 
       return job;
     } catch (e) {

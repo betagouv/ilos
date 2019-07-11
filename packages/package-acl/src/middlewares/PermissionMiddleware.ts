@@ -1,5 +1,6 @@
-import { Container, Exceptions } from '@ilos/core';
+import { Exceptions } from '@ilos/core';
 import {
+  middleware,
   MiddlewareInterface,
   ParamsType,
   ContextType,
@@ -13,7 +14,7 @@ import {
  * @param {...string[]} roles
  * @returns {MiddlewareInterface}
  */
-@Container.middleware()
+@middleware()
 export class PermissionMiddleware implements MiddlewareInterface {
   async process(
     params: ParamsType,

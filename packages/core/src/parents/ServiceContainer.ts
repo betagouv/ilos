@@ -1,5 +1,3 @@
-import { Container } from '../container';
-
 import {
   ContainerInterface,
   ServiceContainerInterface,
@@ -14,6 +12,7 @@ import {
   FactoryType,
 } from '@ilos/common';
 
+import { Container } from '../container';
 import { HookRegistry } from '../container/HookRegistry';
 
 /**
@@ -25,7 +24,6 @@ import { HookRegistry } from '../container/HookRegistry';
  */
 export abstract class ServiceContainer
   implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface {
-
   readonly extensions: ExtensionStaticInterface[] = [];
 
   protected registerHookRegistry = new HookRegistry<RegisterHookInterface>('register', false);
@@ -36,12 +34,7 @@ export abstract class ServiceContainer
   protected readonly parent?: ServiceContainerInterface;
 
   constructor(container?: ContainerInterface) {
-    if (container) {
-      // this.parent = container;
-      this.container = container.createChild();
-    } else {
-      this.container = new Container();
-    }
+    this.container = (container) ? container.createChild() : new Container();
     this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
   }
 
@@ -130,19 +123,19 @@ export abstract class ServiceContainer
     return this.container.get(identifier);
   }
 
-  public bind(constructor: NewableType<any>, identifier?: IdentifierType) {
-    this.container.bind(constructor).toSelf();
+  public bind(ctor: NewableType<any>, identifier?: IdentifierType) {
+    this.container.bind(ctor).toSelf();
     if (identifier) {
-      this.container.bind(identifier).toService(constructor);
+      this.container.bind(identifier).toService(ctor);
     }
 
-    const taggedIdentifier = <IdentifierType | IdentifierType[]>Reflect.getMetadata('extension:identifier', constructor);
+    const taggedIdentifier = <IdentifierType | IdentifierType[]>Reflect.getMetadata('extension:identifier', ctor);
     if (taggedIdentifier) {
       if (!Array.isArray(taggedIdentifier)) {
-        this.container.bind(taggedIdentifier).toService(constructor);
+        this.container.bind(taggedIdentifier).toService(ctor);
       } else {
         for (const id of taggedIdentifier) {
-          this.container.bind(id).toService(constructor);
+          this.container.bind(id).toService(ctor);
         }
       }
     }
@@ -158,15 +151,17 @@ export abstract class ServiceContainer
       return;
     }
 
-    const name = (typeof identifier === 'string') ? identifier : (typeof identifier === 'function' )? identifier.name : identifier.toString();
+    const name = (typeof identifier === 'string') ?
+      identifier : (typeof identifier === 'function') ?
+      identifier.name : identifier.toString();
     throw new Error(`Unable to find bindings for ${name}`);
   }
 
-  public overrideBinding(identifier: IdentifierType, constructor: NewableType<any>) {
+  public overrideBinding(identifier: IdentifierType, ctor: NewableType<any>) {
     if (this.container.isBound(identifier)) {
       this.container.unbind(identifier);
     }
 
-    this.bind(constructor, identifier);
+    this.bind(ctor, identifier);
   }
 }

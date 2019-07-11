@@ -1,5 +1,5 @@
-import { Container } from '@ilos/core';
 import {
+  provider,
   NewableType,
   ConfigInterfaceResolver,
   TemplateInterfaceResolver,
@@ -8,12 +8,12 @@ import {
   TemplateMailInterface,
   NotificationConfigurationType,
   NotificationInterface,
-  NotificationInterfaceResolver
+  NotificationInterfaceResolver,
 } from '@ilos/common';
 
 import { MailjetDriver } from './mail/MailjetDriver';
 
-@Container.provider({
+@provider({
   identifier: NotificationInterfaceResolver,
 })
 export class Notification implements NotificationInterface {

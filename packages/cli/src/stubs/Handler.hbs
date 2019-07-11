@@ -1,7 +1,7 @@
 import { Parents, Container } from '@ilos/core';
-import { ParamsType, ContextType, ResultType } from '@ilos/common';
+import { handler, ParamsType, ContextType, ResultType } from '@ilos/common';
 
-@Container.handler({
+@handler({
   service: 'myService',
   method: '{{name}}',
 })

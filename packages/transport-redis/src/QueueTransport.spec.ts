@@ -3,9 +3,13 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-import { Container, Parents, Extensions } from '@ilos/core';
+import { Parents, Extensions } from '@ilos/core';
 import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
 import {
+  handler,
+  provider,
+  serviceProvider,
+  kernel as kernelDecorator,
   ParamsType,
   ContextType,
   ResultType,
@@ -24,7 +28,7 @@ class QueueExtension extends ParentQueueExtension {
   }
 }
 
-@Container.handler({
+@handler({
   service: 'math',
   method: 'minus',
 })
@@ -43,7 +47,7 @@ class BasicAction extends Parents.Action {
   }
 }
 
-@Container.handler({
+@handler({
   service: 'math',
   method: 'add',
 })
@@ -62,7 +66,7 @@ class BasicTwoAction extends Parents.Action {
   }
 }
 
-@Container.provider({
+@provider({
   identifier: EnvInterfaceResolver,
 })
 class FakeEnvProvider extends EnvInterfaceResolver {
@@ -71,7 +75,7 @@ class FakeEnvProvider extends EnvInterfaceResolver {
   }
 }
 
-@Container.serviceProvider({
+@serviceProvider({
   providers: [
     [EnvInterfaceResolver, FakeEnvProvider],
   ],
@@ -88,7 +92,7 @@ class BasicServiceProvider extends Parents.ServiceProvider {
   ];
 }
 
-@Container.kernel({
+@kernelDecorator({
   children: [BasicServiceProvider],
 })
 class BasicKernel extends Parents.Kernel {

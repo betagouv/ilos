@@ -2,8 +2,8 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Parents, Container } from '@ilos/core';
-import { ResultType, ExtensionStaticInterface } from '@ilos/common';
+import { Parents } from '@ilos/core';
+import { command as commandDecorator, kernel as kernelDecorator, ResultType, ExtensionStaticInterface } from '@ilos/common';
 
 import { CommandExtension } from '../extensions/CommandExtension';
 import { Command } from '../parents/Command';
@@ -11,7 +11,7 @@ import { CommandRegistry } from '../providers/CommandRegistry';
 
 import { CliTransport } from './CliTransport';
 
-@Container.command()
+@commandDecorator()
 class BasicCommand extends Command {
   public readonly signature: string = 'hello <name>';
   public readonly options = [
@@ -29,7 +29,7 @@ class BasicCommand extends Command {
   }
 }
 
-@Container.kernel({
+@kernelDecorator({
   commands: [BasicCommand],
 })
 class BasicKernel extends Parents.Kernel {

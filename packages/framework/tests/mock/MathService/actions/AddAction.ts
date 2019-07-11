@@ -1,8 +1,14 @@
-import { Container, Parents, Types, Exceptions } from '@ilos/core';
-import { LoggerInterfaceResolver } from '@ilos/logger';
+import { Parents, Exceptions } from '@ilos/core';
+import {
+  handler,
+  ParamsType,
+  ContextType,
+  ResultType,
+} from '@ilos/common';
+
 import { CustomProvider } from '../../Providers/CustomProvider';
 
-@Container.handler({
+@handler({
   service: 'math',
   method: 'add',
 })
@@ -13,7 +19,7 @@ export class AddAction extends Parents.Action {
     super();
   }
 
-  protected async handle(params: Types.ParamsType, context: Types.ContextType): Promise<Types.ResultType> {
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     if (!Array.isArray(params)) {
       throw new Exceptions.InvalidParamsException();
     }
