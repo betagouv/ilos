@@ -11,9 +11,10 @@ import {
   HandlerConfigType,
   ContainerInterface,
 } from '@ilos/common';
+import { HandlerRegistry } from './HandlerRegistry';
 
 export class Container extends InversifyContainer implements ContainerInterface {
-  protected handlersRegistry: HandlerConfigType[] = [];
+  protected handlersRegistry: HandlerRegistry = new HandlerRegistry(this);
   parent: Container | null;
 
   get root(): Container {
@@ -44,15 +45,15 @@ export class Container extends InversifyContainer implements ContainerInterface 
   }
 
   setHandler(handler: NewableType<HandlerInterface>) {
-    return;
+    return this.handlersRegistry.set(handler);
   }
 
   getHandler(config: HandlerConfigType): HandlerInterface {
-    throw new Error();
+    return this.handlersRegistry.get(config);
   }
 
   getHandlers(): HandlerConfigType[] {
-    throw new Error();
+    return this.handlersRegistry.all();
   }
 }
 

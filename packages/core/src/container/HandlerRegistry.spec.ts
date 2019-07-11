@@ -55,58 +55,58 @@ describe('Handler registry', () => {
     const container = new Container();
     const handlerRegistry = new HandlerRegistry(container);
 
-    handlerRegistry.setHandler(HelloLocal);
-    handlerRegistry.setHandler(HelloLocalQueue);
-    handlerRegistry.setHandler(HelloLocalStar);
-    handlerRegistry.setHandler(HelloRemote);
-    handlerRegistry.setHandler(HelloRemoteQueue);
-    handlerRegistry.setHandler(HelloRemoteStar);
+    handlerRegistry.set(HelloLocal);
+    handlerRegistry.set(HelloLocalQueue);
+    handlerRegistry.set(HelloLocalStar);
+    handlerRegistry.set(HelloRemote);
+    handlerRegistry.set(HelloRemoteQueue);
+    handlerRegistry.set(HelloRemoteStar);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: true,
     })).to.be.instanceOf(HelloLocal);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: true,
       queue: true,
     })).to.be.instanceOf(HelloLocalQueue);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: '*',
       local: true,
     })).to.be.instanceOf(HelloLocalStar);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'notExisting',
       local: true,
     })).to.be.instanceOf(HelloLocalStar);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: false,
     })).to.be.instanceOf(HelloRemote);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: false,
       queue: true,
     })).to.be.instanceOf(HelloRemote);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: '*',
       local: false,
     })).to.be.instanceOf(HelloRemoteStar);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'notExisting',
       local: false,
@@ -131,16 +131,16 @@ describe('Handler registry', () => {
     const container = new Container();
     const handlerRegistry = new HandlerRegistry(container);
 
-    handlerRegistry.setHandler(HelloRemote);
-    handlerRegistry.setHandler(HelloRemoteStar);
+    handlerRegistry.set(HelloRemote);
+    handlerRegistry.set(HelloRemoteStar);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: true,
     })).to.be.instanceOf(HelloRemote);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'truc',
       local: true,
@@ -165,24 +165,24 @@ describe('Handler registry', () => {
     const container = new Container();
     const handlerRegistry = new HandlerRegistry(container);
 
-    handlerRegistry.setHandler(HelloLocal);
-    handlerRegistry.setHandler(HelloRemoteStar);
+    handlerRegistry.set(HelloLocal);
+    handlerRegistry.set(HelloRemoteStar);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'world',
       queue: true,
       local: true,
     })).to.be.instanceOf(HelloLocal);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'truc',
       queue: true,      
       local: true,
     })).to.be.instanceOf(HelloRemoteStar);
 
-    expect(handlerRegistry.getHandler({
+    expect(handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: false,
