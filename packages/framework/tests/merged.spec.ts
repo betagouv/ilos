@@ -2,8 +2,8 @@
 import { expect } from 'chai';
 import axios from 'axios';
 import { HttpTransport } from '@ilos/transport-http';
-import { Container } from '@ilos/core';
 import {
+  kernel,
   TransportInterface,
   KernelInterface,
 } from '@ilos/common';
@@ -15,7 +15,7 @@ import { ServiceProvider as StringServiceProvider } from './mock/StringService/S
 
 // process.env.APP_REDIS_URL = 'redis://127.0.0.1:6379';
 
-@Container.kernel({
+@kernel({
   children: [
     MathServiceProvider,
     StringServiceProvider,

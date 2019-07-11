@@ -1,6 +1,4 @@
-import { Container } from '@ilos/core';
-
-import { LoggerInterface, LoggerDriverInterface, LogMessageType } from '@ilos/common';
+import { provider, LoggerInterface, LoggerDriverInterface, LogMessageType } from '@ilos/common';
 
 /**
  * Logger provider
@@ -8,7 +6,7 @@ import { LoggerInterface, LoggerDriverInterface, LogMessageType } from '@ilos/co
  * @class Logger
  * @implements {LoggerInterface}
  */
-@Container.provider()
+@provider()
 export class Logger implements LoggerInterface {
   constructor(
     protected logger: LoggerDriverInterface,

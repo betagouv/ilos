@@ -2,8 +2,8 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Container, Parents } from '@ilos/core';
-import { ResultType } from '@ilos/common';
+import { Parents } from '@ilos/core';
+import { command, serviceProvider, ResultType } from '@ilos/common';
 
 import { CommandRegistry } from '../providers/CommandRegistry';
 
@@ -11,7 +11,7 @@ import { CommandExtension } from './CommandExtension';
 import { Command } from '../parents/Command';
 
 
-@Container.command()
+@command()
 class BasicCommand extends Command {
   public readonly signature: string = 'hello <name>';
   public readonly options = [
@@ -29,7 +29,7 @@ class BasicCommand extends Command {
   }
 }
 
-@Container.serviceProvider({
+@serviceProvider({
   commands: [
     BasicCommand,
   ],

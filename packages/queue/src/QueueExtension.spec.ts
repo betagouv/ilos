@@ -1,23 +1,28 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
 
-import { Parents, Container, Extensions } from '@ilos/core';
+import { Parents, Extensions } from '@ilos/core';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ConfigExtension } from '@ilos/config';
 import { EnvExtension } from '@ilos/env';
-import { EnvInterfaceResolver } from '@ilos/common';
+import {
+  EnvInterfaceResolver,
+  handler,
+  provider,
+  serviceProvider,
+} from '@ilos/common';
 
 import { QueueExtension } from './QueueExtension';
 
-@Container.handler({
+@handler({
   service: 'serviceA',
   method: 'hello',
 })
 class ServiceOneHandler extends Parents.Action {
 }
 
-@Container.handler({
+@handler({
   service: 'serviceB',
   method: 'world',
 })
@@ -26,7 +31,7 @@ class ServiceTwoHandler extends Parents.Action {
 
 describe('Queue extension', () => {
   it('should register queue name in container as worker', async () => {
-    @Container.provider({
+    @provider({
       identifier: EnvInterfaceResolver,
     })
     class FakeEnvProvider extends EnvInterfaceResolver {
@@ -35,7 +40,7 @@ describe('Queue extension', () => {
       }
     }
 
-    @Container.serviceProvider({
+    @serviceProvider({
       queues: ['serviceA', 'serviceB'],
       config: {
         redis: {},
@@ -79,7 +84,7 @@ describe('Queue extension', () => {
   });
 
   it('should register queue name in container and handlers', async () => {
-    @Container.serviceProvider({
+    @serviceProvider({
       env: null,
       queues: ['serviceA', 'serviceB'],
       config: {

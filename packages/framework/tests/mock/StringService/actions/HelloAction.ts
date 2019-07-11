@@ -1,8 +1,15 @@
-import { Container, Parents, Types, Exceptions } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { Parents,  Exceptions } from '@ilos/core';
+import {
+  handler,
+  ConfigInterfaceResolver,
+  ParamsType,
+  ContextType,
+  ResultType,
+} from '@ilos/common';
+
 import { CustomProvider } from '../../Providers/CustomProvider';
 
-@Container.handler({
+@handler({
   service: 'string',
   method: 'hello',
 })
@@ -14,7 +21,7 @@ export class HelloAction extends Parents.Action {
     super();
   }
 
-  protected async handle(params: Types.ParamsType, context: Types.ContextType):Promise<Types.ResultType> {
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     if (Array.isArray(params) || !('name' in params)) {
       throw new Exceptions.InvalidParamsException();
     }

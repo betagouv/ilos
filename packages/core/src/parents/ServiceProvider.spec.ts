@@ -3,8 +3,10 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { handler, provider, serviceProvider } from '../container';
 import {
+  handler,
+  provider,
+  serviceProvider,
   ProviderInterface,
   ResultType,
   ParamsType,

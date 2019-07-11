@@ -1,23 +1,32 @@
-import { Container, Parents, Types, Exceptions, Interfaces } from '@ilos/core';
+import { Parents, Exceptions } from '@ilos/core';
+import {
+  handler,
+  ParamsType,
+  ContextType,
+  ResultType,
+  RPCSingleResponseType,
+  KernelInterfaceResolver
+} from '@ilos/common';
+
 import { CustomProvider } from '../../Providers/CustomProvider';
 
-@Container.handler({
+@handler({
   service: 'string',
   method: 'result',
 })
 export class ResultAction extends Parents.Action {  
   constructor(
-    private kernel: Interfaces.KernelInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
     public custom: CustomProvider,
   ) {
     super();
   }
 
-  protected async handle(params: Types.ParamsType, context: Types.ContextType): Promise<Types.ResultType> {
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     if (Array.isArray(params) || !('name' in params) || !('add' in params) || (!Array.isArray(params.add))) {
       throw new Exceptions.InvalidParamsException();
     }
-    const addResult = await <Promise<Types.RPCSingleResponseType>>this.kernel.handle({
+    const addResult = await <Promise<RPCSingleResponseType>>this.kernel.handle({
       jsonrpc: '2.0',
       method: 'math:add',
       id: 1,

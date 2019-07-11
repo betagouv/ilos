@@ -4,9 +4,8 @@ import path from 'path';
 import jsYaml from 'js-yaml';
 import { camelCase, get, set, has } from 'lodash';
 
-import { Container } from '@ilos/core';
-
 import {
+  provider,
   EnvInterfaceResolver,
   ConfigInterface,
 } from '@ilos/common';
@@ -17,7 +16,7 @@ import {
  * @class Config
  * @implements {ConfigInterface}
  */
-@Container.provider()
+@provider()
 export class Config implements ConfigInterface {
   protected config: object = {};
   private configPaths: Set<string> = new Set();

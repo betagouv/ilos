@@ -1,7 +1,7 @@
-import { Container, Interfaces } from '@ilos/core';
+import { ProviderInterface, provider } from '@ilos/common';
 
-@Container.provider()
-export class CustomProvider implements Interfaces.ProviderInterface {
+@provider()
+export class CustomProvider implements ProviderInterface {
   private value: string;
 
   boot() {

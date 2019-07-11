@@ -8,9 +8,9 @@ import {
   ResultType,
   ParamsType,
   ContextType,
+  middleware,
 } from '@ilos/common';
 
-import { middleware } from '../container';
 import { Action } from './Action';
 
 import { ServiceContainer } from './ServiceContainer';

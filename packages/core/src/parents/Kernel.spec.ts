@@ -8,9 +8,11 @@ import {
   ResultType,
   ParamsType,
   ContextType,
+  handler,
+  provider,
+  serviceProvider,
 } from '@ilos/common';
 
-import { handler, provider, serviceProvider } from '../container';
 import { Kernel } from './Kernel';
 import { ServiceProvider } from './ServiceProvider';
 import { Action } from './Action';

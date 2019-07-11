@@ -8,10 +8,12 @@ import path from 'path';
 import { HttpTransport } from '@ilos/transport-http';
 import { QueueTransport } from '@ilos/transport-redis';
 
-import { Container } from '@ilos/core';
 import {
   TransportInterface,
   KernelInterface,
+  serviceProvider,
+  kernel,
+  handler,
 } from '@ilos/common';
 
 import { Kernel } from '../src/Kernel';
@@ -24,7 +26,7 @@ process.env.APP_LOG_PATH = logPath;
 
 const redisUrl = process.env.APP_REDIS_URL;
 
-@Container.serviceProvider({
+serviceProvider({
   config: {
     redis: {
       connectionString: process.env.APP_REDIS_URL,
@@ -37,7 +39,7 @@ const redisUrl = process.env.APP_REDIS_URL;
 })
 class StringServiceProvider extends ParentStringServiceProvider {}
 
-@Container.kernel({
+kernel({
   children: [StringServiceProvider],
 })
 class StringKernel extends Kernel {
@@ -120,7 +122,7 @@ describe('Queue integration', () => {
 // };
 
 // function createKernel(done, testParams) {
-//   @Container.handler({
+//   handler({
 //     service: 'hello',
 //     method: 'world',
 //   })
@@ -139,7 +141,7 @@ describe('Queue integration', () => {
 //     }
 //   }
 
-//   @Container.handler({
+//   handler({
 //     service: 'hello',
 //     method: 'asyncWorld',
 //   })
@@ -151,7 +153,7 @@ describe('Queue integration', () => {
 //     }
 //   }
   
-//   @Container.kernel({
+//   kernel({
 //     config,
 //     env: null,
 //     connections: [

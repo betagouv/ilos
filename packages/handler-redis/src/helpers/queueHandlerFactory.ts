@@ -1,11 +1,10 @@
-import { Container } from '@ilos/core';
 import { RedisConnection } from '@ilos/connection-redis';
-import { NewableType } from '@ilos/common';
+import { handler, NewableType } from '@ilos/common';
 
 import { QueueHandler } from '../QueueHandler';
 
 export function queueHandlerFactory(service: string, version?: string): NewableType<QueueHandler> {
-  @Container.handler({
+  @handler({
     service,
     version,
     method: '*',
