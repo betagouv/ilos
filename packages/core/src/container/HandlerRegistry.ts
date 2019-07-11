@@ -22,8 +22,12 @@ export class HandlerRegistry {
    * @returns {HandlerConfigType[]}
    * @memberof Container
    */
-  getHandlers(): (HandlerConfigType&{ resolver: Function })[] {
-    return this.container.root.getAll(HandlerRegistry.key);
+  all(): (HandlerConfigType&{ resolver: Function })[] {
+    try {
+      return this.container.root.getAll(HandlerRegistry.key);
+    } catch {
+      return [];
+    }
   }
 
   /**
@@ -31,7 +35,7 @@ export class HandlerRegistry {
    * @param {NewableType<HandlerInterface>} handler
    * @memberof Container
    */
-  setHandler(handler: NewableType<HandlerInterface>): void {
+  set(handler: NewableType<HandlerInterface>): void {
     const service = Reflect.getMetadata(HANDLER_META.SERVICE, handler);
     const method = Reflect.getMetadata(HANDLER_META.METHOD, handler);
     const version = Reflect.getMetadata(HANDLER_META.VERSION, handler);
@@ -64,7 +68,7 @@ export class HandlerRegistry {
    * @returns {HandlerInterface}
    * @memberof Container
    */
-  getHandler(initialConfig: HandlerConfigType): HandlerInterface {
+  get(initialConfig: HandlerConfigType): HandlerInterface {
     const config = normalizeHandlerConfig(initialConfig);
 
     // local is true by default
@@ -80,7 +84,7 @@ export class HandlerRegistry {
       config.queue = false;
     }
 
-    const handlers = this.getHandlers().filter((hconfig) => {
+    const handlers = this.all().filter((hconfig) => {
       return (
         // same service
         config.service === hconfig.service
