@@ -4,7 +4,11 @@ import axios from 'axios';
 
 import { HttpTransport } from '@ilos/transport-http';
 import { httpHandlerFactory } from '@ilos/handler-http';
-import { Container, Interfaces, Parents } from '@ilos/core';
+import { Container, Parents } from '@ilos/core';
+import {
+  TransportInterface,
+  KernelInterface,
+} from '@ilos/common';
 
 import { Kernel } from '../src/Kernel';
 
@@ -65,10 +69,10 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
     },
   });
 }
-let mathTransport: Interfaces.TransportInterface;
-let stringTransport: Interfaces.TransportInterface;
-let mathKernel: Interfaces.KernelInterface;
-let stringKernel: Interfaces.KernelInterface;
+let mathTransport: TransportInterface;
+let stringTransport: TransportInterface;
+let mathKernel: KernelInterface;
+let stringKernel: KernelInterface;
 
 describe('Http only integration', () => {
   before(async () => {

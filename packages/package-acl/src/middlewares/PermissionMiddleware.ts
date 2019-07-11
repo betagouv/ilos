@@ -1,4 +1,10 @@
-import { Container, Exceptions, Interfaces, Types } from '@ilos/core';
+import { Container, Exceptions } from '@ilos/core';
+import {
+  MiddlewareInterface,
+  ParamsType,
+  ContextType,
+  ResultType,
+} from '@ilos/common';
 
 /**
  * Can middleware check permission in context and may throw a ForbiddenException
@@ -8,13 +14,13 @@ import { Container, Exceptions, Interfaces, Types } from '@ilos/core';
  * @returns {MiddlewareInterface}
  */
 @Container.middleware()
-export class PermissionMiddleware implements Interfaces.MiddlewareInterface {
+export class PermissionMiddleware implements MiddlewareInterface {
   async process(
-    params: Types.ParamsType,
-    context: Types.ContextType,
+    params: ParamsType,
+    context: ContextType,
     next: Function,
     neededPermissions: string[],
-  ): Promise<Types.ResultType> {
+  ): Promise<ResultType> {
     if (!Array.isArray(neededPermissions) || neededPermissions.length === 0) {
       throw new Exceptions.InvalidParamsException('No permissions defined');
     }

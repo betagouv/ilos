@@ -1,1 +1,1 @@
-export { RepositoryInterface, RepositoryInterfaceResolver } from './RepositoryInterface';
+export { RepositoryModelType, RepositoryInterface, RepositoryInterfaceResolver } from './RepositoryInterface';

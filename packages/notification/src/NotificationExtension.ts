@@ -1,11 +1,15 @@
-import { Interfaces } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
-import { TemplateInterfaceResolver } from '@ilos/template';
+import {
+  ConfigInterfaceResolver,
+  TemplateInterfaceResolver,
+  NotificationInterfaceResolver,
+  RegisterHookInterface,
+  InitHookInterface,
+  ServiceContainerInterface,
+} from '@ilos/common';
 
-import { NotificationInterfaceResolver } from './NotificationInterface';
 import { Notification } from './Notification';
 
-export class NotificationExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
+export class NotificationExtension implements RegisterHookInterface, InitHookInterface {
   static readonly key:string = 'notification';
 
   constructor(protected config?: {
@@ -15,7 +19,7 @@ export class NotificationExtension implements Interfaces.RegisterHookInterface, 
 
   }
 
-  register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
 
     if (!container.isBound(TemplateInterfaceResolver)) {
@@ -31,7 +35,7 @@ export class NotificationExtension implements Interfaces.RegisterHookInterface, 
     serviceContainer.registerHooks(Notification.prototype, NotificationInterfaceResolver);
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     if (this.config) {
       const container = serviceContainer.getContainer();
       container

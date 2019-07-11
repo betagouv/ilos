@@ -1,11 +1,17 @@
-import { Container, Types } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
-import { TemplateInterfaceResolver } from '@ilos/template';
+import { Container } from '@ilos/core';
+import {
+  NewableType,
+  ConfigInterfaceResolver,
+  TemplateInterfaceResolver,
+  MailDriverInterface,
+  MailInterface,
+  TemplateMailInterface,
+  NotificationConfigurationType,
+  NotificationInterface,
+  NotificationInterfaceResolver
+} from '@ilos/common';
 
 import { MailjetDriver } from './mail/MailjetDriver';
-import { MailDriverInterface, MailInterface, TemplateMailInterface } from './mail/MailDriverInterface';
-import { NotificationConfigurationType } from './NotificationConfigurationType';
-import { NotificationInterface, NotificationInterfaceResolver } from './NotificationInterface';
 
 @Container.provider({
   identifier: NotificationInterfaceResolver,
@@ -13,7 +19,7 @@ import { NotificationInterface, NotificationInterfaceResolver } from './Notifica
 export class Notification implements NotificationInterface {
   protected config: NotificationConfigurationType;
   protected mailDriver: MailDriverInterface;
-  protected mailDrivers: { [key:string]: Types.NewableType<MailDriverInterface> } = {
+  protected mailDrivers: { [key:string]: NewableType<MailDriverInterface> } = {
     mailjet: MailjetDriver,
   };
 

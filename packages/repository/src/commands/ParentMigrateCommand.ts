@@ -1,7 +1,11 @@
-import { Types as CliTypes, Interfaces as CliInterfaces } from '@ilos/cli';
-import { Types, Interfaces } from '@ilos/core';
+import {
+  ConfigInterfaceResolver,
+  CommandInterface,
+  NewableType,
+  CommandOptionType,
+  KernelInterfaceResolver,
+} from '@ilos/common';
 
-import { ConfigInterfaceResolver } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
 
 export type MigrationType = {
@@ -28,9 +32,9 @@ export abstract class ParentMigration implements MigrationInterface {
   }
 }
 
-export abstract class ParentMigrateCommand implements CliInterfaces.CommandInterface {
+export abstract class ParentMigrateCommand implements CommandInterface {
   public readonly entity: string = '';
-  protected readonly migrations: Types.NewableType<ParentMigration>[] = [];
+  protected readonly migrations: NewableType<ParentMigration>[] = [];
   protected availableMigrationsMap: Map<string, ParentMigration> = new Map();
 
   get signature(): string {
@@ -38,7 +42,7 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
   }
 
   public readonly description: string = 'Make migration';
-  public readonly options: CliTypes.CommandOptionType[] = [
+  public readonly options: CommandOptionType[] = [
     {
       signature: '-b, --rollback <round>',
       description: 'Rollback',
@@ -57,7 +61,7 @@ export abstract class ParentMigrateCommand implements CliInterfaces.CommandInter
   ];
 
   constructor(
-    protected kernel: Interfaces.KernelInterfaceResolver,
+    protected kernel: KernelInterfaceResolver,
     protected connection: MongoConnection,
     protected config: ConfigInterfaceResolver,
   ) {}

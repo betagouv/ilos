@@ -3,8 +3,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 
 import { Container } from '@ilos/core';
-
-import { EnvInterface } from './EnvInterfaces';
+import { EnvInterface } from '@ilos/common';
 
 /**
  * Env provider

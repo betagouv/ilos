@@ -5,9 +5,11 @@ import jsYaml from 'js-yaml';
 import { camelCase, get, set, has } from 'lodash';
 
 import { Container } from '@ilos/core';
-import { EnvInterfaceResolver } from '@ilos/env';
 
-import { ConfigInterface } from './ConfigInterfaces';
+import {
+  EnvInterfaceResolver,
+  ConfigInterface,
+} from '@ilos/common';
 
 /**
  * Config provider

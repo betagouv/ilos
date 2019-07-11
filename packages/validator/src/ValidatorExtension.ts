@@ -1,9 +1,12 @@
-import { Interfaces } from '@ilos/core';
+import {
+  RegisterHookInterface,
+  ServiceContainerInterface,
+  ValidatorInterfaceResolver,
+} from '@ilos/common';
 
 import { AjvValidator } from './AjvValidator';
-import { ValidatorInterfaceResolver } from './ValidatorInterface';
 
-export class ValidatorExtension implements Interfaces.RegisterHookInterface {
+export class ValidatorExtension implements RegisterHookInterface {
   static readonly key: string = 'validator';
 
   protected validators: [string, any][] = [];
@@ -23,14 +26,14 @@ export class ValidatorExtension implements Interfaces.RegisterHookInterface {
     }
   }
 
-  async register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     if (!container.isBound(ValidatorInterfaceResolver)) {
       container.bind(ValidatorInterfaceResolver).to(AjvValidator);
     }
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     const validator = serviceContainer.getContainer().get(ValidatorInterfaceResolver);
 
     // Init keywords

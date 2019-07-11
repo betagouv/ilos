@@ -1,19 +1,25 @@
-import { Types, Interfaces, Container } from '@ilos/core';
-import { TemplateInterfaceResolver, HandlebarsTemplate } from '@ilos/template';
+import {
+  NewableType,
+  ServiceContainerInterface,
+  InitHookInterface,
+  RegisterHookInterface,
+  TemplateInterfaceResolver,
+  CommandInterface,
+} from '@ilos/common';
+import { HandlebarsTemplate } from '@ilos/template';
 
 import { CommandRegistry } from '../providers/CommandRegistry';
-import { CommandInterface } from '../interfaces';
 
-export class CommandExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
+export class CommandExtension implements RegisterHookInterface, InitHookInterface {
   static readonly key: string = 'commands';
 
   constructor(
-    readonly commands: Types.NewableType<CommandInterface>[],
+    readonly commands: NewableType<CommandInterface>[],
   ) {
     //
   }
 
-  async register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     if (!container.isBound(CommandRegistry)) {
       container.bind(CommandRegistry).toSelf();
@@ -28,7 +34,7 @@ export class CommandExtension implements Interfaces.RegisterHookInterface, Inter
     }
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     const commandRegistry = container.get<CommandRegistry>(CommandRegistry);
 

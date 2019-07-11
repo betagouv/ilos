@@ -2,7 +2,8 @@
 import { ExtensionStaticInterface } from './ExtentionInterface';
 import { ContainerInterface, IdentifierType } from '../container';
 
-export type ServiceContainerConstructorInterface<T = any> = new (parent?: ServiceContainerInterface) => T;
+// export type ServiceContainerConstructorInterface<T = any> = new (parent?: ServiceContainerInterface) => T;
+export type ServiceContainerConstructorInterface<T = any> = new (parent?: ContainerInterface) => T;
 
 export interface ServiceContainerInterface {
   readonly extensions: ExtensionStaticInterface[];

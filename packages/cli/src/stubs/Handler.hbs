@@ -1,4 +1,5 @@
-import { Parents, Container, Types } from '@ilos/core';
+import { Parents, Container } from '@ilos/core';
+import { ParamsType, ContextType, ResultType } from '@ilos/common';
 
 @Container.handler({
   service: 'myService',
@@ -13,9 +14,9 @@ export class {{name}}Action extends Parents.Action {
   }
 
   protected async handle(
-    params: Types.ParamsType,
-    context: Types.ContextType,
-  ): Promise<Types.ResultType> {
+    params: ParamsType,
+    context: ContextType,
+  ): Promise<ResultType> {
     // 
   }
 }

@@ -1,6 +1,6 @@
-import { Container, Interfaces, Types } from '@ilos/core';
+import { Container } from '@ilos/core';
+import { KernelInterfaceResolver, ResultType, CommandOptionType } from '@ilos/common';
 
-import { CommandOptionType } from '../types';
 import { Command } from '../parents/Command';
 
 /**
@@ -27,12 +27,12 @@ export class CallCommand extends Command {
   ];
 
   constructor(
-    private kernel: Interfaces.KernelInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
   ) {
     super();
   }
 
-  public async call(method, options?):Promise<Types.ResultType> {
+  public async call(method, options?):Promise<ResultType> {
     try {
       const call = {
         method,

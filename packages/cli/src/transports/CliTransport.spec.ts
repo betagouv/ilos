@@ -2,7 +2,8 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Parents, Container, Types, Interfaces } from '@ilos/core';
+import { Parents, Container } from '@ilos/core';
+import { ResultType, ExtensionStaticInterface } from '@ilos/common';
 
 import { CommandExtension } from '../extensions/CommandExtension';
 import { Command } from '../parents/Command';
@@ -20,7 +21,7 @@ class BasicCommand extends Command {
     },
   ];
 
-  public async call(name, options?):Promise<Types.ResultType> {
+  public async call(name, options?):Promise<ResultType> {
     if (options && 'hi' in options) {
       return `Hi ${name}`;
     }
@@ -32,7 +33,7 @@ class BasicCommand extends Command {
   commands: [BasicCommand],
 })
 class BasicKernel extends Parents.Kernel {
-  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+  readonly extensions: ExtensionStaticInterface[] = [
     CommandExtension,
   ];
 }

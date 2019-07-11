@@ -2,10 +2,10 @@
 import fs from 'fs';
 import path from 'path';
 
-import { Parents, Interfaces, Types, Container } from '@ilos/core';
+import { Parents, Container } from '@ilos/core';
+import { BootstrapType, NewableType, TransportInterface, KernelInterface } from '@ilos/common';
 
 import { CliTransport } from './transports/CliTransport';
-import { BootstrapType } from './types';
 
 export class Bootstrap {
   constructor(
@@ -53,7 +53,7 @@ export class Bootstrap {
     return bootstrapPath;
   }
 
-  async start(command: string, ...opts: any[]): Promise<Interfaces.TransportInterface> {
+  async start(command: string, ...opts: any[]): Promise<TransportInterface> {
     const bootstrapObject = this.bootstrapObject;
 
     const kernelConstructor = bootstrapObject.kernel();
@@ -88,7 +88,7 @@ export class Bootstrap {
     return transport;
   }
 
-  registerShutdownHook(kernel: Interfaces.KernelInterface, transport: Interfaces.TransportInterface) {
+  registerShutdownHook(kernel: KernelInterface, transport: TransportInterface) {
     function handle() {
       setTimeout(
         () => {
@@ -139,11 +139,11 @@ export class Bootstrap {
 }
 
 export const bootstrap = new Bootstrap({
-  kernel(): Types.NewableType<Interfaces.KernelInterface> {
+  kernel(): NewableType<KernelInterface> {
     return class extends Parents.Kernel {};
   },
   serviceProviders: [],
   transport: {
-    cli(k: Interfaces.KernelInterface): Interfaces.TransportInterface { return new CliTransport(k); },
+    cli(k: KernelInterface): TransportInterface { return new CliTransport(k); },
   },
 });

@@ -1,8 +1,12 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
-
-import { Types, Exceptions } from '@ilos/core';
+import {
+  ParamsType,
+  ContextType,
+  ResultType,
+} from '@ilos/common';
+import { Exceptions } from '@ilos/core';
 
 import { RoleMiddleware } from './RoleMiddleware';
 
@@ -17,7 +21,7 @@ async function noop(params, context) {
 
 const callFactory = (group: string, role: string) => ({
   method: 'test',
-  context: <Types.ContextType>{
+  context: <ContextType>{
     channel: {
       service: '',
       transport: 'http',
@@ -29,8 +33,8 @@ const callFactory = (group: string, role: string) => ({
       },
     },
   },
-  params: <Types.ParamsType>{},
-  result: <Types.ResultType>null,
+  params: <ParamsType>{},
+  result: <ResultType>null,
 });
 
 describe('Role middleware', () => {

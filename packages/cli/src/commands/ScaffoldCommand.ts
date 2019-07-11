@@ -1,10 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 import { Container } from '@ilos/core';
-import { TemplateInterfaceResolver } from '@ilos/template';
+import { TemplateInterfaceResolver, CommandOptionType } from '@ilos/common';
 
 import { Command } from '../parents/Command';
-import { CommandOptionType } from '../types/CommandOptionType';
 
 /**
  * Command to scaffold service, provider, handlers...

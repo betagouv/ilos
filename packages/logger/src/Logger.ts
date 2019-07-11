@@ -1,7 +1,6 @@
 import { Container } from '@ilos/core';
 
-import { LoggerInterface, LoggerDriverInterface } from './LoggerInterface';
-import { LogMessageType } from './LogMessageType';
+import { LoggerInterface, LoggerDriverInterface, LogMessageType } from '@ilos/common';
 
 /**
  * Logger provider

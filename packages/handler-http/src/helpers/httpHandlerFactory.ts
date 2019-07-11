@@ -1,5 +1,10 @@
-import { Container, Types, Interfaces } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { Container } from '@ilos/core';
+import { 
+  ConfigInterfaceResolver,
+  NewableType,
+  HandlerInterface,
+  InitHookInterface,
+} from '@ilos/common';
 
 import { HttpHandler } from '../HttpHandler';
 /**
@@ -14,7 +19,7 @@ export function httpHandlerFactory(
     service: string,
     url: string,
     version?: string,
-  ): Types.NewableType<Interfaces.HandlerInterface&Interfaces.InitHookInterface> {
+  ): NewableType<HandlerInterface&InitHookInterface> {
   let isFromConfig = false;
   if (!/http/.test(url)) {
     isFromConfig = true;

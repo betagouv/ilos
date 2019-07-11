@@ -3,9 +3,14 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-import { Container, Types, Interfaces, Parents, Extensions } from '@ilos/core';
+import { Container, Parents, Extensions } from '@ilos/core';
 import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
-import { EnvInterfaceResolver } from '@ilos/env';
+import {
+  ParamsType,
+  ContextType,
+  ResultType,
+  EnvInterfaceResolver,
+} from '@ilos/common';
 
 import * as Bull from './helpers/bullFactory';
 import { QueueTransport } from './QueueTransport';
@@ -24,7 +29,7 @@ class QueueExtension extends ParentQueueExtension {
   method: 'minus',
 })
 class BasicAction extends Parents.Action {
-  protected async handle(params: Types.ParamsType, context: Types.ContextType):Promise<Types.ResultType> {
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     let count = 0;
     if ('minus' in params) {
       const { add } = params;
@@ -43,7 +48,7 @@ class BasicAction extends Parents.Action {
   method: 'add',
 })
 class BasicTwoAction extends Parents.Action {
-  protected async handle(params: Types.ParamsType, context: Types.ContextType):Promise<Types.ResultType> {
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     let count = 0;
     if ('add' in params) {
       const { add } = params;
