@@ -5,7 +5,7 @@ import {
 } from 'inversify';
 
 import { Metadata } from 'inversify/lib/planning/metadata';
-import { HandlerMeta, HandlerConfigType } from './handler';
+import { HandlerMeta, HandlerConfigType } from './types/handler';
 
 type AnyConfig = { [k: string]: any };
 

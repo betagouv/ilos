@@ -1,4 +1,4 @@
-import { Parents } from '@ilos/core';
+import { Action } from '@ilos/core';
 import {
   handler,
   ConfigInterfaceResolver,
@@ -14,7 +14,7 @@ import { CustomProvider } from '../../Providers/CustomProvider';
   service: 'string',
   method: 'hello',
 })
-export class HelloAction extends Parents.Action {
+export class HelloAction extends Action {
   constructor(
     public custom: CustomProvider,
     private config: ConfigInterfaceResolver,

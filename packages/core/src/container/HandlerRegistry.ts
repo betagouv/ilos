@@ -3,10 +3,10 @@ import {
   HandlerInterface,
   HandlerConfigType,
   ContainerInterface,
+  HandlerMeta,
 } from '@ilos/common';
 
-import { normalizeHandlerConfig } from './helpers/normalizeHandlerConfig';
-import { HANDLER_META } from './Metadata';
+import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
 
 export class HandlerRegistry {
   static readonly key: symbol = Symbol.for('handlers');
@@ -36,11 +36,11 @@ export class HandlerRegistry {
    * @memberof Container
    */
   set(handler: NewableType<HandlerInterface>): void {
-    const service = Reflect.getMetadata(HANDLER_META.SERVICE, handler);
-    const method = Reflect.getMetadata(HANDLER_META.METHOD, handler);
-    const version = Reflect.getMetadata(HANDLER_META.VERSION, handler);
-    const local = Reflect.getMetadata(HANDLER_META.LOCAL, handler);
-    const queue = Reflect.getMetadata(HANDLER_META.QUEUE, handler);
+    const service = Reflect.getMetadata(HandlerMeta.SERVICE, handler);
+    const method = Reflect.getMetadata(HandlerMeta.METHOD, handler);
+    const version = Reflect.getMetadata(HandlerMeta.VERSION, handler);
+    const local = Reflect.getMetadata(HandlerMeta.LOCAL, handler);
+    const queue = Reflect.getMetadata(HandlerMeta.QUEUE, handler);
 
     const handlerConfig = normalizeHandlerConfig({ service, method, version, local, queue });
 

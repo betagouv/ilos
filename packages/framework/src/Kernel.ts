@@ -1,4 +1,4 @@
-import { Parents, Extensions } from '@ilos/core';
+import { Kernel as BaseKernel, Extensions } from '@ilos/core';
 import { Commands, CommandExtension } from '@ilos/cli';
 import { ConfigExtension } from '@ilos/config';
 import { EnvExtension } from '@ilos/env';
@@ -16,7 +16,7 @@ import { kernel, ExtensionStaticInterface } from '@ilos/common';
     Commands.ScaffoldCommand,
   ],
 })
-export class Kernel extends Parents.Kernel {
+export class Kernel extends BaseKernel {
   readonly extensions: ExtensionStaticInterface[] = [
     EnvExtension,
     ConfigExtension,

@@ -7,7 +7,7 @@ import {
 } from '@ilos/common';
 
 import { Providers } from './Providers';
-import { ServiceContainer } from '../parents/ServiceContainer';
+import { ServiceContainer } from '../foundation/ServiceContainer';
 
 describe('Providers extension', () => {
   it('works', async () => {

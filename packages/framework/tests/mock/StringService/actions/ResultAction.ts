@@ -1,4 +1,4 @@
-import { Parents } from '@ilos/core';
+import { Action } from '@ilos/core';
 import {
   handler,
   ParamsType,
@@ -15,7 +15,7 @@ import { CustomProvider } from '../../Providers/CustomProvider';
   service: 'string',
   method: 'result',
 })
-export class ResultAction extends Parents.Action {  
+export class ResultAction extends Action {  
   constructor(
     private kernel: KernelInterfaceResolver,
     public custom: CustomProvider,

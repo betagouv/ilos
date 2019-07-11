@@ -1,4 +1,4 @@
-import { Parents } from '@ilos/core';
+import { Action } from '@ilos/core';
 import {
   handler,
   ParamsType,
@@ -13,7 +13,7 @@ import { CustomProvider } from '../../Providers/CustomProvider';
   service: 'math',
   method: 'add',
 })
-export class AddAction extends Parents.Action {
+export class AddAction extends Action {
   constructor(
     public custom: CustomProvider,
   ) {

@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Parents } from '@ilos/core';
+import { Action } from '@ilos/core';
 import {
   handler,
   ConfigInterfaceResolver,
@@ -12,7 +12,7 @@ import {
   service: 'string',
   method: 'log',
 })
-export class LogAction extends Parents.Action {
+export class LogAction extends Action {
   constructor(
     private config: ConfigInterfaceResolver,
   ) {

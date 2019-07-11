@@ -2,7 +2,7 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Parents } from '@ilos/core';
+import { Kernel } from '@ilos/core';
 import { command as commandDecorator, kernel as kernelDecorator, ResultType, ExtensionStaticInterface } from '@ilos/common';
 
 import { CommandExtension } from '../extensions/CommandExtension';
@@ -32,7 +32,7 @@ class BasicCommand extends Command {
 @kernelDecorator({
   commands: [BasicCommand],
 })
-class BasicKernel extends Parents.Kernel {
+class BasicKernel extends Kernel {
   readonly extensions: ExtensionStaticInterface[] = [
     CommandExtension,
   ];

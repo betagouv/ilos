@@ -1,11 +1,11 @@
-import { Parents, Container } from '@ilos/core';
+import { Action } from '@ilos/core';
 import { handler, ParamsType, ContextType, ResultType } from '@ilos/common';
 
 @handler({
   service: 'myService',
   method: '{{name}}',
 })
-export class {{name}}Action extends Parents.Action {
+export class {{name}}Action extends Action {
   constructor(
     // here inject your dependencies
     // private provider: MyProviderInterfaceResolver,

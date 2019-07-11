@@ -1,4 +1,4 @@
-import { Parents } from '@ilos/core';
+import { ServiceProvider as BaseServiceProvider } from '@ilos/core';
 import { RedisConnection } from '@ilos/connection-redis';
 import { serviceProvider } from '@ilos/common';
 
@@ -22,7 +22,7 @@ import { CustomProvider } from '../Providers/CustomProvider';
     [RedisConnection, 'redis'],
   ],
 })
-export class ServiceProvider extends Parents.ServiceProvider {
+export class ServiceProvider extends BaseServiceProvider {
   async init() {
     await super.init();
     this.getContainer().get(CustomProvider).set('string:');

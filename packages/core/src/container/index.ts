@@ -1,2 +1,4 @@
-export * from './Container';
-export * from './helpers/normalizeHandlerConfig';
+export { Container } from './Container';
+export { HandlerRegistry } from './HandlerRegistry';
+export { HookRegistry } from './HookRegistry';
+
