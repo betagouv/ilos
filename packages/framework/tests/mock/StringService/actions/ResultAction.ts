@@ -1,11 +1,12 @@
-import { Parents, Exceptions } from '@ilos/core';
+import { Parents } from '@ilos/core';
 import {
   handler,
   ParamsType,
   ContextType,
   ResultType,
   RPCSingleResponseType,
-  KernelInterfaceResolver
+  KernelInterfaceResolver,
+  InvalidParamsException,
 } from '@ilos/common';
 
 import { CustomProvider } from '../../Providers/CustomProvider';
@@ -24,7 +25,7 @@ export class ResultAction extends Parents.Action {
 
   protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     if (Array.isArray(params) || !('name' in params) || !('add' in params) || (!Array.isArray(params.add))) {
-      throw new Exceptions.InvalidParamsException();
+      throw new InvalidParamsException();
     }
     const addResult = await <Promise<RPCSingleResponseType>>this.kernel.handle({
       jsonrpc: '2.0',

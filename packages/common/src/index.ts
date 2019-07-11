@@ -16,5 +16,6 @@ export * from './template';
 export * from './transport';
 export * from './validator';
 export * from './queue';
+export * from './exceptions';
 
 export * from './Decorators';

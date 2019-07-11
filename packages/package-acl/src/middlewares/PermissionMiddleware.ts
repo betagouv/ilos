@@ -1,10 +1,11 @@
-import { Exceptions } from '@ilos/core';
 import {
   middleware,
   MiddlewareInterface,
   ParamsType,
   ContextType,
   ResultType,
+  InvalidParamsException,
+  ForbiddenException,
 } from '@ilos/common';
 
 /**
@@ -23,7 +24,7 @@ export class PermissionMiddleware implements MiddlewareInterface {
     neededPermissions: string[],
   ): Promise<ResultType> {
     if (!Array.isArray(neededPermissions) || neededPermissions.length === 0) {
-      throw new Exceptions.InvalidParamsException('No permissions defined');
+      throw new InvalidParamsException('No permissions defined');
     }
 
     let permissions = [];
@@ -37,13 +38,13 @@ export class PermissionMiddleware implements MiddlewareInterface {
     }
 
     if (permissions.length === 0) {
-      throw new Exceptions.ForbiddenException('Invalid permissions');
+      throw new ForbiddenException('Invalid permissions');
     }
 
     const pass = neededPermissions.reduce((p, c) => p && (permissions || []).indexOf(c) > -1, true);
 
     if (!pass) {
-      throw new Exceptions.ForbiddenException('Invalid permissions');
+      throw new ForbiddenException('Invalid permissions');
     }
 
     return next(params, context);
