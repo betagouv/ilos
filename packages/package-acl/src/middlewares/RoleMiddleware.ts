@@ -1,4 +1,10 @@
-import { Container, Exceptions, Types, Interfaces } from '@ilos/core';
+import { Container, Exceptions } from '@ilos/core';
+import {
+  MiddlewareInterface,
+  ParamsType,
+  ContextType,
+  ResultType,
+} from '@ilos/common';
 
 import { reduceRoles } from '../helpers/reduceRoles';
 
@@ -9,8 +15,8 @@ import { reduceRoles } from '../helpers/reduceRoles';
  * @returns {MiddlewareInterface}
  */
 @Container.middleware()
-export class RoleMiddleware implements Interfaces.MiddlewareInterface {
-  async process(params: Types.ParamsType, context: Types.ContextType, next: Function, roles: string[]): Promise<Types.ResultType> {
+export class RoleMiddleware implements MiddlewareInterface {
+  async process(params: ParamsType, context: ContextType, next: Function, roles: string[]): Promise<ResultType> {
     const filtered: string[] = roles.filter(i => !!i);
 
     if (!filtered.length) {

@@ -2,7 +2,12 @@
 import { expect } from 'chai';
 import axios from 'axios';
 import { HttpTransport } from '@ilos/transport-http';
-import { Container, Interfaces } from '@ilos/core';
+import { Container } from '@ilos/core';
+import {
+  TransportInterface,
+  KernelInterface,
+} from '@ilos/common';
+
 import { Kernel } from '../src/Kernel';
 
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
@@ -47,8 +52,8 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
     },
   });
 }
-let transport: Interfaces.TransportInterface;
-let kernel: Interfaces.KernelInterface;
+let transport: TransportInterface;
+let kernel: KernelInterface;
 
 describe('Merged integration', () => {
   before(async () => {

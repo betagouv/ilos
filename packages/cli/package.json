@@ -81,7 +81,8 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "commander": "^2.20.0"
+    "commander": "^2.20.0",
+    "@ilos/common": "^0.2.0"
   },
   "peerDependencies": {
     "@ilos/core": "~0",

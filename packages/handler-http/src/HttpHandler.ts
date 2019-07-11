@@ -1,6 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { Types, Interfaces, Exceptions } from '@ilos/core';
+import { Exceptions } from '@ilos/core';
+import {
+  CallType,
+  ResultType,
+  HandlerInterface,
+  InitHookInterface,
+} from '@ilos/common';
 
 /**
  * Http handler
@@ -8,7 +14,7 @@ import { Types, Interfaces, Exceptions } from '@ilos/core';
  * @class HttpHandler
  * @implements {HandlerInterface}
  */
-export class HttpHandler implements Interfaces.HandlerInterface, Interfaces.InitHookInterface {
+export class HttpHandler implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
 
   protected readonly service: string;
@@ -32,7 +38,7 @@ export class HttpHandler implements Interfaces.HandlerInterface, Interfaces.Init
     });
   }
 
-  public async call(call: Types.CallType): Promise<Types.ResultType> {
+  public async call(call: CallType): Promise<ResultType> {
     const { method, params, context } = call;
     try {
       // TODO : add channel ?

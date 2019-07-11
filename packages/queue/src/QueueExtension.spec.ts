@@ -5,7 +5,8 @@ import { Parents, Container, Extensions } from '@ilos/core';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ConfigExtension } from '@ilos/config';
-import { EnvInterfaceResolver, EnvExtension } from '@ilos/env';
+import { EnvExtension } from '@ilos/env';
+import { EnvInterfaceResolver } from '@ilos/common';
 
 import { QueueExtension } from './QueueExtension';
 

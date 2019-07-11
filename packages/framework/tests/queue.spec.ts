@@ -8,7 +8,11 @@ import path from 'path';
 import { HttpTransport } from '@ilos/transport-http';
 import { QueueTransport } from '@ilos/transport-redis';
 
-import { Container, Interfaces } from '@ilos/core';
+import { Container } from '@ilos/core';
+import {
+  TransportInterface,
+  KernelInterface,
+} from '@ilos/common';
 
 import { Kernel } from '../src/Kernel';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
@@ -55,10 +59,10 @@ function makeRPCNotify(port: number, req: { method: string; params?: any }) {
   });
 }
 
-let stringTransport: Interfaces.TransportInterface;
-let queueTransport: Interfaces.TransportInterface;
-let stringCallerKernel: Interfaces.KernelInterface;
-let stringCalleeKernel: Interfaces.KernelInterface;
+let stringTransport: TransportInterface;
+let queueTransport: TransportInterface;
+let stringCallerKernel: KernelInterface;
+let stringCalleeKernel: KernelInterface;
 
 describe('Queue integration', () => {
   before(async () => {
@@ -122,7 +126,7 @@ describe('Queue integration', () => {
 //   })
 //   class HelloWorldAction extends Parents.Action {
 //     constructor(
-//       protected kernel: Interfaces.KernelInterfaceResolver,
+//       protected kernel: KernelInterfaceResolver,
 //     ) {
 //       super();
 //     }

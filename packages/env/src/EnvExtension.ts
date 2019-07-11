@@ -1,8 +1,13 @@
-import { Interfaces } from '@ilos/core';
+import {
+  RegisterHookInterface,
+  InitHookInterface,
+  ServiceContainerInterface,
+  EnvInterfaceResolver,
+} from '@ilos/common';
 
-import { EnvInterfaceResolver, Env } from '.';
+import { Env } from '.';
 
-export class EnvExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
+export class EnvExtension implements RegisterHookInterface, InitHookInterface {
   static readonly key: string = 'env';
   protected toBeInit = false;
 
@@ -12,7 +17,7 @@ export class EnvExtension implements Interfaces.RegisterHookInterface, Interface
     //
   }
 
-  async register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     if (this.path || !container.isBound(EnvInterfaceResolver)) {
       container.bind(Env).toSelf();
@@ -23,7 +28,7 @@ export class EnvExtension implements Interfaces.RegisterHookInterface, Interface
     }
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     if (this.toBeInit) {
       const container = serviceContainer.getContainer();
       const env = container.get(EnvInterfaceResolver);

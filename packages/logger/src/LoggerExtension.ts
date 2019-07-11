@@ -1,18 +1,21 @@
 import * as winston from 'winston';
 
-import { Interfaces } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import {
+  LoggerInterfaceResolver,
+  ConfigInterfaceResolver,
+  RegisterHookInterface,
+  ServiceContainerInterface,
+} from '@ilos/common';
 
 import { Logger } from './Logger';
-import { LoggerInterfaceResolver } from './LoggerInterface';
 
-export class LoggerExtension implements Interfaces.RegisterHookInterface {
+export class LoggerExtension implements RegisterHookInterface {
   static readonly key: string = 'logger';
 
   constructor(protected configKey: string) {
   }
 
-  async register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     const config = container.get(ConfigInterfaceResolver);
     if (!container.isBound(LoggerInterfaceResolver)) {

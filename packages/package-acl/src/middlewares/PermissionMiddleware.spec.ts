@@ -2,7 +2,12 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { Types, Exceptions } from '@ilos/core';
+import { Exceptions } from '@ilos/core';
+import {
+  ParamsType,
+  ContextType,
+  ResultType,
+} from '@ilos/common';
 
 import { PermissionMiddleware } from './PermissionMiddleware';
 
@@ -17,7 +22,7 @@ async function noop(params, context) {
 
 const callFactory = (permissions: string[]) => ({
   method: 'test',
-  context: <Types.ContextType>{
+  context: <ContextType>{
     channel: {
       service: '',
       transport: 'http',
@@ -28,8 +33,8 @@ const callFactory = (permissions: string[]) => ({
       },
     },
   },
-  params: <Types.ParamsType>{},
-  result: <Types.ResultType>null,
+  params: <ParamsType>{},
+  result: <ResultType>null,
 });
 
 describe('Permission middleware', () => {

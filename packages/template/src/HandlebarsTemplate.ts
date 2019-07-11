@@ -4,8 +4,7 @@ import fs from 'fs';
 import Handlebars from 'handlebars';
 
 import { Container } from '@ilos/core';
-
-import { TemplateInterface } from './TemplateInterface';
+import { TemplateInterface } from '@ilos/common';
 
 @Container.provider()
 export class HandlebarsTemplate implements TemplateInterface {

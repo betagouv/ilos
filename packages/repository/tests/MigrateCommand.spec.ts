@@ -1,8 +1,12 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
 
-import { Parents, Container, Interfaces, Extensions } from '@ilos/core';
-import { Config, ConfigInterfaceResolver } from '@ilos/config';
+import { Parents, Container, Extensions } from '@ilos/core';
+import {
+  ConfigInterfaceResolver,
+  KernelInterfaceResolver,
+} from '@ilos/common';
+import { Config } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
 
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
@@ -102,7 +106,7 @@ class MigrateCommand extends ParentMigrateCommand {
   migrations = [FirstMigration, SecondMigration];
 
   constructor(
-    protected kernel: Interfaces.KernelInterfaceResolver,
+    protected kernel: KernelInterfaceResolver,
     protected db: MongoConnection,
     protected config: ConfigInterfaceResolver,
   ) {

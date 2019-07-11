@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/connection-manager';
+import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/common';
 
 export class MongoConnection implements ConnectionInterface<MongoClient> {
   protected client: MongoClient;

@@ -1,15 +1,19 @@
-import { Interfaces } from '@ilos/core';
-import { EnvInterfaceResolver, Env } from '@ilos/env';
+import { 
+  EnvInterfaceResolver,
+  ConfigInterfaceResolver,
+  RegisterHookInterface,
+  InitHookInterface,
+  ServiceContainerInterface,
+} from '@ilos/common';
 
-import { ConfigInterfaceResolver } from './ConfigInterfaces';
 import { Config } from './Config';
 
-export class ConfigExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
+export class ConfigExtension implements RegisterHookInterface, InitHookInterface {
   static readonly key: string = 'config';
 
   constructor(protected readonly params: string | { workingPath: string; configDir: string } | { [k: string]: any }) {}
 
-  async register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
 
     if (!container.isBound(EnvInterfaceResolver)) {
@@ -22,7 +26,7 @@ export class ConfigExtension implements Interfaces.RegisterHookInterface, Interf
     serviceContainer.registerHooks(Config.prototype, ConfigInterfaceResolver);
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     const config = container.get(ConfigInterfaceResolver);
 

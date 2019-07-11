@@ -1,15 +1,23 @@
 import { Job, Queue } from 'bull';
 
-import { Interfaces, Types } from '@ilos/core';
 import { RedisConnection } from '@ilos/connection-redis';
+import {
+  HandlerInterface,
+  InitHookInterface,
+  CallType,
+} from '@ilos/common';
 
 import { bullFactory } from './helpers/bullFactory';
 
-export class QueueHandler implements Interfaces.HandlerInterface, Interfaces.InitHookInterface {
+export class QueueHandler implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string|[string, any])[] = [];
 
   protected readonly service: string;
   protected readonly version: string;
+
+  protected defaultJobOptions = {
+    // TODO : remove on success
+  };
 
   private client: Queue;
 
@@ -21,7 +29,7 @@ export class QueueHandler implements Interfaces.HandlerInterface, Interfaces.Ini
     this.client = bullFactory(this.service, this.redis.getClient());
   }
 
-  public async call(call: Types.CallType): Promise<Job> {
+  public async call(call: CallType): Promise<Job> {
     if (!this.client) {
       throw new Error('Redis queue handler initialization error');
     }
@@ -37,6 +45,8 @@ export class QueueHandler implements Interfaces.HandlerInterface, Interfaces.Ini
           params,
           _context: context,
         },
+      }, {
+        ...this.defaultJobOptions,
       });
 
       return job;

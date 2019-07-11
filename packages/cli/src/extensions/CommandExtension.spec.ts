@@ -2,7 +2,9 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Container, Types, Parents } from '@ilos/core';
+import { Container, Parents } from '@ilos/core';
+import { ResultType } from '@ilos/common';
+
 import { CommandRegistry } from '../providers/CommandRegistry';
 
 import { CommandExtension } from './CommandExtension';
@@ -19,7 +21,7 @@ class BasicCommand extends Command {
     },
   ];
 
-  public async call(name, options?):Promise<Types.ResultType> {
+  public async call(name, options?):Promise<ResultType> {
     if (options && 'hi' in options) {
       return `Hi ${name}`;
     }

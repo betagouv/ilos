@@ -1,7 +1,11 @@
 import { Queue } from 'bull';
 
-import { Container, Interfaces } from '@ilos/core';
 import { QueueExtension } from '@ilos/queue';
+import {
+  TransportInterface,
+  KernelInterface,
+  ContainerInterface,
+} from '@ilos/common';
 
 import { bullFactory } from './helpers/bullFactory';
 
@@ -11,15 +15,15 @@ import { bullFactory } from './helpers/bullFactory';
  * @class QueueTransport
  * @implements {TransportInterface}
  */
-export class QueueTransport implements Interfaces.TransportInterface {
+export class QueueTransport implements TransportInterface {
   queues: Queue[] = [];
-  kernel: Interfaces.KernelInterface;
+  kernel: KernelInterface;
 
-  constructor(kernel: Interfaces.KernelInterface) {
+  constructor(kernel: KernelInterface) {
     this.kernel = kernel;
   }
 
-  getKernel(): Interfaces.KernelInterface {
+  getKernel(): KernelInterface {
     return this.kernel;
   }
 
@@ -31,7 +35,7 @@ export class QueueTransport implements Interfaces.TransportInterface {
     const [redisUrl] = opts;
     // throw error
 
-    const container = <Container.ContainerInterface>this.kernel.getContainer();
+    const container = <ContainerInterface>this.kernel.getContainer();
 
     if (!container.isBound(QueueExtension.containerKey)) {
       throw new Error('No queue declared');

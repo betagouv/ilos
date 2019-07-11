@@ -1,10 +1,11 @@
-import { Parents, Extensions, Interfaces, Container } from '@ilos/core';
+import { Parents, Extensions, Container } from '@ilos/core';
 import { Commands, CommandExtension } from '@ilos/cli';
 import { ConfigExtension } from '@ilos/config';
 import { EnvExtension } from '@ilos/env';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { LoggerExtension } from '@ilos/logger';
 import { QueueExtension } from '@ilos/queue';
+import { ExtensionStaticInterface } from '@ilos/common';
 
 @Container.kernel({
   env: null,
@@ -16,7 +17,7 @@ import { QueueExtension } from '@ilos/queue';
   ],
 })
 export class Kernel extends Parents.Kernel {
-  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+  readonly extensions: ExtensionStaticInterface[] = [
     EnvExtension,
     ConfigExtension,
     LoggerExtension,

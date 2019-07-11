@@ -1,10 +1,9 @@
 // tslint:disable no-invalid-this
 import { describe } from 'mocha';
 import { expect } from 'chai';
-import { Types } from '@ilos/core';
+import { ResultType, CommandOptionType } from '@ilos/common';
 
 import { Command } from './Command';
-import { CommandOptionType } from '../types';
 
 describe('Command', () => {
   it('works', async () => {
@@ -14,7 +13,7 @@ describe('Command', () => {
       public readonly options: CommandOptionType[] = [
         { signature: '-h, --hi', description: 'hi' },
       ];
-      public async call(name, opts):Promise<Types.ResultType> {
+      public async call(name, opts):Promise<ResultType> {
         if (name === 'crash') {
           throw new Error();
         }

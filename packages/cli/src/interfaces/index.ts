@@ -1,1 +1,0 @@
-export { CommandInterface } from './CommandInterface';

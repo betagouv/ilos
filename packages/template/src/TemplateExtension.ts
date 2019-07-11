@@ -1,10 +1,14 @@
-import { Interfaces } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import {
+  ConfigInterfaceResolver,
+  RegisterHookInterface,
+  InitHookInterface,
+  ServiceContainerInterface,
+  TemplateInterfaceResolver,
+} from '@ilos/common';
 
-import { TemplateInterfaceResolver } from './TemplateInterface';
 import { HandlebarsTemplate } from './HandlebarsTemplate';
 
-export class TemplateExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
+export class TemplateExtension implements RegisterHookInterface, InitHookInterface {
   static readonly key:string = 'template';
 
   constructor(protected config?: {
@@ -14,7 +18,7 @@ export class TemplateExtension implements Interfaces.RegisterHookInterface, Inte
 
   }
 
-  register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
 
     if (!container.isBound(ConfigInterfaceResolver)) {
@@ -26,7 +30,7 @@ export class TemplateExtension implements Interfaces.RegisterHookInterface, Inte
     serviceContainer.registerHooks(HandlebarsTemplate.prototype, TemplateInterfaceResolver);
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     if (this.config) {
       const container = serviceContainer.getContainer();
       container

@@ -47,7 +47,8 @@
     "ioredis": "^4.11.1"
   },
   "peerDependencies": {
-    "@ilos/connection-manager": "~0"
+    "@ilos/connection-manager": "^0.2.0",
+    "@ilos/common": "^0.2.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

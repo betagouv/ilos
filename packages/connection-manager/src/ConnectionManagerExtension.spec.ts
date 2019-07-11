@@ -2,10 +2,9 @@
 import { expect } from 'chai';
 
 import { Parents, Container, Extensions } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { ConfigInterfaceResolver, ConnectionInterface } from '@ilos/common';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
-import { ConnectionInterface } from './ConnectionManagerInterfaces';
 
 class FakeDriverOne implements ConnectionInterface {
   constructor(public config: object) {
