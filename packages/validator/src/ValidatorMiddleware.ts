@@ -1,5 +1,3 @@
-import { Exceptions } from '@ilos/core';
-
 import {
   middleware,
   ValidatorInterfaceResolver,
@@ -7,6 +5,7 @@ import {
   ContextType,
   ResultType,
   MiddlewareInterface,
+  InvalidParamsException,
 } from '@ilos/common';
 
 @middleware()
@@ -22,7 +21,7 @@ export class ValidatorMiddleware implements MiddlewareInterface {
     try {
       await this.validator.validate(params, schema);
     } catch (e) {
-      throw new Exceptions.InvalidParamsException(e.message);
+      throw new InvalidParamsException(e.message);
     }
 
     return next(params, context);

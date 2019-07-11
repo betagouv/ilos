@@ -5,8 +5,9 @@ import {
   ParamsType,
   ContextType,
   ResultType,
+  ForbiddenException,
+  InvalidParamsException,
 } from '@ilos/common';
-import { Exceptions } from '@ilos/core';
 
 import { RoleMiddleware } from './RoleMiddleware';
 
@@ -70,21 +71,21 @@ describe('Role middleware', () => {
 
   it('fails: unknown', async () => {
     const { params, context } = callFactory('registry', 'admin');
-    await expect(middleware.process(params, context, noop, ['unknown'])).to.be.rejectedWith(Exceptions.ForbiddenException);
+    await expect(middleware.process(params, context, noop, ['unknown'])).to.be.rejectedWith(ForbiddenException);
   });
 
   it('fails: null', async () => {
     const { params, context } = callFactory('registry', 'admin');
-    await expect(middleware.process(params, context, noop, [null])).to.be.rejectedWith(Exceptions.InvalidParamsException);
+    await expect(middleware.process(params, context, noop, [null])).to.be.rejectedWith(InvalidParamsException);
   });
 
   it('fails: empty', async () => {
     const { params, context } = callFactory('registry', 'admin');
-    await expect(middleware.process(params, context, noop, [])).to.be.rejectedWith(Exceptions.InvalidParamsException);
+    await expect(middleware.process(params, context, noop, [])).to.be.rejectedWith(InvalidParamsException);
   });
 
   it('fails: undefined', async () => {
     const { params, context } = callFactory('registry', 'admin');
-    await expect(middleware.process(params, context, noop, [undefined])).to.be.rejectedWith(Exceptions.InvalidParamsException);
+    await expect(middleware.process(params, context, noop, [undefined])).to.be.rejectedWith(InvalidParamsException);
   });
 });

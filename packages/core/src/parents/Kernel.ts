@@ -9,12 +9,12 @@ import {
   RPCResponseType,
   RPCSingleCallType,
   RPCSingleResponseType,
+  MethodNotFoundException,
+  InvalidRequestException,
 } from '@ilos/common';
 
 import { hasMultipleCall } from '../helpers/types/hasMultipleCall';
 import { isAnRPCException } from '../helpers/types/isAnRPCException';
-import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';
-import { InvalidRequestException } from '../exceptions/InvalidRequestException';
 import { ServiceProvider } from './ServiceProvider';
 
 

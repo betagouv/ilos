@@ -1,10 +1,11 @@
-import { Exceptions } from '@ilos/core';
 import {
   middleware,
   MiddlewareInterface,
   ParamsType,
   ContextType,
   ResultType,
+  InvalidParamsException,
+  ForbiddenException,
 } from '@ilos/common';
 
 import { reduceRoles } from '../helpers/reduceRoles';
@@ -21,11 +22,11 @@ export class RoleMiddleware implements MiddlewareInterface {
     const filtered: string[] = roles.filter(i => !!i);
 
     if (!filtered.length) {
-      throw new Exceptions.InvalidParamsException('No role defined');
+      throw new InvalidParamsException('No role defined');
     }
 
     if (!('call' in context) || (!('role' in context.call.user) && !('group' in context.call.user))) {
-      throw new Exceptions.ForbiddenException('Invalid permissions');
+      throw new ForbiddenException('Invalid permissions');
     }
 
     const { role, group } = context.call.user;
@@ -33,7 +34,7 @@ export class RoleMiddleware implements MiddlewareInterface {
     const pass = filtered.reduce(reduceRoles(filtered, group, role), true);
 
     if (!pass) {
-      throw new Exceptions.ForbiddenException('Role mismatch');
+      throw new ForbiddenException('Role mismatch');
     }
 
     return next(params, context);

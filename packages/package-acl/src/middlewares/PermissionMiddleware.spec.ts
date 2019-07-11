@@ -2,11 +2,12 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { Exceptions } from '@ilos/core';
 import {
   ParamsType,
   ContextType,
   ResultType,
+  InvalidParamsException,
+  ForbiddenException,
 } from '@ilos/common';
 
 import { PermissionMiddleware } from './PermissionMiddleware';
@@ -56,23 +57,23 @@ describe('Permission middleware', () => {
     const permissions: string[] = ['test.ok'];
     const { params, context } = callFactory(permissions);
 
-    await expect(middleware.process(params, context, noop, [])).to.be.rejectedWith(Exceptions.InvalidParamsException);
+    await expect(middleware.process(params, context, noop, [])).to.be.rejectedWith(InvalidParamsException);
   });
 
   it('fails: no user permissions', async () => {
     const { params, context } = callFactory([]);
-    await expect(middleware.process(params, context, noop, ['not-ok'])).to.be.rejectedWith(Exceptions.ForbiddenException);
+    await expect(middleware.process(params, context, noop, ['not-ok'])).to.be.rejectedWith(ForbiddenException);
   });
 
   it('fails: different permission', async () => {
     const permissions: string[] = ['test.ok'];
     const { params, context } = callFactory(permissions);
-    await expect(middleware.process(params, context, noop, ['test.not-ok'])).to.be.rejectedWith(Exceptions.ForbiddenException);
+    await expect(middleware.process(params, context, noop, ['test.not-ok'])).to.be.rejectedWith(ForbiddenException);
   });
 
   it('fails: not matching all permissions', async () => {
     const permissions: string[] = ['test.perm1'];
     const { params, context } = callFactory(permissions);
-    await expect(middleware.process(params, context, noop, ['test.perm1', 'test.perm2'])).to.be.rejectedWith(Exceptions.ForbiddenException);
+    await expect(middleware.process(params, context, noop, ['test.perm1', 'test.perm2'])).to.be.rejectedWith(ForbiddenException);
   });
 });

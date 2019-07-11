@@ -1,11 +1,11 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { Exceptions } from '@ilos/core';
 import {
   CallType,
   ResultType,
   HandlerInterface,
   InitHookInterface,
+  ServiceException,
 } from '@ilos/common';
 
 /**
@@ -53,7 +53,7 @@ export class HttpHandler implements HandlerInterface, InitHookInterface {
       });
 
       if (!('data' in response) || !('result' in response.data)) {
-        throw new Exceptions.ServiceException(response.data.error);
+        throw new ServiceException(response.data.error);
       }
       call.result = response.data.result;
       return response.data.result;
