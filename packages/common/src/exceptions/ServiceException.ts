@@ -1,4 +1,4 @@
-import { RPCErrorType } from '../call/RPCErrorType';
+import { RPCErrorType } from '../types/call/RPCErrorType';
 
 export class ServiceException extends Error {
   serviceError = true;

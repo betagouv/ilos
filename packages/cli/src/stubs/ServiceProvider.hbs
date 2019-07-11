@@ -1,4 +1,4 @@
-import { Parents } from '@ilos/core';
+import { ServiceProvider } from '@ilos/core';
 import { serviceProvider } from '@ilos/common';
 
 @serviceProvider({
@@ -6,4 +6,4 @@ import { serviceProvider } from '@ilos/common';
   handlers: [], // Declare your handlers
   children: [], // Declare sub service providers here  
 })
-export class {{name}}ServiceProvider extends Parents.ServiceProvider {}
+export class {{name}}ServiceProvider extends ServiceProvider {}

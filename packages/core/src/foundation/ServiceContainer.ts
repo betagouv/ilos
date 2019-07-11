@@ -12,8 +12,7 @@ import {
   FactoryType,
 } from '@ilos/common';
 
-import { Container } from '../container';
-import { HookRegistry } from '../container/HookRegistry';
+import { Container, HookRegistry } from '../container';
 
 /**
  * Service container parent class

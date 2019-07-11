@@ -2,7 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { Parents } from '@ilos/core';
+import { Kernel as BaseKernel } from '@ilos/core';
 import { kernel, BootstrapType, NewableType, TransportInterface, KernelInterface } from '@ilos/common';
 
 import { CliTransport } from './transports/CliTransport';
@@ -140,7 +140,7 @@ export class Bootstrap {
 
 export const bootstrap = new Bootstrap({
   kernel(): NewableType<KernelInterface> {
-    return class extends Parents.Kernel {};
+    return class extends BaseKernel {};
   },
   serviceProviders: [],
   transport: {

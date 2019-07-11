@@ -1,7 +1,7 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
 
-import { Parents, Extensions } from '@ilos/core';
+import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
 import { provider, serviceProvider, ConfigInterfaceResolver, ConnectionInterface } from '@ilos/common';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
@@ -127,7 +127,7 @@ class FakeConfigProvider extends ConfigInterfaceResolver {
     [FakeDriverThree, 'hello.you'],
   ],
 })
-class ServiceProvider extends Parents.ServiceProvider {
+class ServiceProvider extends BaseServiceProvider {
   readonly extensions = [
     Extensions.Providers,
     ConnectionManagerExtension,

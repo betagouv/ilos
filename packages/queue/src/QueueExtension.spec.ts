@@ -1,7 +1,7 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
 
-import { Parents, Extensions } from '@ilos/core';
+import { Action, ServiceProvider, Extensions } from '@ilos/core';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ConfigExtension } from '@ilos/config';
@@ -19,14 +19,14 @@ import { QueueExtension } from './QueueExtension';
   service: 'serviceA',
   method: 'hello',
 })
-class ServiceOneHandler extends Parents.Action {
+class ServiceOneHandler extends Action {
 }
 
 @handler({
   service: 'serviceB',
   method: 'world',
 })
-class ServiceTwoHandler extends Parents.Action {
+class ServiceTwoHandler extends Action {
 }
 
 describe('Queue extension', () => {
@@ -56,7 +56,7 @@ describe('Queue extension', () => {
         FakeEnvProvider,
       ],
     })
-    class MyService extends Parents.ServiceProvider {
+    class MyService extends ServiceProvider {
       extensions = [
         Extensions.Providers,
         ConfigExtension,
@@ -98,7 +98,7 @@ describe('Queue extension', () => {
         [RedisConnection, 'redis'],
       ],
     })
-    class MyService extends Parents.ServiceProvider {
+    class MyService extends ServiceProvider {
       extensions = [
         EnvExtension,
         ConfigExtension,

@@ -104,7 +104,7 @@ describe('Queue integration', () => {
 // // tslint:disable max-classes-per-file
 // import { expect } from 'chai';
 
-// import { Parents, Container, Interfaces, Extensions } from '@ilos/core';
+// import { Kernel, Actions, Container, Extensions } from '@ilos/core';
 // import { ConfigExtension } from '@ilos/config';
 // import { RedisConnection } from '@ilos/connection-redis';
 
@@ -126,7 +126,7 @@ describe('Queue integration', () => {
 //     service: 'hello',
 //     method: 'world',
 //   })
-//   class HelloWorldAction extends Parents.Action {
+//   class HelloWorldAction extends Action {
 //     constructor(
 //       protected kernel: KernelInterfaceResolver,
 //     ) {
@@ -145,7 +145,7 @@ describe('Queue integration', () => {
 //     service: 'hello',
 //     method: 'asyncWorld',
 //   })
-//   class HelloAsyncWorldAction extends Parents.Action {
+//   class HelloAsyncWorldAction extends Action {
 //     protected async handle(params):Promise<void> {
 //       expect(params).to.deep.eq(testParams);
 //       done();
@@ -165,7 +165,7 @@ describe('Queue integration', () => {
 //     ],
 //     queues: ['hello'],
 //   })
-//   class Kernel extends Parents.Kernel {
+//   class Kernel extends Kernel {
 //     extensions = [
 //       EnvExtension,
 //       ConfigExtension,

@@ -2,7 +2,7 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import supertest from 'supertest';
 
-import { Parents } from '@ilos/core';
+import { Kernel } from '@ilos/core';
 import {
   RPCCallType,
   RPCResponseType,
@@ -15,7 +15,7 @@ let httpTransport: HttpTransport;
 
 describe('Http transport', () => {
   before(() => {
-    class BasicKernel extends Parents.Kernel {
+    class BasicKernel extends Kernel {
       async handle(call: RPCCallType): Promise<RPCResponseType> {
         // generate errors from method name
         if ('method' in call) {

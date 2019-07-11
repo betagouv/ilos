@@ -2,7 +2,7 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Parents } from '@ilos/core';
+import { ServiceProvider } from '@ilos/core';
 import { command, serviceProvider, ResultType } from '@ilos/common';
 
 import { CommandRegistry } from '../providers/CommandRegistry';
@@ -34,7 +34,7 @@ class BasicCommand extends Command {
     BasicCommand,
   ],
 })
-class BasicServiceProvider extends Parents.ServiceProvider {
+class BasicServiceProvider extends ServiceProvider {
   extensions = [CommandExtension];
 }
 

@@ -3,7 +3,12 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-import { Parents, Extensions } from '@ilos/core';
+import {
+  Extensions,
+  Action,
+  ServiceProvider,
+  Kernel,
+} from '@ilos/core';
 import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
 import {
   handler,
@@ -32,7 +37,7 @@ class QueueExtension extends ParentQueueExtension {
   service: 'math',
   method: 'minus',
 })
-class BasicAction extends Parents.Action {
+class BasicAction extends Action {
   protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     let count = 0;
     if ('minus' in params) {
@@ -51,7 +56,7 @@ class BasicAction extends Parents.Action {
   service: 'math',
   method: 'add',
 })
-class BasicTwoAction extends Parents.Action {
+class BasicTwoAction extends Action {
   protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     let count = 0;
     if ('add' in params) {
@@ -84,7 +89,7 @@ class FakeEnvProvider extends EnvInterfaceResolver {
   ],
   queues: ['math'],
 })
-class BasicServiceProvider extends Parents.ServiceProvider {
+class BasicServiceProvider extends ServiceProvider {
   extensions = [
     Extensions.Providers,
     Extensions.Handlers,
@@ -95,7 +100,7 @@ class BasicServiceProvider extends Parents.ServiceProvider {
 @kernelDecorator({
   children: [BasicServiceProvider],
 })
-class BasicKernel extends Parents.Kernel {
+class BasicKernel extends Kernel {
 }
 
 

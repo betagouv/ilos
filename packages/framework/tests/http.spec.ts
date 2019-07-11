@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { HttpTransport } from '@ilos/transport-http';
 import { httpHandlerFactory } from '@ilos/handler-http';
-import { Parents } from '@ilos/core';
+import { ServiceProvider } from '@ilos/core';
 import {
   serviceProvider,
   kernel,
@@ -27,7 +27,7 @@ import { ServiceProvider as ParentStringServiceProvider } from './mock/StringSer
     httpHandlerFactory('math', 'http://127.0.0.1:8080'),
   ]
 })
-class StringServiceProvider extends Parents.ServiceProvider {}
+class StringServiceProvider extends ServiceProvider {}
 
 @kernel({
   children: [MathServiceProvider],

@@ -5,7 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { handler } from '@ilos/common';
 
 import { Container } from '.';
-import { Action } from '../parents';
+import { Action } from '../foundation/Action';
 import { HandlerRegistry } from './HandlerRegistry';
 
 chai.use(chaiAsPromised);

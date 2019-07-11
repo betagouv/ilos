@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import {
   Container as InversifyContainer,
-  ContainerModule as InversifyContainerModule,
   interfaces,
 } from 'inversify';
 
@@ -56,5 +55,3 @@ export class Container extends InversifyContainer implements ContainerInterface 
     return this.handlersRegistry.all();
   }
 }
-
-export class ContainerModule extends InversifyContainerModule {}
