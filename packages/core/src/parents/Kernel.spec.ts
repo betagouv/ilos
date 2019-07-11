@@ -3,14 +3,17 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
+import {
+  ProviderInterface,
+  ResultType,
+  ParamsType,
+  ContextType,
+} from '@ilos/common';
+
 import { handler, provider, serviceProvider } from '../container';
-import { ProviderInterface } from '../interfaces/ProviderInterface';
 import { Kernel } from './Kernel';
 import { ServiceProvider } from './ServiceProvider';
 import { Action } from './Action';
-import { ResultType } from '../types/ResultType';
-import { ParamsType } from '../types/ParamsType';
-import { ContextType } from '../types/ContextType';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;

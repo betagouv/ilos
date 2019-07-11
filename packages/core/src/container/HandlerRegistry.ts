@@ -1,6 +1,10 @@
-import { HandlerConfig, ContainerInterface } from './ContainerInterfaces';
-import { HandlerInterface } from '../interfaces/HandlerInterface';
-import { NewableType } from '../types';
+import {
+  NewableType,
+  HandlerInterface,
+  HandlerConfigType,
+  ContainerInterface,
+} from '@ilos/common';
+
 import { normalizeHandlerConfig } from './helpers/normalizeHandlerConfig';
 import { HANDLER_META } from './Metadata';
 
@@ -15,10 +19,10 @@ export class HandlerRegistry {
 
   /**
    * Get all registred handlers
-   * @returns {HandlerConfig[]}
+   * @returns {HandlerConfigType[]}
    * @memberof Container
    */
-  getHandlers(): (HandlerConfig&{ resolver: Function })[] {
+  getHandlers(): (HandlerConfigType&{ resolver: Function })[] {
     return this.container.root.getAll(HandlerRegistry.key);
   }
 
@@ -56,11 +60,11 @@ export class HandlerRegistry {
    * [local, async] => [local/async, local/async/*, local/sync, local/sync/*, remote/sync, remote/sync/*]
    * [remote, sync] => [remote/sync, remote/sync/*]
    * [remote, async] => [remote/sync, remote/sync/*]
-   * @param {HandlerConfig} config
+   * @param {HandlerConfigType} config
    * @returns {HandlerInterface}
    * @memberof Container
    */
-  getHandler(initialConfig: HandlerConfig): HandlerInterface {
+  getHandler(initialConfig: HandlerConfigType): HandlerInterface {
     const config = normalizeHandlerConfig(initialConfig);
 
     // local is true by default

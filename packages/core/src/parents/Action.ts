@@ -1,11 +1,16 @@
-import { CallType } from '../types/CallType';
-import { ResultType } from '../types/ResultType';
-import { ParamsType } from '../types/ParamsType';
-import { ContextType } from '../types/ContextType';
-import { HandlerInterface } from '../interfaces/HandlerInterface';
+import {
+  CallType,
+  ResultType,
+  ParamsType,
+  ContextType,
+  HandlerInterface,
+  FunctionMiddlewareInterface,
+  MiddlewareInterface,
+  ServiceContainerInterface,
+  InitHookInterface,
+} from '@ilos/common';
+
 import { compose } from '../helpers/compose';
-import { FunctionMiddlewareInterface, MiddlewareInterface } from '../interfaces/MiddlewareInterface';
-import { ServiceContainerInterface, InitHookInterface } from '../interfaces';
 
 
 /**

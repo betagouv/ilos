@@ -1,4 +1,4 @@
-import { RPCErrorType } from '../types/RPCErrorType';
+import { RPCErrorType } from '@ilos/common';
 
 export abstract class RPCException extends Error {
   rpcError: RPCErrorType;

@@ -3,12 +3,16 @@ import { describe } from 'mocha';
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import { Container, middleware } from '../container';
+import {
+  MiddlewareInterface,
+  ResultType,
+  ParamsType,
+  ContextType,
+} from '@ilos/common';
+
+import { middleware } from '../container';
 import { Action } from './Action';
-import { ResultType } from '../types/ResultType';
-import { ParamsType } from '../types/ParamsType';
-import { ContextType } from '../types/ContextType';
-import { MiddlewareInterface } from '../interfaces/MiddlewareInterface';
+
 import { ServiceContainer } from './ServiceContainer';
 
 chai.use(chaiAsPromised);

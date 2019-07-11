@@ -1,14 +1,19 @@
-import { Container, ContainerInterface, Factory, ServiceIdentifier } from '../container';
+import { Container } from '../container';
 
 import {
+  ContainerInterface,
   ServiceContainerInterface,
   ServiceContainerInterfaceResolver,
-} from '../interfaces/ServiceContainerInterface';
+  DestroyHookInterface,
+  InitHookInterface,
+  RegisterHookInterface,
+  ExtensionInterface,
+  ExtensionStaticInterface,
+  IdentifierType,
+  NewableType,
+  FactoryType,
+} from '@ilos/common';
 
-import { DestroyHookInterface, InitHookInterface, RegisterHookInterface } from '../interfaces/hooks';
-
-import { ExtensionInterface, ExtensionStaticInterface } from '../interfaces/ExtentionInterface';
-import { IdentifierType, NewableType } from '../types';
 import { HookRegistry } from '../container/HookRegistry';
 
 /**
@@ -20,21 +25,24 @@ import { HookRegistry } from '../container/HookRegistry';
  */
 export abstract class ServiceContainer
   implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface {
+
   readonly extensions: ExtensionStaticInterface[] = [];
 
   protected registerHookRegistry = new HookRegistry<RegisterHookInterface>('register', false);
   protected initHookRegistry = new HookRegistry<InitHookInterface>('init');
   protected destroyHookRegistry = new HookRegistry<DestroyHookInterface>('destroy');
 
-  protected container: ContainerInterface;
+  protected readonly container: ContainerInterface;
+  protected readonly parent?: ServiceContainerInterface;
 
   constructor(container?: ContainerInterface) {
     if (container) {
-      this.container = container;
+      // this.parent = container;
+      this.container = container.createChild();
     } else {
       this.container = new Container();
-      this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
     }
+    this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
   }
 
   /**
@@ -96,7 +104,7 @@ export abstract class ServiceContainer
     for (const { key: extensionKey } of extensions) {
       if (Reflect.hasMetadata(extensionKey, this.constructor)) {
         const extensionConfig = Reflect.getMetadata(extensionKey, this.constructor);
-        const extension = container.get<Factory<ExtensionInterface>>(extensionKey)(extensionConfig);
+        const extension = container.get<FactoryType<ExtensionInterface>>(extensionKey)(extensionConfig);
         this.registerHooks(extension);
       }
     }
@@ -106,7 +114,7 @@ export abstract class ServiceContainer
     if (Reflect.hasMetadata('extension:children', this.constructor)) {
       const children = Reflect.getMetadata('extension:children', this.constructor);
       for (const child of children) {
-        const childInstance = new child(this.getContainer().createChild());
+        const childInstance = new child(this.getContainer());
         this.getContainer()
           .bind(child)
           .toConstantValue(childInstance);
@@ -118,17 +126,17 @@ export abstract class ServiceContainer
     }
   }
 
-  public get(identifier: ServiceIdentifier) {
+  public get(identifier: IdentifierType) {
     return this.container.get(identifier);
   }
 
-  public bind(constructor: NewableType<any>, identifier?: ServiceIdentifier) {
+  public bind(constructor: NewableType<any>, identifier?: IdentifierType) {
     this.container.bind(constructor).toSelf();
     if (identifier) {
       this.container.bind(identifier).toService(constructor);
     }
 
-    const taggedIdentifier = <ServiceIdentifier | ServiceIdentifier[]>Reflect.getMetadata('extension:identifier', constructor);
+    const taggedIdentifier = <IdentifierType | IdentifierType[]>Reflect.getMetadata('extension:identifier', constructor);
     if (taggedIdentifier) {
       if (!Array.isArray(taggedIdentifier)) {
         this.container.bind(taggedIdentifier).toService(constructor);
@@ -140,7 +148,7 @@ export abstract class ServiceContainer
     }
   }
 
-  public ensureIsBound(identifier: ServiceIdentifier, fallback?: NewableType<any>) {
+  public ensureIsBound(identifier: IdentifierType, fallback?: NewableType<any>) {
     if (this.container.isBound(identifier)) {
       return;
     }
@@ -154,7 +162,7 @@ export abstract class ServiceContainer
     throw new Error(`Unable to find bindings for ${name}`);
   }
 
-  public overrideBinding(identifier: ServiceIdentifier, constructor: NewableType<any>) {
+  public overrideBinding(identifier: IdentifierType, constructor: NewableType<any>) {
     if (this.container.isBound(identifier)) {
       this.container.unbind(identifier);
     }

@@ -1,14 +1,16 @@
-import { ContainerInterface } from '../container';
+import {
+  ContainerInterface,
+  ParamsType,
+  ContextType,
+  ResultType,
+  KernelInterface,
+  KernelInterfaceResolver,
+  RPCCallType,
+  RPCResponseType,
+  RPCSingleCallType,
+  RPCSingleResponseType,
+} from '@ilos/common';
 
-import { ParamsType } from '../types/ParamsType';
-import { ContextType } from '../types/ContextType';
-import { ResultType } from '../types/ResultType';
-
-import { KernelInterface, KernelInterfaceResolver } from '../interfaces/KernelInterface';
-import { RPCCallType } from '../types/RPCCallType';
-import { RPCResponseType } from '../types/RPCResponseType';
-import { RPCSingleCallType } from '../types/RPCSingleCallType';
-import { RPCSingleResponseType } from '../types/RPCSingleResponseType';
 import { hasMultipleCall } from '../helpers/types/hasMultipleCall';
 import { isAnRPCException } from '../helpers/types/isAnRPCException';
 import { MethodNotFoundException } from '../exceptions/MethodNotFoundException';

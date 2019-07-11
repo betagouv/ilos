@@ -1,5 +1,6 @@
+import { ExtensionStaticInterface } from '@ilos/common';
+
 import { ServiceContainer } from './ServiceContainer';
-import { ExtensionStaticInterface } from '../interfaces/ExtentionInterface';
 import { Providers, Middlewares, Handlers } from '../extensions';
 
 /**
