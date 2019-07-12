@@ -77,9 +77,9 @@ export class HandlerRegistry {
     }
     // remote/async is not possible now
     if ('local' in config
-      && !config.local
-      && 'queue' in config
-      && config
+    && !config.local
+    && 'queue' in config
+    && config
     ) {
       config.queue = false;
     }
@@ -109,17 +109,16 @@ export class HandlerRegistry {
         return (hconfig1.local === config.local) ? -1 : 1;
       }
 
+      if (hconfig1.queue !== hconfig2.queue) {
+        return (hconfig1.queue === config.queue) ? -1 : 1;
+      }
+
       if (hconfig1.method !== hconfig2.method) {
         return (hconfig1.method === config.method) ? -1 : 1;
       }
 
-      if (hconfig1.queue !== hconfig2.queue) {
-        return (hconfig1.local === config.local) ? -1 : 1;
-      }
-
       return 0;
     });
-
     return (handlers.length > 0) ? handlers.shift().resolver() : undefined;
   }
 }

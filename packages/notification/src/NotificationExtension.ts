@@ -31,24 +31,22 @@ export class NotificationExtension implements RegisterHookInterface, InitHookInt
   }
 
   register(serviceContainer: ServiceContainerInterface) {
-    const container = serviceContainer.getContainer();
-
-    if (!container.isBound(TemplateInterfaceResolver)) {
-      throw new Error('Unable to find template provider');
-    }
-
-    if (!container.isBound(ConfigInterfaceResolver)) {
-      throw new Error('Unable to find config provider');
-    }
-
-    container.bind(Notification).toSelf();
-    container.bind(NotificationInterfaceResolver).toService(Notification);
+    serviceContainer.bind(Notification);
     serviceContainer.registerHooks(Notification.prototype, NotificationInterfaceResolver);
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
     if (this.config) {
       const container = serviceContainer.getContainer();
+
+      if (!container.isBound(TemplateInterfaceResolver)) {
+        throw new Error('Unable to find template provider');
+      }
+
+      if (!container.isBound(ConfigInterfaceResolver)) {
+        throw new Error('Unable to find config provider');
+      }
+
       container
         .get(TemplateInterfaceResolver)
         .loadTemplatesFromDirectory(

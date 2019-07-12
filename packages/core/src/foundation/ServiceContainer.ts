@@ -102,6 +102,7 @@ export abstract class ServiceContainer
     this.container.bind(ctor).toSelf();
     if (identifier) {
       this.container.bind(identifier).toService(ctor);
+      return;
     }
 
     const taggedIdentifier = <IdentifierType | IdentifierType[]>Reflect.getMetadata(Symbol.for('extension:identifier'), ctor);
@@ -116,13 +117,13 @@ export abstract class ServiceContainer
     }
   }
 
-  public ensureIsBound(identifier: IdentifierType, fallback?: NewableType<any>) {
+  public ensureIsBound(identifier: IdentifierType, fallback?: NewableType<any>, fallbackIdentifier?: IdentifierType) {
     if (this.container.isBound(identifier)) {
       return;
     }
 
     if (fallback) {
-      this.bind(fallback, identifier);
+      this.bind(fallback, fallbackIdentifier);
       return;
     }
 

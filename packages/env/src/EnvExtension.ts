@@ -10,6 +10,7 @@ import { Env } from '.';
 
 @extension({
   name: 'env',
+  autoload: true,
 })
 export class EnvExtension implements RegisterHookInterface, InitHookInterface {
   protected toBeInit = false;
@@ -22,6 +23,7 @@ export class EnvExtension implements RegisterHookInterface, InitHookInterface {
 
   async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
+    // TODO : use serviceContainer API
     if (this.path || !container.isBound(EnvInterfaceResolver)) {
       container.bind(Env).toSelf();
       container.bind(EnvInterfaceResolver).toService(Env);

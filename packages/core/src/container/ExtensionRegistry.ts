@@ -1,5 +1,5 @@
 import {
-  ExtensionConfigurationType, 
+  ExtensionConfigurationType,
   extensionConfigurationMetadataKey,
   ServiceContainerInterface,
   ContainerInterface,
@@ -7,6 +7,7 @@ import {
   NewableType,
   FactoryType,
 } from '@ilos/common';
+
 import { DependencyTree } from '../helpers/DependencyTree';
 
 export class ExtensionRegistry {
@@ -27,7 +28,7 @@ export class ExtensionRegistry {
     } catch {
       //
     }
-    extensions.forEach(config => {
+    extensions.forEach((config) => {
       this.registry.set(config.key, config);
     });
   }
@@ -35,8 +36,7 @@ export class ExtensionRegistry {
   all(): ExtensionConfigurationType[] {
     try {
       return Array.from(this.registry.values());
-    }
-    catch {
+    } catch {
       return [];
     }
   }
@@ -49,7 +49,7 @@ export class ExtensionRegistry {
       .filter((config: ExtensionConfigurationType) => config.autoload || isConfigured(config.decoratorKey))
       .map(config => ({
         ...config,
-        require: config.require.map(extensionConstructor => this.getExtentionConfig(extensionConstructor).key)
+        require: config.require.map(extensionConstructor => this.getExtentionConfig(extensionConstructor).key),
       }))
       .forEach(cfg => tree.add(cfg.key, cfg, cfg.require));
 
@@ -59,7 +59,7 @@ export class ExtensionRegistry {
   register(extensionConstructor: NewableType<ExtensionInterface>) {
     const config = this.getExtentionConfig(extensionConstructor);
 
-    if(this.container.isBound(config.key)) {
+    if (this.container.isBound(config.key)) {
       if (!config.override) {
         return;
       }
@@ -67,13 +67,13 @@ export class ExtensionRegistry {
       this.registry.delete(config.key);
     }
 
-    this.container.bind(config.key).toFactory(() => config => new extensionConstructor(config));
+    this.container.bind(config.key).toFactory(() => cfg => new extensionConstructor(cfg));
     this.container.bind(ExtensionRegistry.key).toConstantValue(config);
     this.registry.set(config.key, config);
   }
 
   protected getExtentionConfig(extensionConstructor: NewableType<ExtensionInterface>) {
-    if(!Reflect.hasMetadata(extensionConfigurationMetadataKey, extensionConstructor)) {
+    if (!Reflect.hasMetadata(extensionConfigurationMetadataKey, extensionConstructor)) {
       throw new Error(`Wrong configuration for extension ${extensionConstructor}`);
     }
 
@@ -83,12 +83,12 @@ export class ExtensionRegistry {
   apply() {
     const extensions = this.get();
     for (const extensionConfig of extensions) {
-      let extensionCtorConfig: any = undefined;
+      let extensionCtorConfig: any;
       if (Reflect.hasMetadata(extensionConfig.decoratorKey, this.serviceContainer.constructor)) {
         extensionCtorConfig = Reflect.getMetadata(extensionConfig.decoratorKey, this.serviceContainer.constructor);
       }
 
-      if(!extensionConfig.autoload && extensionCtorConfig === undefined) {
+      if (!extensionConfig.autoload && extensionCtorConfig === undefined) {
         throw new Error(`Missing config for extension ${extensionCtorConfig.name}`);
       }
 

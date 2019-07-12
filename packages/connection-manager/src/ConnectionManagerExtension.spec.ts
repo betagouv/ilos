@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
-import { provider, serviceProvider, ConfigInterfaceResolver, ConnectionInterface } from '@ilos/common';
+import { provider, serviceProvider, ConfigInterfaceResolver, ConnectionInterface, EnvInterfaceResolver } from '@ilos/common';
 import { ConfigExtension } from '@ilos/config';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
@@ -83,27 +83,29 @@ class FakeProviderTwo {
   }
 }
 
-@provider()
-class FakeConfigProvider extends ConfigInterfaceResolver {
-  get(key: string) {
-    if (key === 'hello.world') {
-      return {
-        hello: 'world',
-      };
-    }
-    if (key === 'hello.you') {
-      return {
-        hello: 'you',
-      };
-    }
-    return;
+@provider({
+  identifier: EnvInterfaceResolver,
+})
+class FakeEnv extends EnvInterfaceResolver {
+  get(_k, fb) {
+    return fb;
   }
 }
 
 @serviceProvider({
   providers: [
-    [ConfigInterfaceResolver, FakeConfigProvider],
+    FakeEnv,
   ],
+  config: {
+    hello: {
+      world: {
+        hello: 'world',
+      },
+      you: {
+        hello: 'you',
+      },
+    },
+  },
   connections: [
     {
       use: FakeDriverOne,

@@ -7,7 +7,7 @@ import {
 } from '@ilos/common';
 
 @extension({
-  name: 'providers'
+  name: 'providers',
   // TODO add require: ['*'] in order to process this extension last
 })
 export class Providers implements RegisterHookInterface {

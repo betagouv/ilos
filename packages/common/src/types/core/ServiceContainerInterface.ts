@@ -47,6 +47,6 @@ export abstract class ServiceContainerInterfaceResolver implements ServiceContai
   }
 
   overrideBinding(identifier: IdentifierType, ctor: NewableType<any>): void {
-    throw new Error();    
+    throw new Error();
   }
 }

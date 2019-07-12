@@ -8,7 +8,7 @@ import { QueueExtension } from '@ilos/queue';
 import { NotificationExtension } from '@ilos/notification';
 import { TemplateExtension } from '@ilos/template';
 import { ValidatorExtension } from '@ilos/validator';
-import { kernel, ExtensionStaticInterface } from '@ilos/common';
+import { kernel } from '@ilos/common';
 
 @kernel({
   env: null,
@@ -20,7 +20,7 @@ import { kernel, ExtensionStaticInterface } from '@ilos/common';
   ],
 })
 export class Kernel extends BaseKernel {
-  readonly extensions: ExtensionStaticInterface[] = [
+  readonly extensions = [
     EnvExtension,
     ConfigExtension,
     LoggerExtension,

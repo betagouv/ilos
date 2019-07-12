@@ -36,7 +36,6 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
 
     try {
       const { method, params, context } = call;
-
       const job = await this.client.add(
         {
           method,
