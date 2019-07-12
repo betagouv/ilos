@@ -1,5 +1,4 @@
-import { ExtensionStaticInterface } from '@ilos/common';
-
+import { NewableType, ExtensionInterface } from '@ilos/common';
 import { ServiceContainer } from './ServiceContainer';
 import { Providers, Middlewares, Handlers } from '../extensions';
 
@@ -11,7 +10,7 @@ import { Providers, Middlewares, Handlers } from '../extensions';
  * @implements {ServiceProviderInterface}
  */
 export abstract class ServiceProvider extends ServiceContainer {
-  readonly extensions: ExtensionStaticInterface[] = [
+  readonly extensions: NewableType<ExtensionInterface>[] = [
     Middlewares,
     Providers,
     Handlers,

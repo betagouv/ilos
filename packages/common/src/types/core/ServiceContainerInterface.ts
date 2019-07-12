@@ -1,5 +1,5 @@
 // import { ContainerInterface } from '../container';
-import { ExtensionStaticInterface } from './ExtentionInterface';
+import { ExtensionInterface } from './ExtentionInterface';
 import { ContainerInterface, IdentifierType } from '../container';
 import { NewableType } from '../shared';
 
@@ -7,7 +7,7 @@ import { NewableType } from '../shared';
 export type ServiceContainerConstructorInterface<T = any> = new (parent?: ContainerInterface) => T;
 
 export interface ServiceContainerInterface {
-  readonly extensions: ExtensionStaticInterface[];
+  readonly extensions: NewableType<ExtensionInterface>[];
   registerHooks(hooker: object, identifier?: IdentifierType): void;
 
   /**
@@ -24,7 +24,7 @@ export interface ServiceContainerInterface {
 }
 
 export abstract class ServiceContainerInterfaceResolver implements ServiceContainerInterface {
-  readonly extensions: ExtensionStaticInterface[] = [];
+  readonly extensions: NewableType<ExtensionInterface>[] = [];
 
   registerHooks(hooker: object, identifier?: IdentifierType): void {
     throw new Error();
