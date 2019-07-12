@@ -7,12 +7,19 @@ import {
   NewableType,
   QueueConfigType,
   QueueTargetType,
+  extension,
 } from '@ilos/common';
+import { Extensions } from '@ilos/core';
+
 import { queueHandlerFactory } from '@ilos/handler-redis';
 
+@extension({
+  name: 'queues',
+  require: [
+    Extensions.Handlers,
+  ],
+})
 export class QueueExtension implements RegisterHookInterface, InitHookInterface {
-  static readonly key: string = 'queues';
-
   static get containerKey() {
     return Symbol.for('queues');
   }

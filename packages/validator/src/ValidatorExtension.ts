@@ -2,13 +2,15 @@ import {
   RegisterHookInterface,
   ServiceContainerInterface,
   ValidatorInterfaceResolver,
+  extension,
 } from '@ilos/common';
 
 import { AjvValidator } from './AjvValidator';
 
+@extension({
+  name: 'validator',
+})
 export class ValidatorExtension implements RegisterHookInterface {
-  static readonly key: string = 'validator';
-
   protected validators: [string, any][] = [];
   protected keywords: any[] = [];
 

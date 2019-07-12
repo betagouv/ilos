@@ -5,10 +5,21 @@ import {
   RegisterHookInterface,
   InitHookInterface,
   ServiceContainerInterface,
+  extension,
 } from '@ilos/common';
+
+import { ConfigExtension } from '@ilos/config';
+import { TemplateExtension } from '@ilos/template';
 
 import { Notification } from './Notification';
 
+@extension({
+  name: 'validation',
+  require: [
+    ConfigExtension,
+    TemplateExtension,
+  ],
+})
 export class NotificationExtension implements RegisterHookInterface, InitHookInterface {
   static readonly key:string = 'notification';
 

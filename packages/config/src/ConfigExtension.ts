@@ -4,13 +4,18 @@ import {
   RegisterHookInterface,
   InitHookInterface,
   ServiceContainerInterface,
+  extension,
 } from '@ilos/common';
+
+import { EnvExtension } from '@ilos/env';
 
 import { Config } from './Config';
 
+@extension({
+  name: 'config',
+  require: [EnvExtension],
+})
 export class ConfigExtension implements RegisterHookInterface, InitHookInterface {
-  static readonly key: string = 'config';
-
   constructor(protected readonly params: string | { workingPath: string; configDir: string } | { [k: string]: any }) {}
 
   async register(serviceContainer: ServiceContainerInterface) {
