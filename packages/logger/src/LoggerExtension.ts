@@ -16,7 +16,7 @@ import { Logger } from './Logger';
   name: 'logger',
   require: [
     ConfigExtension,
-  ]
+  ],
 })
 export class LoggerExtension implements RegisterHookInterface {
   constructor(protected configKey: string) {
@@ -24,9 +24,7 @@ export class LoggerExtension implements RegisterHookInterface {
 
   async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
-    if (!container.isBound(ConfigInterfaceResolver)) {
-      throw new Error(`Unable to load config provider`);
-    }
+    serviceContainer.ensureIsBound(ConfigInterfaceResolver);
 
     if (!container.isBound(LoggerInterfaceResolver)) {
       container.bind(Logger)

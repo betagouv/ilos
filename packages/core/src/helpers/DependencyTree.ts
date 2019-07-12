@@ -2,7 +2,7 @@ export class DependencyTree {
   nodes: Map<symbol, { data: any, require: Set<symbol>, requiredBy: Set<symbol> }> = new Map();
 
   add(key: symbol, node: any, require: symbol[]) {
-    this.nodes.set(key, { require: new Set([...require]), data: node, requiredBy: new Set()});
+    this.nodes.set(key, { require: new Set([...require]), data: node, requiredBy: new Set() });
   }
 
   resolve() {
@@ -16,12 +16,12 @@ export class DependencyTree {
     if (unmet.size === 0) {
       return [...initialMet];
     }
-    
+
     const met = new Set([...initialMet]);
     const stillUnmet: Set<symbol> = new Set();
     const requested: Set<symbol> = new Set();
-    
-    for(const nodeId of unmet) {
+
+    for (const nodeId of unmet) {
       const deps = this.nodes.get(nodeId).require;
       // list unmets dependencies
       const unmetDeps = new Set([...deps].filter(x => !met.has(x)));

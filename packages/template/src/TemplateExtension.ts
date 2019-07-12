@@ -14,7 +14,8 @@ import { HandlebarsTemplate } from './HandlebarsTemplate';
   name: 'template',
   require: [
     ConfigExtension,
-  ]
+  ],
+  autoload: true,
 })
 export class TemplateExtension implements RegisterHookInterface, InitHookInterface {
   constructor(protected config?: {
@@ -27,10 +28,6 @@ export class TemplateExtension implements RegisterHookInterface, InitHookInterfa
   register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
 
-    if (!container.isBound(ConfigInterfaceResolver)) {
-      throw new Error('Unable to find config provider');
-    }
-
     container.bind(HandlebarsTemplate).toSelf();
     container.bind(TemplateInterfaceResolver).toService(HandlebarsTemplate);
     serviceContainer.registerHooks(HandlebarsTemplate.prototype, TemplateInterfaceResolver);
@@ -39,6 +36,11 @@ export class TemplateExtension implements RegisterHookInterface, InitHookInterfa
   async init(serviceContainer: ServiceContainerInterface) {
     if (this.config) {
       const container = serviceContainer.getContainer();
+
+      if (!container.isBound(ConfigInterfaceResolver)) {
+        throw new Error('Unable to find config provider');
+      }
+
       container
         .get(TemplateInterfaceResolver)
         .loadTemplatesFromDirectory(

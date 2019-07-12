@@ -7,7 +7,7 @@ import { httpHandlerFactory } from '@ilos/handler-http';
 import { ServiceProvider } from '@ilos/core';
 import {
   serviceProvider,
-  kernel,
+  kernel as kernelDecorator,
   TransportInterface,
   KernelInterface,
 } from '@ilos/common';
@@ -29,14 +29,14 @@ import { ServiceProvider as ParentStringServiceProvider } from './mock/StringSer
 })
 class StringServiceProvider extends ServiceProvider {}
 
-@kernel({
+@kernelDecorator({
   children: [MathServiceProvider],
 })
 class MathKernel extends Kernel {
   name = 'math';
 }
 
-@kernel({
+@kernelDecorator({
   children: [StringServiceProvider],
 })
 class StringKernel extends Kernel {

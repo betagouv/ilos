@@ -8,6 +8,7 @@ import {
   provider,
   EnvInterfaceResolver,
   ConfigInterface,
+  ConfigInterfaceResolver,
 } from '@ilos/common';
 
 /**
@@ -16,7 +17,9 @@ import {
  * @class Config
  * @implements {ConfigInterface}
  */
-@provider()
+@provider({
+  identifier: ConfigInterfaceResolver,
+})
 export class Config implements ConfigInterface {
   protected config: object = {};
   private configPaths: Set<string> = new Set();

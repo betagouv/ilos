@@ -11,31 +11,28 @@ import { CommandRegistry } from '../providers/CommandRegistry';
 
 @extension({
   name: 'commands',
+  autoload: true,
 })
 export class CommandExtension implements RegisterHookInterface, InitHookInterface {
   constructor(
-    readonly commands: NewableType<CommandInterface>[],
+    readonly commands: NewableType<CommandInterface>[] = [],
   ) {
     //
   }
 
   async register(serviceContainer: ServiceContainerInterface) {
-    const container = serviceContainer.getContainer();
-    if (!container.isBound(CommandRegistry)) {
-      container.bind(CommandRegistry).toSelf();
-    }
+    serviceContainer.ensureIsBound(CommandRegistry, CommandRegistry);
 
     for (const command of this.commands) {
-      container.bind(command).toSelf();
+      serviceContainer.bind(command);
     }
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    const container = serviceContainer.getContainer();
-    const commandRegistry = container.get<CommandRegistry>(CommandRegistry);
+    const commandRegistry = serviceContainer.get<CommandRegistry>(CommandRegistry);
 
     for (const command of this.commands) {
-      const cmd = container.get(command);
+      const cmd = serviceContainer.get(command);
       this.registerCommand(commandRegistry, cmd);
     }
   }

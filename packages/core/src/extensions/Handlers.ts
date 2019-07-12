@@ -11,7 +11,7 @@ import { Middlewares } from './Middlewares';
 @extension({
   name: 'handlers',
   require: [
-    Middlewares
+    Middlewares,
   ],
 })
 export class Handlers implements RegisterHookInterface {

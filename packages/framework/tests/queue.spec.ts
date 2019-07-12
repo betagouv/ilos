@@ -12,7 +12,7 @@ import {
   TransportInterface,
   KernelInterface,
   serviceProvider,
-  kernel,
+  kernel as kernelDecorator,
   handler,
 } from '@ilos/common';
 
@@ -26,7 +26,7 @@ process.env.APP_LOG_PATH = logPath;
 
 const redisUrl = process.env.APP_REDIS_URL;
 
-serviceProvider({
+@serviceProvider({
   config: {
     redis: {
       connectionString: process.env.APP_REDIS_URL,
@@ -39,7 +39,7 @@ serviceProvider({
 })
 class StringServiceProvider extends ParentStringServiceProvider {}
 
-kernel({
+@kernelDecorator({
   children: [StringServiceProvider],
 })
 class StringKernel extends Kernel {
