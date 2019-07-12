@@ -6,6 +6,7 @@ import {
 
 import { Metadata } from 'inversify/lib/planning/metadata';
 import { HandlerMeta, HandlerConfigType } from './types/handler';
+import { ExtensionConfigurationType, extensionConfigurationMetadataKey } from './types/core/ExtentionInterface';
 
 type AnyConfig = { [k: string]: any };
 
@@ -13,7 +14,7 @@ function extensionTag(config: AnyConfig) {
   return function (target) {
     Reflect.ownKeys(config).forEach((key: string) => {
       // Reflect.defineMetadata(`extension:${key}`, config[key], target.prototype);
-      Reflect.defineMetadata(`extension:${key}`, config[key], target);
+      Reflect.defineMetadata(Symbol.for(`extension:${key}`), config[key], target);
     });
     return target;
   };
@@ -76,4 +77,28 @@ export function kernel(config: AnyConfig) {
 export function command() { return injectable(); }
 export function middleware() { return injectable(); }
 export function lib() { return injectable(); }
+
+export function extension(config: ExtensionConfigurationType) {
+  const defaultConfig = {
+    override: false,
+    autoload: false,
+    require: [],
+  };
+
+  return function (target) {
+    const normalizedConfig = { ...defaultConfig, ...config };
+
+    if (!('key' in normalizedConfig)) {
+      normalizedConfig.key = Symbol.for(normalizedConfig.name);
+    }
+
+    if (!('decoratorKey' in normalizedConfig)) {
+      normalizedConfig.decoratorKey = Symbol.for(`extension:${normalizedConfig.name}`);
+    }
+
+    Reflect.defineMetadata(extensionConfigurationMetadataKey, normalizedConfig, target);
+    return target;
+  };
+}
+
 export { injectable, inject } from 'inversify';
