@@ -6,5 +6,6 @@ export {
   ServiceContainerInterfaceResolver,
   ServiceContainerConstructorInterface,
 } from './ServiceContainerInterface';
-export { ExtensionInterface, ExtensionStaticInterface } from './ExtentionInterface';
+
+export * from './ExtentionInterface';
 
