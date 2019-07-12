@@ -3,6 +3,7 @@ import { expect } from 'chai';
 
 import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
 import { provider, serviceProvider, ConfigInterfaceResolver, ConnectionInterface } from '@ilos/common';
+import { ConfigExtension } from '@ilos/config';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
 
@@ -130,6 +131,7 @@ class FakeConfigProvider extends ConfigInterfaceResolver {
 class ServiceProvider extends BaseServiceProvider {
   readonly extensions = [
     Extensions.Providers,
+    ConfigExtension,
     ConnectionManagerExtension,
   ];
 }

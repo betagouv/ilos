@@ -4,18 +4,24 @@ import {
   InitHookInterface,
   ServiceContainerInterface,
   TemplateInterfaceResolver,
+  extension,
 } from '@ilos/common';
+import { ConfigExtension } from '@ilos/config';
 
 import { HandlebarsTemplate } from './HandlebarsTemplate';
 
+@extension({
+  name: 'template',
+  require: [
+    ConfigExtension,
+  ]
+})
 export class TemplateExtension implements RegisterHookInterface, InitHookInterface {
-  static readonly key:string = 'template';
-
   constructor(protected config?: {
     path: string,
     meta: string | { [k:string]: any },
   }) {
-
+    //
   }
 
   register(serviceContainer: ServiceContainerInterface) {

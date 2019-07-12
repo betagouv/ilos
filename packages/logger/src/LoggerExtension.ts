@@ -5,31 +5,45 @@ import {
   ConfigInterfaceResolver,
   RegisterHookInterface,
   ServiceContainerInterface,
+  extension,
 } from '@ilos/common';
+
+import { ConfigExtension } from '@ilos/config';
 
 import { Logger } from './Logger';
 
+@extension({
+  name: 'logger',
+  require: [
+    ConfigExtension,
+  ]
+})
 export class LoggerExtension implements RegisterHookInterface {
-  static readonly key: string = 'logger';
-
   constructor(protected configKey: string) {
   }
 
   async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
-    const config = container.get(ConfigInterfaceResolver);
+    if (!container.isBound(ConfigInterfaceResolver)) {
+      throw new Error(`Unable to load config provider`);
+    }
+
     if (!container.isBound(LoggerInterfaceResolver)) {
-      container
-        .bind(LoggerInterfaceResolver)
-        .toConstantValue(
-          new Logger(winston.createLogger(
+      container.bind(Logger)
+        .toDynamicValue((context) => {
+          const contextedContainer = context.container;
+          if (!contextedContainer.isBound(ConfigInterfaceResolver)) {
+            throw new Error(`Unable to load config provider`);
+          }
+          const config = contextedContainer.get(ConfigInterfaceResolver);
+          return new Logger(winston.createLogger(
             config.get(this.configKey, {
               transports: [
                 new winston.transports.Console(),
               ],
             }),
-          )),
-        );
+          ));
+        });
     }
   }
 }

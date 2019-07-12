@@ -89,7 +89,7 @@ export function extension(config: ExtensionConfigurationType) {
     const normalizedConfig = { ...defaultConfig, ...config };
 
     if (!('key' in normalizedConfig)) {
-      normalizedConfig.key = Symbol.for(normalizedConfig.name);
+      normalizedConfig.key = Symbol.for(`container:${normalizedConfig.name}`);
     }
 
     if (!('decoratorKey' in normalizedConfig)) {

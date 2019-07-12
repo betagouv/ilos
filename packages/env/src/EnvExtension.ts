@@ -3,12 +3,15 @@ import {
   InitHookInterface,
   ServiceContainerInterface,
   EnvInterfaceResolver,
+  extension,
 } from '@ilos/common';
 
 import { Env } from '.';
 
+@extension({
+  name: 'env',
+})
 export class EnvExtension implements RegisterHookInterface, InitHookInterface {
-  static readonly key: string = 'env';
   protected toBeInit = false;
 
   constructor(

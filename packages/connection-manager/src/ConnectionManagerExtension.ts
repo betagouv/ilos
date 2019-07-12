@@ -10,11 +10,19 @@ import {
   DestroyHookInterface,
   NewableType,
   ServiceContainerInterface,
+  extension,
 } from '@ilos/common';
 
+import { ConfigExtension } from '@ilos/config';
+
+@extension({
+  name: 'connections',
+  require: [
+    ConfigExtension,
+  ],
+})
 export class ConnectionManagerExtension
   implements RegisterHookInterface, InitHookInterface, DestroyHookInterface {
-  static readonly key = 'connections';
 
   protected config: ConfigInterface;
   protected connectionRegistry: Map<Symbol, ConnectionInterface> = new Map();
@@ -49,6 +57,10 @@ export class ConnectionManagerExtension
   constructor(protected readonly connections: ConnectionDeclarationType[]) {}
 
   async register(serviceContainer: ServiceContainerInterface): Promise<void> {
+    if(!serviceContainer.getContainer().isBound(ConfigInterfaceResolver)) {
+      throw new Error(`Missing config provider`);
+    }
+
     for (const serviceConnectionDeclaration of this.connections) {
       if (Array.isArray(serviceConnectionDeclaration)) {
         const [connectionConstructor, connectionConfigKey, serviceConstructors] = serviceConnectionDeclaration;

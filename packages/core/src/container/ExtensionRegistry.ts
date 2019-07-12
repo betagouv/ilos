@@ -83,12 +83,12 @@ export class ExtensionRegistry {
   apply() {
     const extensions = this.get();
     for (const extensionConfig of extensions) {
-      let extensionCtorConfig;
+      let extensionCtorConfig: any = undefined;
       if (Reflect.hasMetadata(extensionConfig.decoratorKey, this.serviceContainer.constructor)) {
         extensionCtorConfig = Reflect.getMetadata(extensionConfig.decoratorKey, this.serviceContainer.constructor);
       }
 
-      if(!extensionConfig.autoload && !extensionCtorConfig) {
+      if(!extensionConfig.autoload && extensionCtorConfig === undefined) {
         throw new Error(`Missing config for extension ${extensionCtorConfig.name}`);
       }
 

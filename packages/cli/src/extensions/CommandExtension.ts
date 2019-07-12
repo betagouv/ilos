@@ -3,16 +3,16 @@ import {
   ServiceContainerInterface,
   InitHookInterface,
   RegisterHookInterface,
-  TemplateInterfaceResolver,
   CommandInterface,
+  extension,
 } from '@ilos/common';
-import { HandlebarsTemplate } from '@ilos/template';
 
 import { CommandRegistry } from '../providers/CommandRegistry';
 
+@extension({
+  name: 'commands',
+})
 export class CommandExtension implements RegisterHookInterface, InitHookInterface {
-  static readonly key: string = 'commands';
-
   constructor(
     readonly commands: NewableType<CommandInterface>[],
   ) {
@@ -23,10 +23,6 @@ export class CommandExtension implements RegisterHookInterface, InitHookInterfac
     const container = serviceContainer.getContainer();
     if (!container.isBound(CommandRegistry)) {
       container.bind(CommandRegistry).toSelf();
-    }
-
-    if (!container.isBound(TemplateInterfaceResolver)) {
-      container.bind(TemplateInterfaceResolver).to(HandlebarsTemplate);
     }
 
     for (const command of this.commands) {

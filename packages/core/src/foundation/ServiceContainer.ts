@@ -5,14 +5,13 @@ import {
   DestroyHookInterface,
   InitHookInterface,
   RegisterHookInterface,
-  ExtensionInterface,
-  ExtensionStaticInterface,
   IdentifierType,
   NewableType,
-  FactoryType,
+  ExtensionInterface,
 } from '@ilos/common';
 
 import { Container, HookRegistry } from '../container';
+import { ExtensionRegistry } from '../container/ExtensionRegistry';
 
 /**
  * Service container parent class
@@ -23,11 +22,12 @@ import { Container, HookRegistry } from '../container';
  */
 export abstract class ServiceContainer
   implements ServiceContainerInterface, InitHookInterface, DestroyHookInterface, RegisterHookInterface {
-  readonly extensions: ExtensionStaticInterface[] = [];
+  readonly extensions: NewableType<ExtensionInterface>[] = [];
 
   protected registerHookRegistry = new HookRegistry<RegisterHookInterface>('register', false);
   protected initHookRegistry = new HookRegistry<InitHookInterface>('init');
   protected destroyHookRegistry = new HookRegistry<DestroyHookInterface>('destroy');
+  protected extensionRegistry: ExtensionRegistry;
 
   protected readonly container: ContainerInterface;
   protected readonly parent?: ServiceContainerInterface;
@@ -35,6 +35,7 @@ export abstract class ServiceContainer
   constructor(container?: ContainerInterface) {
     this.container = (container) ? container.createChild() : new Container();
     this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
+    this.extensionRegistry = new ExtensionRegistry(this);
   }
 
   /**
@@ -42,8 +43,12 @@ export abstract class ServiceContainer
    * @memberof ServiceContainer
    */
   async register() {
-    this.registerExtensions(this.extensions);
-    this.applyExtensions();
+    this.extensionRegistry.importFromParent();
+    for (const extension of this.extensions) {
+      this.extensionRegistry.register(extension);
+    }
+    this.extensionRegistry.apply();
+
     await this.registerChildren();
     await this.registerHookRegistry.dispatch(this);
   }
@@ -73,38 +78,9 @@ export abstract class ServiceContainer
     return;
   }
 
-  protected registerExtensions(extensions: ExtensionStaticInterface[]) {
-    const container = this.getContainer().root;
-    for (const index in extensions) {
-      if (extensions.hasOwnProperty(index)) {
-        const extension = extensions[index];
-        const containerExtensionKey = `extension:${extension.key}`;
-        if (!container.isBound(containerExtensionKey)) {
-          container.bind(containerExtensionKey).toFactory(() => config => new extension(config));
-          container.bind('extensions').toConstantValue({
-            index,
-            key: containerExtensionKey,
-          });
-        }
-      }
-    }
-  }
-
-  protected applyExtensions() {
-    const container = this.getContainer();
-    const extensions = container.getAll<{ key: string; index: number }>('extensions').sort((a, b) => a.index - b.index);
-    for (const { key: extensionKey } of extensions) {
-      if (Reflect.hasMetadata(extensionKey, this.constructor)) {
-        const extensionConfig = Reflect.getMetadata(extensionKey, this.constructor);
-        const extension = container.get<FactoryType<ExtensionInterface>>(extensionKey)(extensionConfig);
-        this.registerHooks(extension);
-      }
-    }
-  }
-
   protected registerChildren() {
-    if (Reflect.hasMetadata('extension:children', this.constructor)) {
-      const children = Reflect.getMetadata('extension:children', this.constructor);
+    if (Reflect.hasMetadata(Symbol.for('extension:children'), this.constructor)) {
+      const children = Reflect.getMetadata(Symbol.for('extension:children'), this.constructor);
       for (const child of children) {
         const childInstance = new child(this.getContainer());
         this.getContainer()
@@ -118,8 +94,8 @@ export abstract class ServiceContainer
     }
   }
 
-  public get(identifier: IdentifierType) {
-    return this.container.get(identifier);
+  public get<T>(identifier: IdentifierType<T>): T {
+    return this.container.get<T>(identifier);
   }
 
   public bind(ctor: NewableType<any>, identifier?: IdentifierType) {
@@ -128,7 +104,7 @@ export abstract class ServiceContainer
       this.container.bind(identifier).toService(ctor);
     }
 
-    const taggedIdentifier = <IdentifierType | IdentifierType[]>Reflect.getMetadata('extension:identifier', ctor);
+    const taggedIdentifier = <IdentifierType | IdentifierType[]>Reflect.getMetadata(Symbol.for('extension:identifier'), ctor);
     if (taggedIdentifier) {
       if (!Array.isArray(taggedIdentifier)) {
         this.container.bind(taggedIdentifier).toService(ctor);

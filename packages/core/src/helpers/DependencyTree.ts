@@ -25,14 +25,20 @@ export class DependencyTree {
       const deps = this.nodes.get(nodeId).require;
       // list unmets dependencies
       const unmetDeps = new Set([...deps].filter(x => !met.has(x)));
+
+      // look for missing deps
+      const unresolvableDependencies = (new Set([...unmetDeps].filter(x => !unmet.has(x))));
+      if (unresolvableDependencies.size > 0) {
+        // if dependency is no resolvable, just warn
+        console.warn(`Unsolvable extenion dependencies : ${[...unresolvableDependencies].map(k => k.toString()).join(', ')}`);
+        [...unresolvableDependencies].forEach(x => unmetDeps.delete(x));
+        // throw new Error(`Unsolvable extenion dependencies : ${[...unresolvableDependencies].join(', ')}`);
+      }
+
       // if not unmet, add nodeId to met
       if (unmetDeps.size === 0) {
         met.add(nodeId);
         continue;
-      }
-      // look for missing deps
-      if ((new Set([...unmetDeps].filter(x => !unmet.has(x)))).size > 0) {
-        throw new Error('Unsolvable dependency');
       }
       stillUnmet.add(nodeId);
       unmetDeps.forEach(id => requested.add(id));

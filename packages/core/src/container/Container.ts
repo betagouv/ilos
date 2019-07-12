@@ -10,6 +10,7 @@ import {
   HandlerConfigType,
   ContainerInterface,
 } from '@ilos/common';
+
 import { HandlerRegistry } from './HandlerRegistry';
 
 export class Container extends InversifyContainer implements ContainerInterface {
