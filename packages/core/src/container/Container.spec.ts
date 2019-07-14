@@ -1,119 +1,127 @@
-// // tslint:disable max-classes-per-file
-// import { describe } from 'mocha';
-// import chai from 'chai';
-// import chaiAsPromised from 'chai-as-promised';
+// tslint:disable max-classes-per-file
+import { describe } from 'mocha';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
-// import { Types, Interfaces } from '..';
-// import { Container, handler, lib, provider, inject } from '.';
+import {
+  HandlerInterface,
+  CallType,
+  handler,
+  lib,
+  provider,
+  inject,
+} from '@ilos/common';
 
-// chai.use(chaiAsPromised);
-// const { expect } = chai;
+import { Container } from '.';
 
-// describe('Container', () => {
-//   it('works', async () => {
-//     @lib()
-//     class Hello {
-//       public world = '!!';
-//     }
+chai.use(chaiAsPromised);
+const { expect } = chai;
 
-//     @handler({
-//       service: 'test',
-//       method: 'hello',
-//     })
-//     class Test implements Interfaces.HandlerInterface {
-//       public readonly middlewares = [];
-//       constructor(public hello: Hello) {}
+describe('Container', () => {
+  it('works', async () => {
+    @lib()
+    class Hello {
+      public world = '!!';
+    }
 
-//       async call(call: Types.CallType) {
-//         return;
-//       }
-//     }
+    @handler({
+      service: 'test',
+      method: 'hello',
+    })
+    class Test implements HandlerInterface {
+      public readonly middlewares = [];
+      constructor(public hello: Hello) {}
 
-//     const container = new Container();
-//     const t = container.resolve(Test);
-//     expect(t.hello.world).to.equal('!!');
+      async call(call: CallType) {
+        return;
+      }
+    }
 
-//     container.setHandler(Test);
+    const container = new Container();
+    const t = container.resolve(Test);
+    expect(t.hello.world).to.equal('!!');
 
-//     const tbis = <Test>container.getHandler({
-//       service: 'test',
-//       method: 'hello',
-//     });
-//     expect(tbis.hello.world).to.equal('!!');
-//   });
+    container.setHandler(Test);
 
-//   it('works with provider', async () => {
-//     @lib()
-//     class HelloLib {
-//       public world = 'yeah';
-//     }
+    const tbis = <Test>container.getHandler({
+      service: 'test',
+      method: 'hello',
+    });
+    expect(tbis.hello.world).to.equal('!!');
+  });
 
-//     @provider()
-//     class Hello {
-//       public world = '!!';
-//       @inject(HelloLib) helloLib: HelloLib;
+  it('works with provider', async () => {
+    @lib()
+    class HelloLib {
+      public world = 'yeah';
+    }
 
-//       boot(
-//       ) {
-//         this.world = this.helloLib.world;
-//       }
-//     }
+    @provider()
+    class Hello {
+      public world = '!!';
+      @inject(HelloLib) helloLib: HelloLib;
 
-//     @handler({
-//       service: 'test',
-//       method: 'hello',
-//     })
-//     class Test implements Interfaces.HandlerInterface {
-//       public readonly middlewares = [];
-//       constructor(public hello: Hello) {}
+      boot(
+      ) {
+        this.world = this.helloLib.world;
+      }
+    }
 
-//       async call(call: Types.CallType) {
-//         return;
-//       }
-//     }
+    @handler({
+      service: 'test',
+      method: 'hello',
+    })
+    class Test implements HandlerInterface {
+      public readonly middlewares = [];
+      constructor(public hello: Hello) {}
 
-//     const container = new Container();
-//     const t = container.resolve(Test);
-//     expect(t.hello.world).to.equal('yeah');
+      async call(call: CallType) {
+        return;
+      }
+    }
 
-//     container.setHandler(Test);
+    const container = new Container();
+    const t = container.resolve(Test);
+    expect(t.hello.world).to.equal('yeah');
 
-//     const tbis = <Test>container.getHandler({
-//       service: 'test',
-//       method: 'hello',
-//     });
-//     expect(tbis.hello.world).to.equal('yeah');
-//   });
+    container.setHandler(Test);
 
-//   it('works with no boot provider', async () => {
-//     @provider()
-//     class Hello {
-//       public world = 'yeah';
-//     }
+    const tbis = <Test>container.getHandler({
+      service: 'test',
+      method: 'hello',
+    });
+    expect(tbis.hello.world).to.equal('yeah');
+  });
 
-//     @handler({
-//       service: 'test',
-//       method: 'hello',
-//     })
-//     class Test implements Interfaces.HandlerInterface {
-//       public readonly middlewares = [];
-//       constructor(public hello: Hello) {}
+  it('works with no boot provider', async () => {
+    @provider()
+    class Hello {
+      public world = 'yeah';
+    }
 
-//       async call(call: Types.CallType) {
-//         return;
-//       }
-//     }
+    @handler({
+      service: 'test',
+      method: 'hello',
+    })
+    class Test implements HandlerInterface {
+      public readonly middlewares = [];
+      constructor(public hello: Hello) {}
 
-//     const container = new Container();
-//     const t = container.resolve(Test);
-//     expect(t.hello.world).to.equal('yeah');
+      async call(call: CallType) {
+        return;
+      }
+    }
 
-//     container.setHandler(Test);
+    const container = new Container();
+    const t = container.resolve(Test);
+    expect(t.hello.world).to.equal('yeah');
 
-//     const tbis = <Test>container.getHandler({
-//       service: 'test',
-//       method: 'hello',
-//     });
-//     expect(tbis.hello.world).to.equal('yeah');
-//   });
-// });
+    container.setHandler(Test);
+
+    const tbis = <Test>container.getHandler({
+      service: 'test',
+      method: 'hello',
+    });
+    expect(tbis.hello.world).to.equal('yeah');
+  });
+});
