@@ -6,42 +6,37 @@ import {
   RegisterHookInterface,
   ServiceContainerInterface,
   extension,
+  CONTAINER_LOGGER_KEY,
 } from '@ilos/common';
 
-import { ConfigExtension } from '@ilos/config';
-
-import { Logger } from './Logger';
+import { LoggerConfigurationType, loggerDefaultConfiguration, buildLoggerConfiguration } from './loggerDefaultConfiguration';
 
 @extension({
   name: 'logger',
-  require: [
-    ConfigExtension,
-  ],
+  autoload: true,
 })
 export class LoggerExtension implements RegisterHookInterface {
-  constructor(protected configKey: string) {
+  constructor(protected config: LoggerConfigurationType = loggerDefaultConfiguration) {
   }
 
   async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
-    serviceContainer.ensureIsBound(ConfigInterfaceResolver);
+    const env = 'APP_ENV' in process.env ? process.env.APP_ENV : 'NODE_ENV' in process.env ? process.env.NODE_ENV : 'default';
 
     if (!container.isBound(LoggerInterfaceResolver)) {
-      container.bind(Logger)
+      container.bind(LoggerInterfaceResolver)
         .toDynamicValue((context) => {
           const contextedContainer = context.container;
           if (!contextedContainer.isBound(ConfigInterfaceResolver)) {
             throw new Error(`Unable to load config provider`);
           }
-          const config = contextedContainer.get(ConfigInterfaceResolver);
-          return new Logger(winston.createLogger(
-            config.get(this.configKey, {
-              transports: [
-                new winston.transports.Console(),
-              ],
-            }),
-          ));
+          return winston.createLogger(buildLoggerConfiguration(this.config, env));
         });
+
+      if (container.isBound(CONTAINER_LOGGER_KEY)) {
+        container.unbind(CONTAINER_LOGGER_KEY);
+      }
+      container.bind(CONTAINER_LOGGER_KEY).toService(LoggerInterfaceResolver);
     }
   }
 }

@@ -9,6 +9,7 @@ import {
   EnvInterfaceResolver,
   ConfigInterface,
   ConfigInterfaceResolver,
+  HasLogger,
 } from '@ilos/common';
 
 /**
@@ -20,10 +21,12 @@ import {
 @provider({
   identifier: ConfigInterfaceResolver,
 })
-export class Config implements ConfigInterface {
+export class Config extends HasLogger implements ConfigInterface {
   protected config: object = {};
   private configPaths: Set<string> = new Set();
-  constructor(protected env: EnvInterfaceResolver) {}
+  constructor(protected env: EnvInterfaceResolver) {
+    super();
+  }
 
   async init() {
     const defaultConfigFolder = this.env.get('APP_WORKING_PATH', process.cwd());
@@ -35,6 +38,7 @@ export class Config implements ConfigInterface {
     const configSubFolder = configDir ? configDir : this.env.get('APP_CONFIG_DIR', './config');
     const configFolder = path.resolve(workingPath, configSubFolder);
 
+    this.logger.info(`Loading directory folder ${configFolder}`);
     if (!fs.existsSync(configFolder) || !fs.lstatSync(configFolder).isDirectory()) {
       return;
     }
@@ -47,6 +51,7 @@ export class Config implements ConfigInterface {
     fs.readdirSync(configFolder, 'utf8').forEach((basename) => {
       const filename = path.join(configFolder, basename);
       const fileinfo = path.parse(filename);
+      this.logger.debug(`Loading config file ${filename}`);
       if (['.yaml', '.yml'].indexOf(fileinfo.ext) > -1) {
         this.set(camelCase(fileinfo.name), this.loadYmlFile(filename));
       }
@@ -117,6 +122,7 @@ export class Config implements ConfigInterface {
   }
 
   get(key: string, fallback?: any): any {
+    this.logger.debug(`Trying to get config key '${key}'`, { fallback, db: this.config });
     if (fallback === undefined && !has(this.config, key)) {
       throw new Error(`Unknown config key ${key}`);
     }

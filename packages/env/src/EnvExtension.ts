@@ -6,11 +6,14 @@ import {
   extension,
 } from '@ilos/common';
 
+import { LoggerExtension } from '@ilos/logger';
+
 import { Env } from '.';
 
 @extension({
   name: 'env',
   autoload: true,
+  require: [LoggerExtension],
 })
 export class EnvExtension implements RegisterHookInterface, InitHookInterface {
   protected toBeInit = false;
