@@ -21,12 +21,11 @@ export class ConfigExtension implements RegisterHookInterface, InitHookInterface
 
   async register(serviceContainer: ServiceContainerInterface) {
     serviceContainer.bind(Config);
-    serviceContainer.ensureIsBound(EnvInterfaceResolver);
-
     serviceContainer.registerHooks(Config.prototype, ConfigInterfaceResolver);
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
+    serviceContainer.ensureIsBound(EnvInterfaceResolver);
     const config = serviceContainer.get(ConfigInterfaceResolver);
     if (typeof this.params === 'string') {
       config.loadConfigDirectory(this.params);

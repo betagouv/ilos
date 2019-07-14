@@ -1,4 +1,4 @@
-import { Job, Queue } from 'bull';
+import { Job, Queue, JobOptions } from 'bull';
 
 import { RedisConnection } from '@ilos/connection-redis';
 import {
@@ -15,8 +15,8 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
   protected readonly service: string;
   protected readonly version: string;
 
-  protected defaultJobOptions = {
-    // TODO : remove on success
+  protected defaultJobOptions: JobOptions = {
+    removeOnComplete: true,
   };
 
   private client: Queue;

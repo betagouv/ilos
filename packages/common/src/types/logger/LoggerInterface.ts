@@ -7,8 +7,8 @@ export interface LoggerInterface extends ProviderInterface {
   info(message: string, meta?: any): void;
   warn(message: string, meta?: any): void;
   error(message: string, meta?: any): void;
-  fatal(message: string, meta?: any): void;
   log(message: LogMessageType): void;
+  profile(id: string | number, meta?: LogMessageType): void;
 }
 
 export interface LoggerDriverInterface {
@@ -28,10 +28,10 @@ export abstract class LoggerInterfaceResolver implements LoggerInterface {
   error(message: string, meta?: any): void {
     throw new Error();
   }
-  fatal(message: string, meta?: any): void {
+  log(message: LogMessageType): void {
     throw new Error();
   }
-  log(message: LogMessageType): void {
+  profile(id: string | number, meta?: LogMessageType) {
     throw new Error();
   }
 }

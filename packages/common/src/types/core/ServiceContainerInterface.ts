@@ -1,4 +1,3 @@
-// import { ContainerInterface } from '../container';
 import { ExtensionInterface } from './ExtentionInterface';
 import { ContainerInterface, IdentifierType } from '../container';
 import { NewableType } from '../shared';

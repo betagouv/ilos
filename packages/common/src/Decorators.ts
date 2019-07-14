@@ -3,8 +3,8 @@ import {
   injectable,
   METADATA_KEY,
 } from 'inversify';
-
 import { Metadata } from 'inversify/lib/planning/metadata';
+
 import { HandlerMeta, HandlerConfigType } from './types/handler';
 import { ExtensionConfigurationType, extensionConfigurationMetadataKey } from './types/core/ExtentionInterface';
 
