@@ -1,6 +1,6 @@
 {
   "name": "@ilos/transport-redis",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publishConfig": {
     "access": "public"
   },
@@ -77,11 +77,11 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "bull": "^3.7.0",
-    "@ilos/config": "^0.2.0",
-    "@ilos/env": "^0.2.0",
-    "@ilos/queue": "^0.2.0",
-    "@ilos/common": "^0.2.0"
+    "@ilos/common": "^0.3.0",
+    "@ilos/config": "^0.3.0",
+    "@ilos/env": "^0.3.0",
+    "@ilos/queue": "^0.3.0",
+    "bull": "^3.7.0"
   },
   "peerDependencies": {
     "@ilos/core": "^0.2.0"

@@ -1,6 +1,6 @@
 {
   "name": "@ilos/handler-http",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publishConfig": {
     "access": "public"
   },
@@ -75,9 +75,9 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "@ilos/config": "^0.2.0",
-    "@ilos/common": "^0.2.0"
+    "@ilos/common": "^0.3.0",
+    "@ilos/config": "^0.3.0",
+    "axios": "^0.18.0"
   },
   "peerDependencies": {
     "@ilos/core": "~0"

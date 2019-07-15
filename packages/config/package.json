@@ -1,6 +1,6 @@
 {
   "name": "@ilos/config",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publishConfig": {
     "access": "public"
   },
@@ -77,9 +77,9 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
+    "@ilos/common": "^0.3.0",
     "js-yaml": "^3.13.1",
-    "lodash": "^4.17.11",
-    "@ilos/common": "^0.2.0"
+    "lodash": "^4.17.11"
   },
   "peerDependencies": {
     "@ilos/core": "~0",

@@ -1,6 +1,6 @@
 {
   "name": "@ilos/transport-http",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publishConfig": {
     "access": "public"
   },
@@ -71,7 +71,7 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/core": "^0.2.0",
-    "@ilos/common": "^0.2.0"
+    "@ilos/common": "^0.3.0",
+    "@ilos/core": "^0.3.0"
   }
 }

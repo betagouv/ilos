@@ -1,6 +1,6 @@
 {
   "name": "@ilos/logger",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publishConfig": {
     "access": "public"
   },
@@ -74,8 +74,8 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/config": "^0.2.0",
-    "@ilos/common": "^0.2.0",
+    "@ilos/common": "^0.3.0",
+    "@ilos/config": "^0.3.0",
     "winston": "^3.2.1"
   },
   "peerDependencies": {

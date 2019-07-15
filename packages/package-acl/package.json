@@ -1,6 +1,6 @@
 {
   "name": "@ilos/package-acl",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publishConfig": {
     "access": "public"
   },
@@ -80,6 +80,6 @@
     "@ilos/core": "~0"
   },
   "dependencies": {
-    "@ilos/common": "^0.2.0"
+    "@ilos/common": "^0.3.0"
   }
 }

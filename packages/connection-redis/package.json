@@ -1,6 +1,6 @@
 {
   "name": "@ilos/connection-redis",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
@@ -47,8 +47,8 @@
     "ioredis": "^4.11.1"
   },
   "peerDependencies": {
-    "@ilos/connection-manager": "^0.2.0",
-    "@ilos/common": "^0.2.0"
+    "@ilos/common": "^0.2.0",
+    "@ilos/connection-manager": "^0.2.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
