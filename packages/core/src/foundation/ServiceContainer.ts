@@ -43,6 +43,7 @@ export abstract class ServiceContainer
   protected registerSelf() {
     this.container.bind(ServiceContainerInterfaceResolver).toConstantValue(this);
     this.extensionRegistry = new ExtensionRegistry(this);
+    this.extensionRegistry.importFromParent();
   }
 
   protected registerLogger() {
@@ -56,7 +57,6 @@ export abstract class ServiceContainer
    * @memberof ServiceContainer
    */
   async register() {
-    this.extensionRegistry.importFromParent();
     for (const extension of this.extensions) {
       this.extensionRegistry.register(extension);
     }

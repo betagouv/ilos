@@ -14,7 +14,7 @@ import { TemplateExtension } from '@ilos/template';
 import { Notification } from './Notification';
 
 @extension({
-  name: 'validation',
+  name: 'notification',
   require: [
     ConfigExtension,
     TemplateExtension,
