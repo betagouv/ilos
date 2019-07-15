@@ -19,7 +19,7 @@ import { reduceRoles } from '../helpers/reduceRoles';
 @middleware()
 export class RoleMiddleware implements MiddlewareInterface {
   async process(params: ParamsType, context: ContextType, next: Function, roles: string[]): Promise<ResultType> {
-    const filtered: string[] = roles.filter(i => !!i);
+    const filtered: string[] = roles.filter((i) => !!i);
 
     if (!filtered.length) {
       throw new InvalidParamsException('No role defined');

@@ -9,7 +9,6 @@ export interface CommandInterface {
    */
   readonly signature: string;
 
-
   /**
    * Description of the command
    * @type {string}
@@ -17,14 +16,12 @@ export interface CommandInterface {
    */
   readonly description: string;
 
-
   /**
    * Options of the command
    * @type {CommandOptionType[]}
    * @memberof CommandInterface
    */
   readonly options: CommandOptionType[];
-
 
   /**
    * Command handler, put here your business logic

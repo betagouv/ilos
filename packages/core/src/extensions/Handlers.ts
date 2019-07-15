@@ -10,9 +10,7 @@ import { Middlewares } from './Middlewares';
 
 @extension({
   name: 'handlers',
-  require: [
-    Middlewares,
-  ],
+  require: [Middlewares],
 })
 export class Handlers implements RegisterHookInterface {
   constructor(protected readonly handlers: NewableType<HandlerInterface>[]) {

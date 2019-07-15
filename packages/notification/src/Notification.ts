@@ -19,14 +19,11 @@ import { MailjetDriver } from './mail/MailjetDriver';
 export class Notification implements NotificationInterface {
   protected config: NotificationConfigurationType;
   protected mailDriver: MailDriverInterface;
-  protected mailDrivers: { [key:string]: NewableType<MailDriverInterface> } = {
+  protected mailDrivers: { [key: string]: NewableType<MailDriverInterface> } = {
     mailjet: MailjetDriver,
   };
 
-  constructor(
-    protected configProvider: ConfigInterfaceResolver,
-    protected template: TemplateInterfaceResolver,
-  ) {
+  constructor(protected configProvider: ConfigInterfaceResolver, protected template: TemplateInterfaceResolver) {
     //
   }
 

@@ -13,7 +13,7 @@ import {
   ContextType,
 } from '@ilos/common';
 
-import { ServiceProvider as ParentServiceProvider} from './ServiceProvider';
+import { ServiceProvider as ParentServiceProvider } from './ServiceProvider';
 import { Action } from './Action';
 
 chai.use(chaiAsPromised);
@@ -28,7 +28,7 @@ describe('ServiceProvider', () => {
       method: 'add',
     })
     class BasicAction extends Action {
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         let count = 0;
         if ('add' in params) {
           const { add } = params;
@@ -78,7 +78,7 @@ describe('ServiceProvider', () => {
       constructor(private test: TestResolver) {
         super();
       }
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         if ('name' in params) {
           return this.test.hello(params.name);
         }
@@ -87,12 +87,8 @@ describe('ServiceProvider', () => {
     }
 
     @serviceProvider({
-      providers: [
-        [TestResolver, Test],
-      ],
-      handlers: [
-        BasicAction,
-      ],
+      providers: [[TestResolver, Test]],
+      handlers: [BasicAction],
     })
     class BasicServiceProvider extends ParentServiceProvider {}
 
@@ -136,7 +132,7 @@ describe('ServiceProvider', () => {
       constructor(private test: TestResolver) {
         super();
       }
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         if ('name' in params) {
           return this.test.hello(params.name);
         }
@@ -152,7 +148,7 @@ describe('ServiceProvider', () => {
       constructor(private test: TestResolver) {
         super();
       }
-      protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+      protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
         let count = 0;
         if ('add' in params) {
           const { add } = params;
@@ -172,13 +168,10 @@ describe('ServiceProvider', () => {
 
     @serviceProvider({
       providers: [Test],
-      children: [
-        BasicTwoServiceProvider,
-      ],
+      children: [BasicTwoServiceProvider],
       handlers: [BasicAction],
     })
-    class BasicServiceProvider extends ParentServiceProvider {
-    }
+    class BasicServiceProvider extends ParentServiceProvider {}
 
     const sp = new BasicServiceProvider();
     await sp.register();
@@ -190,10 +183,18 @@ describe('ServiceProvider', () => {
     expect(response).be.equal('Hello Sam');
 
     const handlerTwoInstance = container.getHandler({ service: 'test', method: 'add' });
-    const responseTwo = await handlerTwoInstance.call({ method: 'fake', params: { add: [21, 21] }, context: defaultContext });
+    const responseTwo = await handlerTwoInstance.call({
+      method: 'fake',
+      params: { add: [21, 21] },
+      context: defaultContext,
+    });
     expect(responseTwo).be.equal('Hello 42');
 
-    const responseTwoBis = await handlerTwoInstance.call({ method: 'fake', params: { add: [21, 21] }, context: defaultContext });
+    const responseTwoBis = await handlerTwoInstance.call({
+      method: 'fake',
+      params: { add: [21, 21] },
+      context: defaultContext,
+    });
     expect(responseTwoBis).be.equal('Hi 42');
   });
 });

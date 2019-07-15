@@ -1,15 +1,7 @@
 import 'reflect-metadata';
-import {
-  Container as InversifyContainer,
-  interfaces,
-} from 'inversify';
+import { Container as InversifyContainer, interfaces } from 'inversify';
 
-import {
-  HandlerInterface,
-  NewableType,
-  HandlerConfigType,
-  ContainerInterface,
-} from '@ilos/common';
+import { HandlerInterface, NewableType, HandlerConfigType, ContainerInterface } from '@ilos/common';
 
 import { HandlerRegistry } from './HandlerRegistry';
 

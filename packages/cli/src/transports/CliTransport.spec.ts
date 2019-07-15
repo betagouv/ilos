@@ -2,13 +2,19 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
+
 import { Kernel } from '@ilos/core';
-import { command as commandDecorator, kernel as kernelDecorator, ResultType, NewableType, ExtensionInterface } from '@ilos/common';
+import {
+  command as commandDecorator,
+  kernel as kernelDecorator,
+  ResultType,
+  NewableType,
+  ExtensionInterface,
+} from '@ilos/common';
 
 import { CommandExtension } from '../extensions/CommandExtension';
 import { Command } from '../parents/Command';
 import { CommandRegistry } from '../providers/CommandRegistry';
-
 import { CliTransport } from './CliTransport';
 
 @commandDecorator()
@@ -21,7 +27,7 @@ class BasicCommand extends Command {
     },
   ];
 
-  public async call(name, options?):Promise<ResultType> {
+  public async call(name, options?): Promise<ResultType> {
     if (options && 'hi' in options) {
       return `Hi ${name}`;
     }
@@ -33,9 +39,7 @@ class BasicCommand extends Command {
   commands: [BasicCommand],
 })
 class BasicKernel extends Kernel {
-  readonly extensions: NewableType<ExtensionInterface>[] = [
-    CommandExtension,
-  ];
+  readonly extensions: NewableType<ExtensionInterface>[] = [CommandExtension];
 }
 
 describe('Cli transport', () => {

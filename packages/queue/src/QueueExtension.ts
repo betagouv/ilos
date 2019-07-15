@@ -15,9 +15,7 @@ import { queueHandlerFactory } from '@ilos/handler-redis';
 
 @extension({
   name: 'queues',
-  require: [
-    Extensions.Handlers,
-  ],
+  require: [Extensions.Handlers],
 })
 export class QueueExtension implements RegisterHookInterface, InitHookInterface {
   static get containerKey() {
@@ -26,11 +24,7 @@ export class QueueExtension implements RegisterHookInterface, InitHookInterface 
 
   protected isWorker = false;
 
-  constructor(
-    protected config: QueueConfigType | QueueTargetType[],
-  ) {
-
-  }
+  constructor(protected config: QueueConfigType | QueueTargetType[]) {}
 
   register(serviceContainer: ServiceContainerInterface) {
     const targets = this.filterTargets(
@@ -52,32 +46,25 @@ export class QueueExtension implements RegisterHookInterface, InitHookInterface 
     }
   }
 
-  protected isProcessable(
-    serviceContainer: ServiceContainerInterface,
-  ) {
+  protected isProcessable(serviceContainer: ServiceContainerInterface) {
     const rootContainer = serviceContainer.getContainer().root;
     const registredHandlers = Array.from(
       new Set(
         rootContainer
           .getHandlers()
-          .filter(cfg => 'local' in cfg && cfg.local && ('queue' in cfg && !cfg.queue))
-          .map(cfg => cfg.service),
+          .filter((cfg) => 'local' in cfg && cfg.local && ('queue' in cfg && !cfg.queue))
+          .map((cfg) => cfg.service),
       ),
     );
     const targets = rootContainer.getAll<string>(QueueExtension.containerKey);
-    const unprocessableTargets = targets.filter(
-      (service: string) => (registredHandlers.indexOf(service) < 0),
-    );
+    const unprocessableTargets = targets.filter((service: string) => registredHandlers.indexOf(service) < 0);
 
     if (unprocessableTargets.length > 0) {
       throw new Error(`Unprocessable queue listeners: ${unprocessableTargets.join(', ')}`);
     }
   }
 
-  protected filterTargets(
-    targets: QueueTargetType[],
-    serviceContainer: ServiceContainerInterface,
-  ): QueueTargetType[] {
+  protected filterTargets(targets: QueueTargetType[], serviceContainer: ServiceContainerInterface): QueueTargetType[] {
     const rootContainer = serviceContainer.getContainer().root;
 
     let registredQueues: QueueTargetType[] = [];
@@ -93,24 +80,17 @@ export class QueueExtension implements RegisterHookInterface, InitHookInterface 
     });
   }
 
-  protected registerQueue(
-    targets: QueueTargetType[],
-    serviceContainer: ServiceContainerInterface,
-  ) {
+  protected registerQueue(targets: QueueTargetType[], serviceContainer: ServiceContainerInterface) {
     for (const target of targets) {
       serviceContainer
         .getContainer()
-        .root
-        .bind(QueueExtension.containerKey)
+        .root.bind(QueueExtension.containerKey)
         .toConstantValue(target);
     }
     this.registerQueueHandlers(targets, serviceContainer);
   }
 
-  protected registerQueueHandlers(
-    targets: QueueTargetType[],
-    serviceContainer: ServiceContainerInterface,
-  ) {
+  protected registerQueueHandlers(targets: QueueTargetType[], serviceContainer: ServiceContainerInterface) {
     for (const target of targets) {
       const handler: NewableType<HandlerInterface> = queueHandlerFactory(target);
       serviceContainer.getContainer().setHandler(handler);

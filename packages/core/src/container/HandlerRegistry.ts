@@ -1,19 +1,11 @@
-import {
-  NewableType,
-  HandlerInterface,
-  HandlerConfigType,
-  ContainerInterface,
-  HandlerMeta,
-} from '@ilos/common';
+import { NewableType, HandlerInterface, HandlerConfigType, ContainerInterface, HandlerMeta } from '@ilos/common';
 
 import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
 
 export class HandlerRegistry {
   static readonly key: symbol = Symbol.for('handlers');
 
-  constructor(
-    protected container: ContainerInterface,
-  ) {
+  constructor(protected container: ContainerInterface) {
     //
   }
 
@@ -22,7 +14,7 @@ export class HandlerRegistry {
    * @returns {HandlerConfigType[]}
    * @memberof Container
    */
-  all(): (HandlerConfigType&{ resolver: Function })[] {
+  all(): (HandlerConfigType & { resolver: Function })[] {
     try {
       return this.container.root.getAll(HandlerRegistry.key);
     } catch {
@@ -76,49 +68,37 @@ export class HandlerRegistry {
       config.local = true;
     }
     // remote/async is not possible now
-    if ('local' in config
-    && !config.local
-    && 'queue' in config
-    && config
-    ) {
+    if ('local' in config && !config.local && 'queue' in config && config) {
       config.queue = false;
     }
 
-    const handlers = this.all().filter(hconfig =>
-      (
-        // same service
-        config.service === hconfig.service
-        // same method or *
-        && (
-          config.method === hconfig.method
-          || hconfig.method === '*'
-        )
-        // local + remote or just remote if asked
-        && (
-          config.local
-          || !hconfig.local
-        )
-        // async + sync or just sync if asked
-        && (
-          config.queue
-          || !hconfig.queue
-        )
-      ),
-    ).sort((hconfig1, hconfig2) => {
-      if (hconfig1.local !== hconfig2.local) {
-        return (hconfig1.local === config.local) ? -1 : 1;
-      }
+    const handlers = this.all()
+      .filter(
+        (hconfig) =>
+          // same service
+          config.service === hconfig.service &&
+          // same method or *
+          (config.method === hconfig.method || hconfig.method === '*') &&
+          // local + remote or just remote if asked
+          (config.local || !hconfig.local) &&
+          // async + sync or just sync if asked
+          (config.queue || !hconfig.queue),
+      )
+      .sort((hconfig1, hconfig2) => {
+        if (hconfig1.local !== hconfig2.local) {
+          return hconfig1.local === config.local ? -1 : 1;
+        }
 
-      if (hconfig1.queue !== hconfig2.queue) {
-        return (hconfig1.queue === config.queue) ? -1 : 1;
-      }
+        if (hconfig1.queue !== hconfig2.queue) {
+          return hconfig1.queue === config.queue ? -1 : 1;
+        }
 
-      if (hconfig1.method !== hconfig2.method) {
-        return (hconfig1.method === config.method) ? -1 : 1;
-      }
+        if (hconfig1.method !== hconfig2.method) {
+          return hconfig1.method === config.method ? -1 : 1;
+        }
 
-      return 0;
-    });
-    return (handlers.length > 0) ? handlers.shift().resolver() : undefined;
+        return 0;
+      });
+    return handlers.length > 0 ? handlers.shift().resolver() : undefined;
   }
 }

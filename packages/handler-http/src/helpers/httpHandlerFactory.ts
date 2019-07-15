@@ -1,25 +1,19 @@
-import {
-  handler,
-  ConfigInterfaceResolver,
-  NewableType,
-  HandlerInterface,
-  InitHookInterface,
-} from '@ilos/common';
+import { handler, ConfigInterfaceResolver, NewableType, HandlerInterface, InitHookInterface } from '@ilos/common';
 
 import { HttpHandler } from '../HttpHandler';
 /**
-* httpHandlerFactory - Create a HttpHandler for a remote service
-* @export
-* @param {string} service - service name
-* @param {string} url - service url
-* @param {string} [version]
-* @returns {NewableType<HandlerInterface>}
-*/
+ * httpHandlerFactory - Create a HttpHandler for a remote service
+ * @export
+ * @param {string} service - service name
+ * @param {string} url - service url
+ * @param {string} [version]
+ * @returns {NewableType<HandlerInterface>}
+ */
 export function httpHandlerFactory(
-    service: string,
-    url: string,
-    version?: string,
-  ): NewableType<HandlerInterface&InitHookInterface> {
+  service: string,
+  url: string,
+  version?: string,
+): NewableType<HandlerInterface & InitHookInterface> {
   let isFromConfig = false;
   if (!/http/.test(url)) {
     isFromConfig = true;
@@ -31,9 +25,7 @@ export function httpHandlerFactory(
     local: false,
   })
   class CustomHttpHandler extends HttpHandler {
-    constructor(
-      private config: ConfigInterfaceResolver,
-      ) {
+    constructor(private config: ConfigInterfaceResolver) {
       super();
     }
 

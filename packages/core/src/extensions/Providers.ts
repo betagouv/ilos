@@ -1,10 +1,4 @@
-import {
-  RegisterHookInterface,
-  NewableType,
-  ServiceContainerInterface,
-  IdentifierType,
-  extension,
-} from '@ilos/common';
+import { RegisterHookInterface, NewableType, ServiceContainerInterface, IdentifierType, extension } from '@ilos/common';
 
 @extension({
   name: 'providers',
@@ -29,7 +23,9 @@ export class Providers implements RegisterHookInterface {
         container.bind(target).toSelf();
         container.bind(identifier).toService(target);
       } else {
-        const customIdentifier = <IdentifierType | IdentifierType[]>Reflect.getMetadata(Symbol.for('extension:identifier'), def);
+        const customIdentifier = <IdentifierType | IdentifierType[]>(
+          Reflect.getMetadata(Symbol.for('extension:identifier'), def)
+        );
         target = def;
         container.bind(target).toSelf();
         if (customIdentifier) {

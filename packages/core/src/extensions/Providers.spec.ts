@@ -1,10 +1,6 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
-import {
-  InitHookInterface,
-  provider,
-  serviceProvider,
-} from '@ilos/common';
+import { InitHookInterface, provider, serviceProvider } from '@ilos/common';
 
 import { Providers } from './Providers';
 import { ServiceContainer } from '../foundation/ServiceContainer';
@@ -16,7 +12,7 @@ describe('Providers extension', () => {
         throw new Error();
       }
     }
-    
+
     @provider({
       identifier: ProviderResolver,
     })
@@ -25,18 +21,17 @@ describe('Providers extension', () => {
         return 'AAA';
       }
     }
-    
+
     @serviceProvider({
       providers: [Provider],
     })
-
     class ServiceProvider extends ServiceContainer {
       extensions = [Providers];
     }
     const test = new ServiceProvider();
 
     await test.register();
-    
+
     const screamer = test.getContainer().get(ProviderResolver);
     expect(screamer.scream()).to.eq('AAA');
   });
@@ -48,12 +43,9 @@ describe('Providers extension', () => {
         throw new Error();
       }
     }
-    
+
     @provider({
-      identifier: [
-        ProviderResolver,
-        'aaa',
-      ],
+      identifier: [ProviderResolver, 'aaa'],
     })
     class Provider {
       screamed = 0;
@@ -62,7 +54,7 @@ describe('Providers extension', () => {
         return 'AAA';
       }
     }
-    
+
     @serviceProvider({
       providers: [Provider],
     })
@@ -86,7 +78,7 @@ describe('Providers extension', () => {
         throw new Error();
       }
     }
-    
+
     @provider({
       identifier: ProviderResolver,
     })
@@ -99,11 +91,10 @@ describe('Providers extension', () => {
         return this.screamType;
       }
     }
-    
+
     @serviceProvider({
       providers: [Provider],
     })
-
     class ServiceProvider extends ServiceContainer {
       extensions = [Providers];
     }
@@ -111,7 +102,7 @@ describe('Providers extension', () => {
 
     await test.register();
     await test.init();
-    
+
     const screamer = test.getContainer().get(ProviderResolver);
     expect(screamer.scream()).to.eq('BBB');
   });

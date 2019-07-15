@@ -15,14 +15,10 @@ export function queueHandlerFactory(service: string, version?: string): NewableT
     readonly service: string = service;
     readonly version: string = version;
 
-
-    constructor(
-      protected redis: RedisConnection,
-    ) {
+    constructor(protected redis: RedisConnection) {
       super(redis);
     }
   }
 
   return CustomQueueHandler;
 }
-

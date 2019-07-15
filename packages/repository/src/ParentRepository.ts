@@ -1,10 +1,4 @@
-import {
-  MongoConnection,
-  CollectionInterface,
-  MongoException,
-  ObjectId,
-  DbInterface,
-} from '@ilos/connection-mongo';
+import { MongoConnection, CollectionInterface, MongoException, ObjectId, DbInterface } from '@ilos/connection-mongo';
 import {
   NotFoundException,
   ConfigInterfaceResolver,
@@ -16,10 +10,7 @@ import {
 export abstract class ParentRepository implements RepositoryInterface {
   protected readonly castObjectIds: string[] = ['_id'];
 
-  constructor(
-    protected config: ConfigInterfaceResolver,
-    protected connection: MongoConnection,
-  ) {}
+  constructor(protected config: ConfigInterfaceResolver, protected connection: MongoConnection) {}
 
   public getDbName(): string {
     throw new Error('Database not set');
@@ -29,7 +20,8 @@ export abstract class ParentRepository implements RepositoryInterface {
     throw new Error('Key not set');
   }
 
-  public getDatabase(): string { // TODO : remove useless method
+  public getDatabase(): string {
+    // TODO : remove useless method
     throw new Error('Database not set');
   }
 
@@ -72,8 +64,9 @@ export abstract class ParentRepository implements RepositoryInterface {
   }
 
   async create(data: RepositoryModelType): Promise<RepositoryModelType> {
+    const normalizedData = this.castObjectIdFromString(data);
     const collection = await this.getCollection();
-    const { result, ops } = await collection.insertOne(data);
+    const { result, ops } = await collection.insertOne(normalizedData);
     if (result.ok !== 1) {
       throw new MongoException();
     }
@@ -147,7 +140,7 @@ export abstract class ParentRepository implements RepositoryInterface {
   }
 
   protected instanciateMany(data: any[]): RepositoryModelType[] {
-    return data.map(d => this.instanciate(d));
+    return data.map((d) => this.instanciate(d));
   }
 
   protected castObjectIdFromString(data: RepositoryModelType) {

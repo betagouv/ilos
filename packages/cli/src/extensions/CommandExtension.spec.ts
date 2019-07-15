@@ -1,15 +1,13 @@
-// tslint:disable no-shadowed-variable max-classes-per-file no-invalid-this
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
+
 import { ServiceProvider } from '@ilos/core';
 import { command, serviceProvider, ResultType } from '@ilos/common';
 
 import { CommandRegistry } from '../providers/CommandRegistry';
-
 import { CommandExtension } from './CommandExtension';
 import { Command } from '../parents/Command';
-
 
 @command()
 class BasicCommand extends Command {
@@ -21,7 +19,7 @@ class BasicCommand extends Command {
     },
   ];
 
-  public async call(name, options?):Promise<ResultType> {
+  public async call(name, options?): Promise<ResultType> {
     if (options && 'hi' in options) {
       return `Hi ${name}`;
     }
@@ -30,9 +28,7 @@ class BasicCommand extends Command {
 }
 
 @serviceProvider({
-  commands: [
-    BasicCommand,
-  ],
+  commands: [BasicCommand],
 })
 class BasicServiceProvider extends ServiceProvider {
   extensions = [CommandExtension];
@@ -40,15 +36,15 @@ class BasicServiceProvider extends ServiceProvider {
 
 describe('Command extension', () => {
   it('should register properly', async () => {
-    const serviceProvider = new BasicServiceProvider();
-    await serviceProvider.register();
-    await serviceProvider.init();
+    const basicServiceProvider = new BasicServiceProvider();
+    await basicServiceProvider.register();
+    await basicServiceProvider.init();
 
-    const command = serviceProvider.getContainer().get(CommandRegistry).commands[0];
+    const basicCommand = basicServiceProvider.getContainer().get(CommandRegistry).commands[0];
 
-    expect(command.name()).to.equal('hello');
-    expect(command.options).to.have.length(1);
-    expect(command.options[0]).to.deep.include({
+    expect(basicCommand.name()).to.equal('hello');
+    expect(basicCommand.options).to.have.length(1);
+    expect(basicCommand.options[0]).to.deep.include({
       flags: '-h, --hi',
       required: false,
       optional: false,
@@ -60,10 +56,10 @@ describe('Command extension', () => {
   });
 
   it('should work', (done) => {
-    const serviceProvider = new BasicServiceProvider();
-    const container = serviceProvider.getContainer();
-    serviceProvider.register().then(() => {
-      serviceProvider.init().then(() => {
+    const basicServiceProvider = new BasicServiceProvider();
+    const container = basicServiceProvider.getContainer();
+    basicServiceProvider.register().then(() => {
+      basicServiceProvider.init().then(() => {
         const commander = container.get<CommandRegistry>(CommandRegistry);
         sinon.stub(commander, 'output').callsFake((...args: any[]) => {
           expect(args[0]).to.equal('Hello john');

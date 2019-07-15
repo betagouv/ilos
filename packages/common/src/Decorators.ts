@@ -1,8 +1,5 @@
 import 'reflect-metadata';
-import {
-  injectable,
-  METADATA_KEY,
-} from 'inversify';
+import { injectable, METADATA_KEY } from 'inversify';
 import { Metadata } from 'inversify/lib/planning/metadata';
 
 import { HandlerMeta, HandlerConfigType } from './types/handler';
@@ -11,7 +8,7 @@ import { ExtensionConfigurationType, extensionConfigurationMetadataKey } from '.
 type AnyConfig = { [k: string]: any };
 
 function extensionTag(config: AnyConfig) {
-  return function (target) {
+  return function(target) {
     Reflect.ownKeys(config).forEach((key: string) => {
       // Reflect.defineMetadata(`extension:${key}`, config[key], target.prototype);
       Reflect.defineMetadata(Symbol.for(`extension:${key}`), config[key], target);
@@ -21,15 +18,13 @@ function extensionTag(config: AnyConfig) {
 }
 
 export function provider(config: AnyConfig = {}) {
-  return function (target) {
+  return function(target) {
     if ('boot' in target.prototype) {
       const metadata = new Metadata(METADATA_KEY.POST_CONSTRUCT, 'boot');
       Reflect.defineMetadata(METADATA_KEY.POST_CONSTRUCT, metadata, target);
     }
 
-    return injectable()(
-      extensionTag(config)(target),
-    );
+    return injectable()(extensionTag(config)(target));
   };
 }
 
@@ -50,33 +45,37 @@ export function handler(config: HandlerConfigType) {
   if (!('queue' in config)) {
     queue = false;
   }
-  return function (target) {
+  return function(target) {
     Reflect.defineMetadata(HandlerMeta.SERVICE, service, target);
     Reflect.defineMetadata(HandlerMeta.METHOD, method, target);
     Reflect.defineMetadata(HandlerMeta.VERSION, version, target);
     Reflect.defineMetadata(HandlerMeta.LOCAL, local, target);
     Reflect.defineMetadata(HandlerMeta.QUEUE, queue, target);
-    return injectable()(
-      extensionTag(other)(target),
-    );
+    return injectable()(extensionTag(other)(target));
   };
 }
 
 export function serviceProvider(config: AnyConfig) {
-  return function (target) {
+  return function(target) {
     return extensionTag(config)(target);
   };
 }
 
 export function kernel(config: AnyConfig) {
-  return function (target) {
+  return function(target) {
     return extensionTag(config)(target);
   };
 }
 
-export function command() { return injectable(); }
-export function middleware() { return injectable(); }
-export function lib() { return injectable(); }
+export function command() {
+  return injectable();
+}
+export function middleware() {
+  return injectable();
+}
+export function lib() {
+  return injectable();
+}
 
 export function extension(config: ExtensionConfigurationType) {
   const defaultConfig = {
@@ -85,7 +84,7 @@ export function extension(config: ExtensionConfigurationType) {
     require: [],
   };
 
-  return function (target) {
+  return function(target) {
     const normalizedConfig = { ...defaultConfig, ...config };
 
     if (!('key' in normalizedConfig)) {

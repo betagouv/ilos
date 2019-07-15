@@ -1,5 +1,5 @@
 export class DependencyTree {
-  nodes: Map<symbol, { data: any, require: Set<symbol>, requiredBy: Set<symbol> }> = new Map();
+  nodes: Map<symbol, { data: any; require: Set<symbol>; requiredBy: Set<symbol> }> = new Map();
 
   add(key: symbol, node: any, require: symbol[]) {
     this.nodes.set(key, { require: new Set([...require]), data: node, requiredBy: new Set() });
@@ -7,12 +7,11 @@ export class DependencyTree {
 
   resolve() {
     this.inverseRelations();
-    return this.getOrderedNodes()
-      .map((k: symbol) => this.nodes.get(k).data);
+    return this.getOrderedNodes().map((k: symbol) => this.nodes.get(k).data);
   }
 
   protected getOrderedNodes(initialMet: Set<symbol> = new Set(), initialUnmet?: Set<symbol>) {
-    const unmet = (initialUnmet) ? initialUnmet : new Set(this.nodes.keys());
+    const unmet = initialUnmet ? initialUnmet : new Set(this.nodes.keys());
     if (unmet.size === 0) {
       return [...initialMet];
     }
@@ -24,14 +23,16 @@ export class DependencyTree {
     for (const nodeId of unmet) {
       const deps = this.nodes.get(nodeId).require;
       // list unmets dependencies
-      const unmetDeps = new Set([...deps].filter(x => !met.has(x)));
+      const unmetDeps = new Set([...deps].filter((x) => !met.has(x)));
 
       // look for missing deps
-      const unresolvableDependencies = (new Set([...unmetDeps].filter(x => !unmet.has(x))));
+      const unresolvableDependencies = new Set([...unmetDeps].filter((x) => !unmet.has(x)));
       if (unresolvableDependencies.size > 0) {
         // if dependency is no resolvable, just warn
-        console.warn(`Unsolvable extenion dependencies : ${[...unresolvableDependencies].map(k => k.toString()).join(', ')}`);
-        [...unresolvableDependencies].forEach(x => unmetDeps.delete(x));
+        console.warn(
+          `Unsolvable extenion dependencies : ${[...unresolvableDependencies].map((k) => k.toString()).join(', ')}`,
+        );
+        [...unresolvableDependencies].forEach((x) => unmetDeps.delete(x));
         // throw new Error(`Unsolvable extenion dependencies : ${[...unresolvableDependencies].join(', ')}`);
       }
 
@@ -41,10 +42,10 @@ export class DependencyTree {
         continue;
       }
       stillUnmet.add(nodeId);
-      unmetDeps.forEach(id => requested.add(id));
+      unmetDeps.forEach((id) => requested.add(id));
     }
 
-    if (requested.size > 0 && (new Set([...stillUnmet].filter(x => !requested.has(x))).size === 0)) {
+    if (requested.size > 0 && new Set([...stillUnmet].filter((x) => !requested.has(x))).size === 0) {
       throw new Error('Circular dependency');
     }
 
@@ -53,7 +54,7 @@ export class DependencyTree {
 
   protected inverseRelations() {
     const nodes = this.nodes.entries();
-    for (const [nodeId , { requiredBy }] of nodes) {
+    for (const [nodeId, { requiredBy }] of nodes) {
       for (const req of requiredBy) {
         if (!this.nodes.has(req)) {
           throw new Error(`Unsolvable dependency ${req.toString()}`);

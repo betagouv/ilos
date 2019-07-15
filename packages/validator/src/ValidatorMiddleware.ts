@@ -12,12 +12,7 @@ import {
 export class ValidatorMiddleware implements MiddlewareInterface {
   constructor(private validator: ValidatorInterfaceResolver) {}
 
-  async process(
-    params: ParamsType,
-    context: ContextType,
-    next: Function,
-    schema: string,
-  ): Promise<ResultType> {
+  async process(params: ParamsType, context: ContextType, next: Function, schema: string): Promise<ResultType> {
     try {
       await this.validator.validate(params, schema);
     } catch (e) {

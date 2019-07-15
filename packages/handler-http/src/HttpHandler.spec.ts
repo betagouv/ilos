@@ -21,9 +21,9 @@ describe('Http handler', () => {
   it('works', () => {
     const url = 'http://myfakeservice:8080';
     const nockRequest = nock(url)
-    .post('/')
-    .reply(
-      200,
+      .post('/')
+      .reply(
+        200,
       {
         jsonrpc: '2.0',
         id: 1,
@@ -33,7 +33,7 @@ describe('Http handler', () => {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-    );
+      );
 
     const provider = new (httpHandlerFactory('service', url))();
     provider.init();
@@ -59,9 +59,9 @@ describe('Http handler', () => {
   it('works with correct headers', () => {
     const url = 'http://myfakeservice:8080';
     const nockRequest = nock(url)
-    .post('/')
-    .reply(
-      200,
+      .post('/')
+      .reply(
+        200,
       {
         jsonrpc: '2.0',
         id: 1,
@@ -71,7 +71,7 @@ describe('Http handler', () => {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-    );
+      );
 
     const provider = new (httpHandlerFactory('service', url))();
     provider.init();
@@ -90,9 +90,9 @@ describe('Http handler', () => {
   it('throw error on status code error', () => {
     const url = 'http://myfakeservice:8080';
     const nockRequest = nock(url)
-    .post('/')
-    .reply(
-      500,
+      .post('/')
+      .reply(
+        500,
       {
         jsonrpc: '2.0',
         id: 1,
@@ -102,7 +102,7 @@ describe('Http handler', () => {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-    );
+      );
 
     const provider = new (httpHandlerFactory('service', url))();
     provider.init();
@@ -117,21 +117,19 @@ describe('Http handler', () => {
   it('throw error on status code error', () => {
     const url = 'http://myfakeservice:8080';
     const nockRequest = nock(url)
-    .post('/')
-    .reply(
-      200,
+      .post('/')
+      .reply(
+        200,
       {
         jsonrpc: '2.0',
         id: 1,
-        error: {
-          message: 'wrong!',
-        },
+        error: { message: 'wrong!' },
       },
       {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-    );
+      );
 
     const provider = new (httpHandlerFactory('service', url))();
     provider.init();

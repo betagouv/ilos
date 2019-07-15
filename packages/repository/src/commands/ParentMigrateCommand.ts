@@ -95,7 +95,10 @@ export abstract class ParentMigrateCommand implements CommandInterface {
   public async getMigrationCollection() {
     const collection = this.config.get('migration.collection', 'migrations');
     const db = this.config.get('migration.db');
-    return this.connection.getClient().db(db).collection(collection);
+    return this.connection
+      .getClient()
+      .db(db)
+      .collection(collection);
   }
 
   protected async status(): Promise<string> {
@@ -103,7 +106,7 @@ export abstract class ParentMigrateCommand implements CommandInterface {
     const availableMigrations = this.availableMigrations;
     const result = [];
     for (const signature of availableMigrations) {
-      const info = dbMigrations.find(migration => migration.signature === signature);
+      const info = dbMigrations.find((migration) => migration.signature === signature);
       result.push({ signature, info });
     }
 
@@ -116,7 +119,7 @@ export abstract class ParentMigrateCommand implements CommandInterface {
 
   protected async rollback(round: number): Promise<string> {
     const dbMigrations = await this.listDbMigrations();
-    const orderedDbMigrations = dbMigrations.filter(migration => !!migration.success).reverse();
+    const orderedDbMigrations = dbMigrations.filter((migration) => !!migration.success).reverse();
 
     let output = '';
     for (let i = 0; i < round; i += 1) {
@@ -140,7 +143,7 @@ export abstract class ParentMigrateCommand implements CommandInterface {
     const dbMigrations = await this.listDbMigrations();
     let output = '';
     for (const migrationSignature of this.availableMigrations) {
-      if (!dbMigrations.find(m => m.signature === migrationSignature && !!m.success)) {
+      if (!dbMigrations.find((m) => m.signature === migrationSignature && !!m.success)) {
         const r = await this.applyMigrationAndSave(this.availableMigrationsMap.get(migrationSignature));
         output += `${r.signature}: ${r.success ? 'success' : 'failure'}\n`;
       }

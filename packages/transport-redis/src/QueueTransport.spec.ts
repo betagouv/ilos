@@ -3,12 +3,7 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-import {
-  Extensions,
-  Action,
-  ServiceProvider,
-  Kernel,
-} from '@ilos/core';
+import { Extensions, Action, ServiceProvider, Kernel } from '@ilos/core';
 import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
 import {
   handler,
@@ -38,7 +33,7 @@ class QueueExtension extends ParentQueueExtension {
   method: 'minus',
 })
 class BasicAction extends Action {
-  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     let count = 0;
     if ('minus' in params) {
       const { add } = params;
@@ -57,7 +52,7 @@ class BasicAction extends Action {
   method: 'add',
 })
 class BasicTwoAction extends Action {
-  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     let count = 0;
     if ('add' in params) {
       const { add } = params;
@@ -81,44 +76,44 @@ class FakeEnvProvider extends EnvInterfaceResolver {
 }
 
 @serviceProvider({
-  providers: [
-    [EnvInterfaceResolver, FakeEnvProvider],
-  ],
-  handlers: [
-    BasicAction, BasicTwoAction,
-  ],
+  providers: [[EnvInterfaceResolver, FakeEnvProvider]],
+  handlers: [BasicAction, BasicTwoAction],
   queues: ['math'],
 })
 class BasicServiceProvider extends ServiceProvider {
-  extensions = [
-    Extensions.Providers,
-    Extensions.Handlers,
-    QueueExtension,
-  ];
+  extensions = [Extensions.Providers, Extensions.Handlers, QueueExtension];
 }
 
 @kernelDecorator({
   children: [BasicServiceProvider],
 })
-class BasicKernel extends Kernel {
-}
-
+class BasicKernel extends Kernel {}
 
 describe('Queue transport', () => {
   beforeEach(() => {
     sandbox.stub(Bull, 'bullFactory').callsFake(
       // @ts-ignore
-      name => ({
+      (name) => ({
         name,
-        async process(fn) { this.fn = fn; return; },
-        async close() { return; },
-        async isReady() { return this; },
-        on(event: string, callback: (...args: any[]) => void) { return this; },
+        async process(fn) {
+          this.fn = fn;
+          return;
+        },
+        async close() {
+          return;
+        },
+        async isReady() {
+          return this;
+        },
+        on(event: string, callback: (...args: any[]) => void) {
+          return this;
+        },
         async add(call) {
           const fn = this.fn;
           return fn(call);
         },
-      }));
+      }),
+    );
   });
   afterEach(() => {
     sandbox.restore();
@@ -155,4 +150,3 @@ describe('Queue transport', () => {
     await queueTransport.down();
   });
 });
-

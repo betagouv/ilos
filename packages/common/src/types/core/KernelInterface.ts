@@ -18,7 +18,7 @@ export interface KernelInterface extends ServiceContainerInterface, BootstrapHoo
 }
 
 export abstract class KernelInterfaceResolver extends ServiceContainerInterfaceResolver implements KernelInterface {
-  async handle(call: RPCCallType): Promise<RPCResponseType|void> {
+  async handle(call: RPCCallType): Promise<RPCResponseType | void> {
     throw new Error();
   }
 

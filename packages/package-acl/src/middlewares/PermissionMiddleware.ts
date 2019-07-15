@@ -29,10 +29,11 @@ export class PermissionMiddleware implements MiddlewareInterface {
 
     let permissions = [];
 
-    if (!!context.call
-      && !!context.call.user
-      && !!context.call.user.permissions
-      && !!context.call.user.permissions.length
+    if (
+      !!context.call &&
+      !!context.call.user &&
+      !!context.call.user.permissions &&
+      !!context.call.user.permissions.length
     ) {
       permissions = context.call.user.permissions;
     }

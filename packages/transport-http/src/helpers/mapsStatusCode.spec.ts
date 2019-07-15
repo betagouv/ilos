@@ -90,24 +90,24 @@ describe('RPC/HTTP status codes mapping', () => {
     ).to.eq(500);
   });
 
-  it('Unauthorized -> 501', () => {
+  it('Unauthorized -> 401', () => {
     expect(
       mapStatusCode({
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32501, message: 'Unauthorized' },
       }),
-    ).to.eq(501);
+    ).to.eq(401);
   });
 
-  it('Forbidden -> 503', () => {
+  it('Forbidden -> 403', () => {
     expect(
       mapStatusCode({
         id: 1,
         jsonrpc: '2.0',
         error: { code: -32503, message: 'Forbidden' },
       }),
-    ).to.eq(503);
+    ).to.eq(403);
   });
 
   it('Conflict -> 409', () => {

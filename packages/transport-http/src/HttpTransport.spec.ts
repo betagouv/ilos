@@ -3,10 +3,7 @@ import { expect } from 'chai';
 import supertest from 'supertest';
 
 import { Kernel } from '@ilos/core';
-import {
-  RPCCallType,
-  RPCResponseType,
-} from '@ilos/common';
+import { RPCCallType, RPCResponseType } from '@ilos/common';
 
 import { HttpTransport } from './HttpTransport';
 

@@ -1,13 +1,9 @@
-import {
-  MiddlewareInterface,
-  FunctionMiddlewareInterface,
-  ParamsType,
-  ResultType,
-  ContextType,
-} from '@ilos/common';
+import { MiddlewareInterface, FunctionMiddlewareInterface, ParamsType, ResultType, ContextType } from '@ilos/common';
 
 type middlewareInstancesWithOptionsType = (MiddlewareInterface | [MiddlewareInterface, any])[];
-export function compose(middlewareInstancesWithOptions: middlewareInstancesWithOptionsType):FunctionMiddlewareInterface {
+export function compose(
+  middlewareInstancesWithOptions: middlewareInstancesWithOptionsType,
+): FunctionMiddlewareInterface {
   if (!Array.isArray(middlewareInstancesWithOptions)) {
     throw new TypeError('Middleware stack must be an array!');
   }
@@ -24,13 +20,16 @@ export function compose(middlewareInstancesWithOptions: middlewareInstancesWithO
       middlewareInstance = middlewareInstanceWithOptions;
     }
 
-    middlewares.push(
-      (params: ParamsType, context: ContextType, next?: FunctionMiddlewareInterface) =>
-        middlewareInstance.process(params, context, next, options),
+    middlewares.push((params: ParamsType, context: ContextType, next?: FunctionMiddlewareInterface) =>
+      middlewareInstance.process(params, context, next, options),
     );
   }
 
-  return async function (params: ParamsType, context: ContextType, handle: FunctionMiddlewareInterface): Promise<ResultType> {
+  return async function(
+    params: ParamsType,
+    context: ContextType,
+    handle: FunctionMiddlewareInterface,
+  ): Promise<ResultType> {
     // last called middleware #
     let index = -1;
     return dispatch(0)(params, context);

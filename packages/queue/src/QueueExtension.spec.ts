@@ -6,12 +6,7 @@ import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ConfigExtension } from '@ilos/config';
 import { EnvExtension } from '@ilos/env';
-import {
-  EnvInterfaceResolver,
-  handler,
-  provider,
-  serviceProvider,
-} from '@ilos/common';
+import { EnvInterfaceResolver, handler, provider, serviceProvider } from '@ilos/common';
 
 import { QueueExtension } from './QueueExtension';
 
@@ -19,15 +14,13 @@ import { QueueExtension } from './QueueExtension';
   service: 'serviceA',
   method: 'hello',
 })
-class ServiceOneHandler extends Action {
-}
+class ServiceOneHandler extends Action {}
 
 @handler({
   service: 'serviceB',
   method: 'world',
 })
-class ServiceTwoHandler extends Action {
-}
+class ServiceTwoHandler extends Action {}
 
 describe('Queue extension', () => {
   it('should register queue name in container as worker', async () => {
@@ -45,16 +38,9 @@ describe('Queue extension', () => {
       config: {
         redis: {},
       },
-      handlers: [
-        ServiceOneHandler,
-        ServiceTwoHandler,
-      ],
-      connections: [
-        [RedisConnection, 'redis'],
-      ],
-      providers: [
-        FakeEnvProvider,
-      ],
+      handlers: [ServiceOneHandler, ServiceTwoHandler],
+      connections: [[RedisConnection, 'redis']],
+      providers: [FakeEnvProvider],
     })
     class MyService extends ServiceProvider {
       extensions = [
@@ -75,10 +61,7 @@ describe('Queue extension', () => {
 
     const queueRegistry = container.getAll(queueRegistrySymbol);
 
-    expect(queueRegistry).to.members([
-      'serviceA',
-      'serviceB',
-    ]);
+    expect(queueRegistry).to.members(['serviceA', 'serviceB']);
 
     expect(container.getHandlers().length).to.eq(4);
   });
@@ -90,22 +73,11 @@ describe('Queue extension', () => {
       config: {
         redis: {},
       },
-      handlers: [
-        ServiceOneHandler,
-        ServiceTwoHandler,
-      ],
-      connections: [
-        [RedisConnection, 'redis'],
-      ],
+      handlers: [ServiceOneHandler, ServiceTwoHandler],
+      connections: [[RedisConnection, 'redis']],
     })
     class MyService extends ServiceProvider {
-      extensions = [
-        EnvExtension,
-        ConfigExtension,
-        ConnectionManagerExtension,
-        Extensions.Handlers,
-        QueueExtension,
-      ];
+      extensions = [EnvExtension, ConfigExtension, ConnectionManagerExtension, Extensions.Handlers, QueueExtension];
     }
 
     const service = new MyService();
@@ -117,10 +89,7 @@ describe('Queue extension', () => {
 
     const queueRegistry = container.getAll(queueRegistrySymbol);
 
-    expect(queueRegistry).to.members([
-      'serviceA',
-      'serviceB',
-    ]);
+    expect(queueRegistry).to.members(['serviceA', 'serviceB']);
 
     expect(container.getHandlers().length).to.eq(4);
   });

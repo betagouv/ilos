@@ -15,20 +15,17 @@ import { Notification } from './Notification';
 
 @extension({
   name: 'notification',
-  require: [
-    ConfigExtension,
-    TemplateExtension,
-  ],
+  require: [ConfigExtension, TemplateExtension],
 })
 export class NotificationExtension implements RegisterHookInterface, InitHookInterface {
-  static readonly key:string = 'notification';
+  static readonly key: string = 'notification';
 
-  constructor(protected config?: {
-    template: string,
-    templateMeta: string | { [k:string]: any },
-  }) {
-
-  }
+  constructor(
+    protected config?: {
+      template: string;
+      templateMeta: string | { [k: string]: any };
+    },
+  ) {}
 
   register(serviceContainer: ServiceContainerInterface) {
     serviceContainer.bind(Notification);
@@ -51,11 +48,9 @@ export class NotificationExtension implements RegisterHookInterface, InitHookInt
         .get(TemplateInterfaceResolver)
         .loadTemplatesFromDirectory(
           this.config.template,
-          (typeof this.config.templateMeta === 'string') ?
-            container
-              .get(ConfigInterfaceResolver)
-              .get(this.config.templateMeta) :
-            this.config.templateMeta,
+          typeof this.config.templateMeta === 'string'
+            ? container.get(ConfigInterfaceResolver).get(this.config.templateMeta)
+            : this.config.templateMeta,
         );
     }
   }
