@@ -100,9 +100,9 @@ export class Bootstrap {
     @kernel({
       children: serviceProviders,
     })
-    class Kernel extends kernelConstructor {}
+    class CustomKernel extends kernelConstructor {}
 
-    const kernelInstance = new Kernel();
+    const kernelInstance = new CustomKernel();
     await kernelInstance.bootstrap();
 
     let transport: TransportInterface;
