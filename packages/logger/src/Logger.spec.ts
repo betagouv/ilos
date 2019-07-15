@@ -1,10 +1,20 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
+
 import * as winston from 'winston';
-import { DefaultLogger, injectable, HasLogger, LoggerInterface, serviceProvider, EnvInterfaceResolver, provider } from '@ilos/common';
+import {
+  injectable,
+  provider,
+  serviceProvider,
+  HasLogger,
+  LoggerInterface,
+  EnvInterfaceResolver,
+  DefaultLogger,
+} from '@ilos/common';
 import { ServiceContainer, Extensions } from '@ilos/core';
+import { ConfigExtension } from '@ilos/config';
+
 import { LoggerExtension } from './LoggerExtension';
-import { ConfigExtension } from '../../config/dist';
 
 describe('Logger provider', () => {
   it('should have default logger', () => {
@@ -36,6 +46,7 @@ describe('Logger provider', () => {
         return fb;
       }
     }
+
     @serviceProvider({
       config: {
 
@@ -44,7 +55,6 @@ describe('Logger provider', () => {
         [EnvInterfaceResolver, FakeEnv]
       ]
     })
-    
     class Service extends ServiceContainer {
       extensions = [
         LoggerExtension,

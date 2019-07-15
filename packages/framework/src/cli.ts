@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-import { bootstrap } from './Bootstrap';
+import { Bootstrap } from './Bootstrap';
 console.log('Bootstraping app...');
 
-bootstrap
+Bootstrap
   .createFromPath()
   .then((app) => {
     const [_1, _2, command, ...opts] = process.argv;
     app
-    .boot(command, opts)
+    .boot(command, ...opts)
     .then(() => {
       console.log('Ready!');
     })

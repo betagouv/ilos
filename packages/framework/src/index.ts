@@ -1,3 +1,3 @@
-export { Bootstrap, bootstrap } from './Bootstrap';
+export { Bootstrap } from './Bootstrap';
 export { Kernel } from './Kernel';
 

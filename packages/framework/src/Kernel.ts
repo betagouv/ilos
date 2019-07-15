@@ -11,7 +11,6 @@ import { ValidatorExtension } from '@ilos/validator';
 import { kernel } from '@ilos/common';
 
 @kernel({
-  env: null,
   config: process.cwd(),
   commands: [
     Commands.CallCommand,
