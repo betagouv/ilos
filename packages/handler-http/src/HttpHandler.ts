@@ -1,6 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { Types, Interfaces, Exceptions } from '@ilos/core';
+import {
+  CallType,
+  ResultType,
+  HandlerInterface,
+  InitHookInterface,
+  ServiceException,
+} from '@ilos/common';
 
 /**
  * Http handler
@@ -8,7 +14,7 @@ import { Types, Interfaces, Exceptions } from '@ilos/core';
  * @class HttpHandler
  * @implements {HandlerInterface}
  */
-export class HttpHandler implements Interfaces.HandlerInterface, Interfaces.InitHookInterface {
+export class HttpHandler implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
 
   protected readonly service: string;
@@ -32,7 +38,7 @@ export class HttpHandler implements Interfaces.HandlerInterface, Interfaces.Init
     });
   }
 
-  public async call(call: Types.CallType): Promise<Types.ResultType> {
+  public async call(call: CallType): Promise<ResultType> {
     const { method, params, context } = call;
     try {
       // TODO : add channel ?
@@ -47,7 +53,7 @@ export class HttpHandler implements Interfaces.HandlerInterface, Interfaces.Init
       });
 
       if (!('data' in response) || !('result' in response.data)) {
-        throw new Exceptions.ServiceException(response.data.error);
+        throw new ServiceException(response.data.error);
       }
       call.result = response.data.result;
       return response.data.result;

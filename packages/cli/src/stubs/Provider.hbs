@@ -1,6 +1,7 @@
-import { Container, Interfaces } from '@ilos/core';
+import { Container } from '@ilos/core';
+import { provider, ProviderInterface } from '@ilos/common';
 
-@Container.provider({
+@provider({
   // identifier: {{name}}ProviderInterfaceResolver
 })
-export class {{name}}Provider implements Interfaces.ProviderInterface {}
+export class {{name}}Provider implements ProviderInterface {}

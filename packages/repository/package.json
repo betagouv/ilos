@@ -46,7 +46,8 @@
   "dependencies": {
     "@ilos/cli": "^0.2.0",
     "@ilos/config": "^0.2.0",
-    "@ilos/connection-mongo": "^0.2.0"
+    "@ilos/connection-mongo": "^0.2.0",
+    "@ilos/common": "^0.2.0"
   },
   "peerDependencies": {
     "@ilos/core": "~0"

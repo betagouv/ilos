@@ -1,4 +1,12 @@
-import { Container, Exceptions, Interfaces, Types } from '@ilos/core';
+import {
+  middleware,
+  MiddlewareInterface,
+  ParamsType,
+  ContextType,
+  ResultType,
+  InvalidParamsException,
+  ForbiddenException,
+} from '@ilos/common';
 
 /**
  * Can middleware check permission in context and may throw a ForbiddenException
@@ -7,16 +15,16 @@ import { Container, Exceptions, Interfaces, Types } from '@ilos/core';
  * @param {...string[]} roles
  * @returns {MiddlewareInterface}
  */
-@Container.middleware()
-export class PermissionMiddleware implements Interfaces.MiddlewareInterface {
+@middleware()
+export class PermissionMiddleware implements MiddlewareInterface {
   async process(
-    params: Types.ParamsType,
-    context: Types.ContextType,
+    params: ParamsType,
+    context: ContextType,
     next: Function,
     neededPermissions: string[],
-  ): Promise<Types.ResultType> {
+  ): Promise<ResultType> {
     if (!Array.isArray(neededPermissions) || neededPermissions.length === 0) {
-      throw new Exceptions.InvalidParamsException('No permissions defined');
+      throw new InvalidParamsException('No permissions defined');
     }
 
     let permissions = [];
@@ -30,13 +38,13 @@ export class PermissionMiddleware implements Interfaces.MiddlewareInterface {
     }
 
     if (permissions.length === 0) {
-      throw new Exceptions.ForbiddenException('Invalid permissions');
+      throw new ForbiddenException('Invalid permissions');
     }
 
     const pass = neededPermissions.reduce((p, c) => p && (permissions || []).indexOf(c) > -1, true);
 
     if (!pass) {
-      throw new Exceptions.ForbiddenException('Invalid permissions');
+      throw new ForbiddenException('Invalid permissions');
     }
 
     return next(params, context);

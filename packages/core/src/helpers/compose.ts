@@ -1,5 +1,10 @@
-import { ParamsType, ResultType, ContextType } from '../types';
-import { MiddlewareInterface, FunctionMiddlewareInterface } from '../interfaces/MiddlewareInterface';
+import {
+  MiddlewareInterface,
+  FunctionMiddlewareInterface,
+  ParamsType,
+  ResultType,
+  ContextType,
+} from '@ilos/common';
 
 type middlewareInstancesWithOptionsType = (MiddlewareInterface | [MiddlewareInterface, any])[];
 export function compose(middlewareInstancesWithOptions: middlewareInstancesWithOptionsType):FunctionMiddlewareInterface {

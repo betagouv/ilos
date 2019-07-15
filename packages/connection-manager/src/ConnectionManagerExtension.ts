@@ -1,16 +1,28 @@
-import { Types, Interfaces, Container } from '@ilos/core';
-import { ConfigInterfaceResolver, ConfigInterface } from '@ilos/config';
-
 import {
+  ContainerInterface,
+  ConfigInterfaceResolver,
+  ConfigInterface,
   ConnectionDeclarationType,
   ConnectionInterface,
   ConnectionConfigurationType,
-} from './ConnectionManagerInterfaces';
+  RegisterHookInterface,
+  InitHookInterface,
+  DestroyHookInterface,
+  NewableType,
+  ServiceContainerInterface,
+  extension,
+} from '@ilos/common';
 
+import { ConfigExtension } from '@ilos/config';
+
+@extension({
+  name: 'connections',
+  require: [
+    ConfigExtension,
+  ],
+})
 export class ConnectionManagerExtension
-  implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface, Interfaces.DestroyHookInterface {
-  static readonly key = 'connections';
-
+  implements RegisterHookInterface, InitHookInterface, DestroyHookInterface {
   protected config: ConfigInterface;
   protected connectionRegistry: Map<Symbol, ConnectionInterface> = new Map();
 
@@ -25,25 +37,29 @@ export class ConnectionManagerExtension
   /**
    * connectionConstructorSymbolRegistry, map used for registring, associate a Connection constructor with a Symbol
    * @protected
-   * @type {Map<Types.NewableType<ConnectionInterface>, Symbol>}
+   * @type {Map<NewableType<ConnectionInterface>, Symbol>}
    * @memberof ConnectionManagerExtension
    */
-  protected connectionConstructorSymbolRegistry: Map<Types.NewableType<ConnectionInterface>, Symbol> = new Map();
+  protected connectionConstructorSymbolRegistry: Map<NewableType<ConnectionInterface>, Symbol> = new Map();
 
   /**
-   * mappingRegistry, Map<Types.NewableType<ConnectionInterface>, Map<Types.NewableType<any>, instanceSymbolRegistry>>
+   * mappingRegistry, Map<NewableType<ConnectionInterface>, Map<NewableType<any>, instanceSymbolRegistry>>
    * @protected
-   * @type {Map<Types.NewableType<ConnectionInterface>, Symbol>}
+   * @type {Map<NewableType<ConnectionInterface>, Symbol>}
    * @memberof ConnectionManagerExtension
    */
   protected mappingRegistry: Map<
-    Types.NewableType<ConnectionInterface>,
-    Map<Types.NewableType<any>, Symbol>
+    NewableType<ConnectionInterface>,
+    Map<NewableType<any>, Symbol>
   > = new Map();
 
   constructor(protected readonly connections: ConnectionDeclarationType[]) {}
 
-  async register(serviceContainer: Interfaces.ServiceContainerInterface): Promise<void> {
+  async register(serviceContainer: ServiceContainerInterface): Promise<void> {
+    if (!serviceContainer.getContainer().isBound(ConfigInterfaceResolver)) {
+      throw new Error('Missing config provider');
+    }
+
     for (const serviceConnectionDeclaration of this.connections) {
       if (Array.isArray(serviceConnectionDeclaration)) {
         const [connectionConstructor, connectionConfigKey, serviceConstructors] = serviceConnectionDeclaration;
@@ -61,7 +77,7 @@ export class ConnectionManagerExtension
     this.setUpContainer(serviceContainer.getContainer());
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     this.config = container.get(ConfigInterfaceResolver);
     const connections = this.createAllConnections();
@@ -82,7 +98,7 @@ export class ConnectionManagerExtension
     }
   }
 
-  protected setUpContainer(container: Container.ContainerInterface) {
+  protected setUpContainer(container: ContainerInterface) {
     const connectionConstructorRegistry = this.connectionConstructorSymbolRegistry.entries();
     for (const [connectionConstructor, connectionSymbol] of connectionConstructorRegistry) {
       let requesterMapRegistry = new Map();
@@ -119,9 +135,9 @@ export class ConnectionManagerExtension
   }
 
   protected registerConnectionRequest(
-    connectionConstructor: Types.NewableType<ConnectionInterface>,
+    connectionConstructor: NewableType<ConnectionInterface>,
     connectionConfigKey: string,
-    serviceConstructors: Types.NewableType<any>[] = [],
+    serviceConstructors: NewableType<any>[] = [],
   ): void {
     const connectionConstructorSymbol = this.getConnectionConstructorSymbol(connectionConstructor);
     const instanceSymbol = this.getInstanceSymbol(
@@ -157,7 +173,7 @@ export class ConnectionManagerExtension
 
   protected getConnection(
     instanceToken: Symbol,
-    connectionConstructor: Types.NewableType<ConnectionInterface>,
+    connectionConstructor: NewableType<ConnectionInterface>,
   ): ConnectionInterface {
     if (!this.connectionRegistry.has(instanceToken)) {
       if (!this.instanceSymbolRegistry.has(instanceToken)) {
@@ -169,7 +185,7 @@ export class ConnectionManagerExtension
   }
 
   protected createConnection(
-    connectionConstructor: Types.NewableType<ConnectionInterface>,
+    connectionConstructor: NewableType<ConnectionInterface>,
     configKey: string | { [k: string]: any },
     instanceToken?: Symbol,
   ): ConnectionInterface {
@@ -187,7 +203,7 @@ export class ConnectionManagerExtension
     return this.config.get(configurationKey, {});
   }
 
-  protected getConnectionConstructorSymbol(connConstructor: Types.NewableType<ConnectionInterface>): Symbol {
+  protected getConnectionConstructorSymbol(connConstructor: NewableType<ConnectionInterface>): Symbol {
     if (!this.connectionConstructorSymbolRegistry.has(connConstructor)) {
       this.connectionConstructorSymbolRegistry.set(connConstructor, Symbol());
     }
@@ -208,8 +224,8 @@ export class ConnectionManagerExtension
   }
 
   protected setConstructorsMapping(
-    serviceConstructors: Types.NewableType<any>[],
-    connectionConstructor: Types.NewableType<ConnectionInterface>,
+    serviceConstructors: NewableType<any>[],
+    connectionConstructor: NewableType<ConnectionInterface>,
     instanceSymbol: Symbol,
   ) {
     if (!this.mappingRegistry.has(connectionConstructor)) {

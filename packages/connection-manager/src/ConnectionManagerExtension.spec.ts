@@ -1,11 +1,11 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
 
-import { Parents, Container, Extensions } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
+import { provider, serviceProvider, ConfigInterfaceResolver, ConnectionInterface, EnvInterfaceResolver } from '@ilos/common';
+import { ConfigExtension } from '@ilos/config';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
-import { ConnectionInterface } from './ConnectionManagerInterfaces';
 
 class FakeDriverOne implements ConnectionInterface {
   constructor(public config: object) {
@@ -61,7 +61,7 @@ class FakeDriverThree implements ConnectionInterface {
   }
 }
 
-@Container.provider()
+@provider()
 class FakeProviderOne {
   constructor(
     public driverOne: FakeDriverOne,
@@ -72,7 +72,7 @@ class FakeProviderOne {
   }
 }
 
-@Container.provider()
+@provider()
 class FakeProviderTwo {
   constructor(
     public driverOne: FakeDriverOne,
@@ -83,27 +83,29 @@ class FakeProviderTwo {
   }
 }
 
-@Container.provider()
-class FakeConfigProvider extends ConfigInterfaceResolver {
-  get(key: string) {
-    if (key === 'hello.world') {
-      return {
-        hello: 'world',
-      };
-    }
-    if (key === 'hello.you') {
-      return {
-        hello: 'you',
-      };
-    }
-    return;
+@provider({
+  identifier: EnvInterfaceResolver,
+})
+class FakeEnv extends EnvInterfaceResolver {
+  get(_k, fb) {
+    return fb;
   }
 }
 
-@Container.serviceProvider({
+@serviceProvider({
   providers: [
-    [ConfigInterfaceResolver, FakeConfigProvider],
+    FakeEnv,
   ],
+  config: {
+    hello: {
+      world: {
+        hello: 'world',
+      },
+      you: {
+        hello: 'you',
+      },
+    },
+  },
   connections: [
     {
       use: FakeDriverOne,
@@ -128,9 +130,10 @@ class FakeConfigProvider extends ConfigInterfaceResolver {
     [FakeDriverThree, 'hello.you'],
   ],
 })
-class ServiceProvider extends Parents.ServiceProvider {
+class ServiceProvider extends BaseServiceProvider {
   readonly extensions = [
     Extensions.Providers,
+    ConfigExtension,
     ConnectionManagerExtension,
   ];
 }

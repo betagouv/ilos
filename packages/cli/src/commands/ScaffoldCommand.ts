@@ -1,10 +1,8 @@
 import path from 'path';
 import fs from 'fs';
-import { Container } from '@ilos/core';
-import { TemplateInterfaceResolver } from '@ilos/template';
+import { command, TemplateInterfaceResolver, CommandOptionType } from '@ilos/common';
 
 import { Command } from '../parents/Command';
-import { CommandOptionType } from '../types/CommandOptionType';
 
 /**
  * Command to scaffold service, provider, handlers...
@@ -12,7 +10,7 @@ import { CommandOptionType } from '../types/CommandOptionType';
  * @class CallCommand
  * @extends {Command}
  */
-@Container.command()
+@command()
 export class ScaffoldCommand extends Command {
   public readonly signature: string = 'generate <type> [name]';
   public readonly description: string = 'Generate service, provider, or handler';

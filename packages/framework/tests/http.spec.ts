@@ -4,7 +4,13 @@ import axios from 'axios';
 
 import { HttpTransport } from '@ilos/transport-http';
 import { httpHandlerFactory } from '@ilos/handler-http';
-import { Container, Interfaces, Parents } from '@ilos/core';
+import { ServiceProvider } from '@ilos/core';
+import {
+  serviceProvider,
+  kernel as kernelDecorator,
+  TransportInterface,
+  KernelInterface,
+} from '@ilos/common';
 
 import { Kernel } from '../src/Kernel';
 
@@ -13,7 +19,7 @@ import { ServiceProvider as ParentStringServiceProvider } from './mock/StringSer
 
 // process.env.APP_REDIS_URL = 'redis://127.0.0.1:6379';
 
-@Container.serviceProvider({
+@serviceProvider({
   children: [
     ParentStringServiceProvider,
   ],
@@ -21,16 +27,16 @@ import { ServiceProvider as ParentStringServiceProvider } from './mock/StringSer
     httpHandlerFactory('math', 'http://127.0.0.1:8080'),
   ]
 })
-class StringServiceProvider extends Parents.ServiceProvider {}
+class StringServiceProvider extends ServiceProvider {}
 
-@Container.kernel({
+@kernelDecorator({
   children: [MathServiceProvider],
 })
 class MathKernel extends Kernel {
   name = 'math';
 }
 
-@Container.kernel({
+@kernelDecorator({
   children: [StringServiceProvider],
 })
 class StringKernel extends Kernel {
@@ -65,10 +71,10 @@ function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
     },
   });
 }
-let mathTransport: Interfaces.TransportInterface;
-let stringTransport: Interfaces.TransportInterface;
-let mathKernel: Interfaces.KernelInterface;
-let stringKernel: Interfaces.KernelInterface;
+let mathTransport: TransportInterface;
+let stringTransport: TransportInterface;
+let mathKernel: KernelInterface;
+let stringKernel: KernelInterface;
 
 describe('Http only integration', () => {
   before(async () => {

@@ -3,9 +3,23 @@ import { describe } from 'mocha';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-import { Container, Types, Interfaces, Parents, Extensions } from '@ilos/core';
+import {
+  Extensions,
+  Action,
+  ServiceProvider,
+  Kernel,
+} from '@ilos/core';
 import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
-import { EnvInterfaceResolver } from '@ilos/env';
+import {
+  handler,
+  provider,
+  serviceProvider,
+  kernel as kernelDecorator,
+  ParamsType,
+  ContextType,
+  ResultType,
+  EnvInterfaceResolver,
+} from '@ilos/common';
 
 import * as Bull from './helpers/bullFactory';
 import { QueueTransport } from './QueueTransport';
@@ -19,12 +33,12 @@ class QueueExtension extends ParentQueueExtension {
   }
 }
 
-@Container.handler({
+@handler({
   service: 'math',
   method: 'minus',
 })
-class BasicAction extends Parents.Action {
-  protected async handle(params: Types.ParamsType, context: Types.ContextType):Promise<Types.ResultType> {
+class BasicAction extends Action {
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     let count = 0;
     if ('minus' in params) {
       const { add } = params;
@@ -38,12 +52,12 @@ class BasicAction extends Parents.Action {
   }
 }
 
-@Container.handler({
+@handler({
   service: 'math',
   method: 'add',
 })
-class BasicTwoAction extends Parents.Action {
-  protected async handle(params: Types.ParamsType, context: Types.ContextType):Promise<Types.ResultType> {
+class BasicTwoAction extends Action {
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     let count = 0;
     if ('add' in params) {
       const { add } = params;
@@ -57,7 +71,7 @@ class BasicTwoAction extends Parents.Action {
   }
 }
 
-@Container.provider({
+@provider({
   identifier: EnvInterfaceResolver,
 })
 class FakeEnvProvider extends EnvInterfaceResolver {
@@ -66,7 +80,7 @@ class FakeEnvProvider extends EnvInterfaceResolver {
   }
 }
 
-@Container.serviceProvider({
+@serviceProvider({
   providers: [
     [EnvInterfaceResolver, FakeEnvProvider],
   ],
@@ -75,7 +89,7 @@ class FakeEnvProvider extends EnvInterfaceResolver {
   ],
   queues: ['math'],
 })
-class BasicServiceProvider extends Parents.ServiceProvider {
+class BasicServiceProvider extends ServiceProvider {
   extensions = [
     Extensions.Providers,
     Extensions.Handlers,
@@ -83,10 +97,10 @@ class BasicServiceProvider extends Parents.ServiceProvider {
   ];
 }
 
-@Container.kernel({
+@kernelDecorator({
   children: [BasicServiceProvider],
 })
-class BasicKernel extends Parents.Kernel {
+class BasicKernel extends Kernel {
 }
 
 

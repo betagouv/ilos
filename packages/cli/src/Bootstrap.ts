@@ -2,10 +2,10 @@
 import fs from 'fs';
 import path from 'path';
 
-import { Parents, Interfaces, Types, Container } from '@ilos/core';
+import { Kernel as BaseKernel } from '@ilos/core';
+import { kernel, BootstrapType, NewableType, TransportInterface, KernelInterface } from '@ilos/common';
 
 import { CliTransport } from './transports/CliTransport';
-import { BootstrapType } from './types';
 
 export class Bootstrap {
   constructor(
@@ -53,28 +53,28 @@ export class Bootstrap {
     return bootstrapPath;
   }
 
-  async start(command: string, ...opts: any[]): Promise<Interfaces.TransportInterface> {
+  async start(command: string, ...opts: any[]): Promise<TransportInterface> {
     const bootstrapObject = this.bootstrapObject;
 
     const kernelConstructor = bootstrapObject.kernel();
 
     const serviceProviders = 'serviceProviders' in bootstrapObject ? bootstrapObject.serviceProviders : [];
 
-    @Container.kernel({
+    @kernel({
       children: serviceProviders,
     })
     class Kernel extends kernelConstructor {}
 
-    const kernel = new Kernel();
-    await kernel.bootstrap();
+    const kernelInstance = new Kernel();
+    await kernelInstance.bootstrap();
 
     let transport;
 
     if (command !== 'cli' && (command in bootstrapObject.transport)) {
-      transport = bootstrapObject.transport[command](kernel);
+      transport = bootstrapObject.transport[command](kernelInstance);
       await transport.up(opts);
     } else {
-      transport = bootstrapObject.transport.cli(kernel);
+      transport = bootstrapObject.transport.cli(kernelInstance);
       await transport.up([
         null,
         null,
@@ -83,12 +83,12 @@ export class Bootstrap {
       ]);
     }
 
-    this.registerShutdownHook(kernel, transport);
+    this.registerShutdownHook(kernelInstance, transport);
 
     return transport;
   }
 
-  registerShutdownHook(kernel: Interfaces.KernelInterface, transport: Interfaces.TransportInterface) {
+  registerShutdownHook(kernelInstance: KernelInterface, transport: TransportInterface) {
     function handle() {
       setTimeout(
         () => {
@@ -99,7 +99,7 @@ export class Bootstrap {
 
       transport.down()
         .then(() => {
-          kernel.shutdown()
+          kernelInstance.shutdown()
             .then(() => {
               process.exit(0);
             })
@@ -139,11 +139,11 @@ export class Bootstrap {
 }
 
 export const bootstrap = new Bootstrap({
-  kernel(): Types.NewableType<Interfaces.KernelInterface> {
-    return class extends Parents.Kernel {};
+  kernel(): NewableType<KernelInterface> {
+    return class extends BaseKernel {};
   },
   serviceProviders: [],
   transport: {
-    cli(k: Interfaces.KernelInterface): Interfaces.TransportInterface { return new CliTransport(k); },
+    cli(k: KernelInterface): TransportInterface { return new CliTransport(k); },
   },
 });

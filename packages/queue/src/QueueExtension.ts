@@ -1,12 +1,25 @@
-import { Interfaces, Types } from '@ilos/core';
-import { EnvInterfaceResolver } from '@ilos/env';
+import {
+  EnvInterfaceResolver,
+  RegisterHookInterface,
+  InitHookInterface,
+  ServiceContainerInterface,
+  HandlerInterface,
+  NewableType,
+  QueueConfigType,
+  QueueTargetType,
+  extension,
+} from '@ilos/common';
+import { Extensions } from '@ilos/core';
+
 import { queueHandlerFactory } from '@ilos/handler-redis';
 
-import { QueueConfigType, QueueTargetType } from './QueueTypes';
-
-export class QueueExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
-  static readonly key: string = 'queues';
-
+@extension({
+  name: 'queues',
+  require: [
+    Extensions.Handlers,
+  ],
+})
+export class QueueExtension implements RegisterHookInterface, InitHookInterface {
   static get containerKey() {
     return Symbol.for('queues');
   }
@@ -19,7 +32,7 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
 
   }
 
-  register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  register(serviceContainer: ServiceContainerInterface) {
     const targets = this.filterTargets(
       [...(Array.isArray(this.config) ? this.config : this.config.for)],
       serviceContainer,
@@ -28,7 +41,7 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
     this.registerQueue(targets, serviceContainer);
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
     if (container.isBound(EnvInterfaceResolver)) {
       this.isWorker = container.get(EnvInterfaceResolver).get('APP_WORKER', false);
@@ -40,7 +53,7 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
   }
 
   protected isProcessable(
-    serviceContainer: Interfaces.ServiceContainerInterface,
+    serviceContainer: ServiceContainerInterface,
   ) {
     const rootContainer = serviceContainer.getContainer().root;
     const registredHandlers = Array.from(
@@ -63,7 +76,7 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
 
   protected filterTargets(
     targets: QueueTargetType[],
-    serviceContainer: Interfaces.ServiceContainerInterface,
+    serviceContainer: ServiceContainerInterface,
   ): QueueTargetType[] {
     const rootContainer = serviceContainer.getContainer().root;
 
@@ -82,7 +95,7 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
 
   protected registerQueue(
     targets: QueueTargetType[],
-    serviceContainer: Interfaces.ServiceContainerInterface,
+    serviceContainer: ServiceContainerInterface,
   ) {
     for (const target of targets) {
       serviceContainer
@@ -96,10 +109,10 @@ export class QueueExtension implements Interfaces.RegisterHookInterface, Interfa
 
   protected registerQueueHandlers(
     targets: QueueTargetType[],
-    serviceContainer: Interfaces.ServiceContainerInterface,
+    serviceContainer: ServiceContainerInterface,
   ) {
     for (const target of targets) {
-      const handler: Types.NewableType<Interfaces.HandlerInterface> = queueHandlerFactory(target);
+      const handler: NewableType<HandlerInterface> = queueHandlerFactory(target);
       serviceContainer.getContainer().setHandler(handler);
       serviceContainer.registerHooks(handler.prototype, handler);
     }

@@ -78,5 +78,8 @@
   },
   "peerDependencies": {
     "@ilos/core": "~0"
+  },
+  "dependencies": {
+    "@ilos/common": "^0.2.0"
   }
 }

@@ -2,7 +2,8 @@
 import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Parents, Container, Types, Interfaces } from '@ilos/core';
+import { Kernel } from '@ilos/core';
+import { command as commandDecorator, kernel as kernelDecorator, ResultType, NewableType, ExtensionInterface } from '@ilos/common';
 
 import { CommandExtension } from '../extensions/CommandExtension';
 import { Command } from '../parents/Command';
@@ -10,7 +11,7 @@ import { CommandRegistry } from '../providers/CommandRegistry';
 
 import { CliTransport } from './CliTransport';
 
-@Container.command()
+@commandDecorator()
 class BasicCommand extends Command {
   public readonly signature: string = 'hello <name>';
   public readonly options = [
@@ -20,7 +21,7 @@ class BasicCommand extends Command {
     },
   ];
 
-  public async call(name, options?):Promise<Types.ResultType> {
+  public async call(name, options?):Promise<ResultType> {
     if (options && 'hi' in options) {
       return `Hi ${name}`;
     }
@@ -28,11 +29,11 @@ class BasicCommand extends Command {
   }
 }
 
-@Container.kernel({
+@kernelDecorator({
   commands: [BasicCommand],
 })
-class BasicKernel extends Parents.Kernel {
-  readonly extensions: Interfaces.ExtensionStaticInterface[] = [
+class BasicKernel extends Kernel {
+  readonly extensions: NewableType<ExtensionInterface>[] = [
     CommandExtension,
   ];
 }

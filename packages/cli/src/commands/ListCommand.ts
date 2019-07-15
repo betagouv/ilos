@@ -1,7 +1,6 @@
-import { Container, Interfaces } from '@ilos/core';
+import { command, KernelInterfaceResolver, CommandOptionType } from '@ilos/common';
 
 import { Command } from '../parents/Command';
-import { CommandOptionType } from '../types/CommandOptionType';
 
 /**
  * Command that list RPC methods
@@ -9,14 +8,14 @@ import { CommandOptionType } from '../types/CommandOptionType';
  * @class CallCommand
  * @extends {Command}
  */
-@Container.command()
+@command()
 export class ListCommand extends Command {
   public readonly signature: string = 'list';
   public readonly description: string = 'List RPC methods';
   public readonly options: CommandOptionType[] = [];
 
   constructor(
-    private kernel: Interfaces.KernelInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
   ) {
     super();
   }

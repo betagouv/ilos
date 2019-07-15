@@ -1,21 +1,27 @@
-import { Interfaces, Container, Types, Exceptions } from '@ilos/core';
+import {
+  middleware,
+  ValidatorInterfaceResolver,
+  ParamsType,
+  ContextType,
+  ResultType,
+  MiddlewareInterface,
+  InvalidParamsException,
+} from '@ilos/common';
 
-import { ValidatorInterfaceResolver } from './ValidatorInterface';
-
-@Container.middleware()
-export class ValidatorMiddleware implements Interfaces.MiddlewareInterface {
+@middleware()
+export class ValidatorMiddleware implements MiddlewareInterface {
   constructor(private validator: ValidatorInterfaceResolver) {}
 
   async process(
-    params: Types.ParamsType,
-    context: Types.ContextType,
+    params: ParamsType,
+    context: ContextType,
     next: Function,
     schema: string,
-  ): Promise<Types.ResultType> {
+  ): Promise<ResultType> {
     try {
       await this.validator.validate(params, schema);
     } catch (e) {
-      throw new Exceptions.InvalidParamsException(e.message);
+      throw new InvalidParamsException(e.message);
     }
 
     return next(params, context);

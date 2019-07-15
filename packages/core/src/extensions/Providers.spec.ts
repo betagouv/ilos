@@ -1,10 +1,13 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
+import {
+  InitHookInterface,
+  provider,
+  serviceProvider,
+} from '@ilos/common';
 
-import { provider, serviceProvider } from '../container';
 import { Providers } from './Providers';
-import { ServiceContainer } from '../parents/ServiceContainer';
-import { InitHookInterface, DestroyHookInterface } from '../interfaces';
+import { ServiceContainer } from '../foundation/ServiceContainer';
 
 describe('Providers extension', () => {
   it('works', async () => {

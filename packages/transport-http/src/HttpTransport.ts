@@ -1,8 +1,12 @@
 import http from 'http';
 
-import { Interfaces, Types } from '@ilos/core';
-
 import { mapStatusCode } from './helpers/mapStatusCode';
+import {
+  TransportInterface,
+  KernelInterface,
+  RPCCallType,
+  RPCResponseType,
+} from '@ilos/common';
 
 /**
  * Http Transport
@@ -10,15 +14,15 @@ import { mapStatusCode } from './helpers/mapStatusCode';
  * @class HttpTransport
  * @implements {TransportInterface}
  */
-export class HttpTransport implements Interfaces.TransportInterface {
+export class HttpTransport implements TransportInterface {
   protected server: http.Server;
-  protected kernel: Interfaces.KernelInterface;
+  protected kernel: KernelInterface;
 
-  constructor(kernel: Interfaces.KernelInterface) {
+  constructor(kernel: KernelInterface) {
     this.kernel = kernel;
   }
 
-  getKernel(): Interfaces.KernelInterface {
+  getKernel(): KernelInterface {
     return this.kernel;
   }
 
@@ -76,11 +80,11 @@ export class HttpTransport implements Interfaces.TransportInterface {
             // throw new Error();
           }
 
-          const call: Types.RPCCallType = JSON.parse(data);
+          const call: RPCCallType = JSON.parse(data);
           // TODO : add channel ?
           this.kernel
             .handle(call)
-            .then((results: Types.RPCResponseType) => {
+            .then((results: RPCResponseType) => {
               res.statusCode = mapStatusCode(results);
               res.end(JSON.stringify(results));
             })

@@ -2,7 +2,7 @@
 import { Redis as RedisInterface } from 'ioredis';
 import Redis from 'ioredis';
 
-import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/connection-manager';
+import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/common';
 
 export class RedisConnection implements ConnectionInterface<RedisInterface> {
   protected client: RedisInterface;

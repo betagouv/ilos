@@ -1,7 +1,12 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
-import { Parents, Container, Extensions } from '@ilos/core';
-import { Config, ConfigInterfaceResolver } from '@ilos/config';
+import { Kernel as BaseKernel, Extensions } from '@ilos/core';
+import {
+  provider,
+  kernel as kernelDecorator,
+  ConfigInterfaceResolver,
+} from '@ilos/common';
+import { Config } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 
@@ -26,7 +31,7 @@ class User {
     });
   }
 }
-@Container.provider()
+@provider()
 class FakeConfig extends Config {
   async init() {
     // do nothing
@@ -39,7 +44,7 @@ class FakeConfig extends Config {
   }
 }
 
-@Container.provider()
+@provider()
 class UserRepository extends ParentRepository {
   constructor(
     protected config: ConfigInterfaceResolver,
@@ -79,7 +84,7 @@ class UserRepository extends ParentRepository {
   }
 }
 
-@Container.kernel({
+@kernelDecorator({
   connections: [
     [MongoConnection, 'mongo'],
   ],
@@ -88,7 +93,7 @@ class UserRepository extends ParentRepository {
     [ConfigInterfaceResolver, FakeConfig],
   ],
 })
-class Kernel extends Parents.Kernel {
+class Kernel extends BaseKernel {
   extensions = [Extensions.Providers, ConnectionManagerExtension];
 }
 

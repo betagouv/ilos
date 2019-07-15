@@ -1,39 +1,38 @@
-import { Types, Interfaces, Container } from '@ilos/core';
-import { TemplateInterfaceResolver, HandlebarsTemplate } from '@ilos/template';
+import {
+  NewableType,
+  ServiceContainerInterface,
+  InitHookInterface,
+  RegisterHookInterface,
+  CommandInterface,
+  extension,
+} from '@ilos/common';
 
 import { CommandRegistry } from '../providers/CommandRegistry';
-import { CommandInterface } from '../interfaces';
 
-export class CommandExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
-  static readonly key: string = 'commands';
-
+@extension({
+  name: 'commands',
+  autoload: true,
+})
+export class CommandExtension implements RegisterHookInterface, InitHookInterface {
   constructor(
-    readonly commands: Types.NewableType<CommandInterface>[],
+    readonly commands: NewableType<CommandInterface>[] = [],
   ) {
     //
   }
 
-  async register(serviceContainer: Interfaces.ServiceContainerInterface) {
-    const container = serviceContainer.getContainer();
-    if (!container.isBound(CommandRegistry)) {
-      container.bind(CommandRegistry).toSelf();
-    }
-
-    if (!container.isBound(TemplateInterfaceResolver)) {
-      container.bind(TemplateInterfaceResolver).to(HandlebarsTemplate);
-    }
+  async register(serviceContainer: ServiceContainerInterface) {
+    serviceContainer.ensureIsBound(CommandRegistry, CommandRegistry);
 
     for (const command of this.commands) {
-      container.bind(command).toSelf();
+      serviceContainer.bind(command);
     }
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
-    const container = serviceContainer.getContainer();
-    const commandRegistry = container.get<CommandRegistry>(CommandRegistry);
+  async init(serviceContainer: ServiceContainerInterface) {
+    const commandRegistry = serviceContainer.get<CommandRegistry>(CommandRegistry);
 
     for (const command of this.commands) {
-      const cmd = container.get(command);
+      const cmd = serviceContainer.get(command);
       this.registerCommand(commandRegistry, cmd);
     }
   }

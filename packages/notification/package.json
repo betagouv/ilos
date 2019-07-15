@@ -46,7 +46,8 @@
   "dependencies": {
     "@ilos/config": "^0.2.0",
     "@ilos/template": "^0.2.0",
-    "node-mailjet": "^3.3.1"
+    "node-mailjet": "^3.3.1",
+    "@ilos/common": "^0.2.0"
   },
   "peerDependencies": {
     "@ilos/core": "~0"

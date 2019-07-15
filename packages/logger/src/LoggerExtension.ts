@@ -1,32 +1,42 @@
 import * as winston from 'winston';
 
-import { Interfaces } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import {
+  LoggerInterfaceResolver,
+  ConfigInterfaceResolver,
+  RegisterHookInterface,
+  ServiceContainerInterface,
+  extension,
+  CONTAINER_LOGGER_KEY,
+} from '@ilos/common';
 
-import { Logger } from './Logger';
-import { LoggerInterfaceResolver } from './LoggerInterface';
+import { LoggerConfigurationType, loggerDefaultConfiguration, buildLoggerConfiguration } from './loggerDefaultConfiguration';
 
-export class LoggerExtension implements Interfaces.RegisterHookInterface {
-  static readonly key: string = 'logger';
-
-  constructor(protected configKey: string) {
+@extension({
+  name: 'logger',
+  autoload: true,
+})
+export class LoggerExtension implements RegisterHookInterface {
+  constructor(protected config: LoggerConfigurationType = loggerDefaultConfiguration) {
   }
 
-  async register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
-    const config = container.get(ConfigInterfaceResolver);
+    const env = 'APP_ENV' in process.env ? process.env.APP_ENV : 'NODE_ENV' in process.env ? process.env.NODE_ENV : 'default';
+
     if (!container.isBound(LoggerInterfaceResolver)) {
-      container
-        .bind(LoggerInterfaceResolver)
-        .toConstantValue(
-          new Logger(winston.createLogger(
-            config.get(this.configKey, {
-              transports: [
-                new winston.transports.Console(),
-              ],
-            }),
-          )),
-        );
+      container.bind(LoggerInterfaceResolver)
+        .toDynamicValue((context) => {
+          const contextedContainer = context.container;
+          if (!contextedContainer.isBound(ConfigInterfaceResolver)) {
+            throw new Error(`Unable to load config provider`);
+          }
+          return winston.createLogger(buildLoggerConfiguration(this.config, env));
+        });
+
+      if (container.isBound(CONTAINER_LOGGER_KEY)) {
+        container.unbind(CONTAINER_LOGGER_KEY);
+      }
+      container.bind(CONTAINER_LOGGER_KEY).toService(LoggerInterfaceResolver);
     }
   }
 }

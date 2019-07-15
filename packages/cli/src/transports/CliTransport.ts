@@ -1,4 +1,4 @@
-import { Interfaces } from '@ilos/core';
+import { KernelInterface, TransportInterface } from '@ilos/common';
 
 import { CommandRegistry } from '../providers/CommandRegistry';
 
@@ -8,10 +8,10 @@ import { CommandRegistry } from '../providers/CommandRegistry';
  * @class CliTransport
  * @implements {TransportInterface}
  */
-export class CliTransport implements Interfaces.TransportInterface {
-  kernel: Interfaces.KernelInterface;
+export class CliTransport implements TransportInterface {
+  kernel: KernelInterface;
 
-  constructor(kernel: Interfaces.KernelInterface) {
+  constructor(kernel: KernelInterface) {
     this.kernel = kernel;
   }
 
@@ -19,7 +19,7 @@ export class CliTransport implements Interfaces.TransportInterface {
     return;
   }
 
-  getKernel(): Interfaces.KernelInterface {
+  getKernel(): KernelInterface {
     return this.kernel;
   }
 

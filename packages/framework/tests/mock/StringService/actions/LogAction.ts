@@ -1,21 +1,25 @@
 import fs from 'fs';
-import { Container, Parents, Types, Exceptions } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
-import { CustomProvider } from '../../Providers/CustomProvider';
+import { Action } from '@ilos/core';
+import {
+  handler,
+  ConfigInterfaceResolver,
+  ParamsType,
+  ContextType,
+  ResultType,
+} from '@ilos/common';
 
-@Container.handler({
+@handler({
   service: 'string',
   method: 'log',
 })
-export class LogAction extends Parents.Action {
+export class LogAction extends Action {
   constructor(
-    public custom: CustomProvider,
     private config: ConfigInterfaceResolver,
   ) {
     super();
   }
 
-  protected async handle(params: Types.ParamsType, context: Types.ContextType):Promise<Types.ResultType> {
+  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
     if (context && !!context.channel && !!context.channel.transport && context.channel.transport === 'queue') {
       fs.writeFileSync(this.config.get('log.path'), JSON.stringify(params), { encoding:'utf8', flag:'w' });
     }

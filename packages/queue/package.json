@@ -78,6 +78,7 @@
   },
   "dependencies": {
     "@ilos/env": "^0.2.0",
+    "@ilos/common": "^0.2.0",
     "@ilos/handler-redis": "^0.2.0",
     "@ilos/connection-manager": "^0.2.0",
     "@ilos/connection-redis": "^0.2.0",

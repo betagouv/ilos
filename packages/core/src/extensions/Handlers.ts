@@ -1,9 +1,20 @@
-import { RegisterHookInterface } from '../interfaces/hooks/RegisterHookInterface';
-import { NewableType } from '../types';
-import { ServiceContainerInterface, HandlerInterface } from '../interfaces';
+import {
+  RegisterHookInterface,
+  NewableType,
+  ServiceContainerInterface,
+  HandlerInterface,
+  extension,
+} from '@ilos/common';
 
+import { Middlewares } from './Middlewares';
+
+@extension({
+  name: 'handlers',
+  require: [
+    Middlewares,
+  ],
+})
 export class Handlers implements RegisterHookInterface {
-  static readonly key = 'handlers';
   constructor(protected readonly handlers: NewableType<HandlerInterface>[]) {
     //
   }

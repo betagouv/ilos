@@ -1,12 +1,15 @@
-import { NewableType } from '../types';
 import {
+  NewableType,
   MiddlewareInterface,
   ServiceContainerInterface,
   RegisterHookInterface,
-} from '../interfaces';
+  extension,
+} from '@ilos/common';
 
+@extension({
+  name: 'middlewares',
+})
 export class Middlewares implements RegisterHookInterface {
-  static readonly key = 'middlewares';
   constructor(protected readonly middlewares: (NewableType<MiddlewareInterface> | [string, NewableType<MiddlewareInterface>])[]) {
     //
   }

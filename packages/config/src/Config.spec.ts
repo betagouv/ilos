@@ -3,7 +3,7 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import mockFs from 'mock-fs';
 
-import { EnvInterfaceResolver } from '@ilos/env';
+import { EnvInterfaceResolver } from '@ilos/common';
 
 import { Config } from './Config';
 

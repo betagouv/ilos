@@ -3,11 +3,9 @@ import path from 'path';
 import fs from 'fs';
 import Handlebars from 'handlebars';
 
-import { Container } from '@ilos/core';
+import { provider, TemplateInterface } from '@ilos/common';
 
-import { TemplateInterface } from './TemplateInterface';
-
-@Container.provider()
+@provider()
 export class HandlebarsTemplate implements TemplateInterface {
   protected templates: Map<string, Function> = new Map();
   protected metadata: Map<string, any> = new Map();

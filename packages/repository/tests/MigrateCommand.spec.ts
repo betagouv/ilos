@@ -1,8 +1,16 @@
 // tslint:disable max-classes-per-file
 import { expect } from 'chai';
 
-import { Parents, Container, Interfaces, Extensions } from '@ilos/core';
-import { Config, ConfigInterfaceResolver } from '@ilos/config';
+import { Kernel as BaseKernel, Extensions } from '@ilos/core';
+import {
+  ConfigInterfaceResolver,
+  KernelInterfaceResolver,
+  provider,
+  kernel as kernelDecorator,
+  injectable,
+  command,
+} from '@ilos/common';
+import { Config } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
 
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
@@ -27,7 +35,7 @@ const config = {
   }
 };
 
-@Container.provider()
+@provider()
 class FakeConfig extends Config {
   async init() {
     // do nothing
@@ -40,7 +48,7 @@ class FakeConfig extends Config {
   }
 }
 
-@Container.kernel({
+@kernelDecorator({
   providers: [
     [ConfigInterfaceResolver, FakeConfig],
   ],
@@ -48,13 +56,13 @@ class FakeConfig extends Config {
     [MongoConnection, 'mongo'],
   ],
 })
-class Kernel extends Parents.Kernel {
+class Kernel extends BaseKernel {
   extensions = [Extensions.Providers, ConnectionManagerExtension];
 }
 
 const kernel = new Kernel();
 
-@Container.injectable()
+@injectable()
 class FirstMigration extends ParentMigration {
   readonly signature = '20190527.FirstMigration';
   static signature = '20190527.FirstMigration';
@@ -74,7 +82,7 @@ class FirstMigration extends ParentMigration {
   }
 }
 
-@Container.injectable()
+@injectable()
 class SecondMigration extends ParentMigration {
   readonly signature = '20190527.SecondMigration';
   static signature = '20190527.SecondMigration';
@@ -96,13 +104,13 @@ class SecondMigration extends ParentMigration {
   }
 }
 
-@Container.command()
+@command()
 class MigrateCommand extends ParentMigrateCommand {
   entity = 'test';
   migrations = [FirstMigration, SecondMigration];
 
   constructor(
-    protected kernel: Interfaces.KernelInterfaceResolver,
+    protected kernel: KernelInterfaceResolver,
     protected db: MongoConnection,
     protected config: ConfigInterfaceResolver,
   ) {
