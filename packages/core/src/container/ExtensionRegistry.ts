@@ -63,7 +63,11 @@ export class ExtensionRegistry {
       if (!config.override) {
         return;
       }
-      this.container.unbind(config.key);
+      try {
+        this.container.unbind(config.key);
+      } catch {
+        // do nothing, identifier is bound on parent
+      }
       this.registry.delete(config.key);
     }
 
