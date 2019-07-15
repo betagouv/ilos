@@ -2,7 +2,13 @@
 import { expect } from 'chai';
 
 import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
-import { provider, serviceProvider, ConfigInterfaceResolver, ConnectionInterface, EnvInterfaceResolver } from '@ilos/common';
+import {
+  provider,
+  serviceProvider,
+  ConfigInterfaceResolver,
+  ConnectionInterface,
+  EnvInterfaceResolver,
+} from '@ilos/common';
 import { ConfigExtension } from '@ilos/config';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
@@ -63,22 +69,14 @@ class FakeDriverThree implements ConnectionInterface {
 
 @provider()
 class FakeProviderOne {
-  constructor(
-    public driverOne: FakeDriverOne,
-    public driverTwo: FakeDriverTwo,
-    public driverThree: FakeDriverThree,
-  ) {
+  constructor(public driverOne: FakeDriverOne, public driverTwo: FakeDriverTwo, public driverThree: FakeDriverThree) {
     //
   }
 }
 
 @provider()
 class FakeProviderTwo {
-  constructor(
-    public driverOne: FakeDriverOne,
-    public driverTwo: FakeDriverTwo,
-    public driverThree: FakeDriverThree,
-  ) {
+  constructor(public driverOne: FakeDriverOne, public driverTwo: FakeDriverTwo, public driverThree: FakeDriverThree) {
     //
   }
 }
@@ -93,9 +91,7 @@ class FakeEnv extends EnvInterfaceResolver {
 }
 
 @serviceProvider({
-  providers: [
-    FakeEnv,
-  ],
+  providers: [FakeEnv],
   config: {
     hello: {
       world: {
@@ -131,11 +127,7 @@ class FakeEnv extends EnvInterfaceResolver {
   ],
 })
 class ServiceProvider extends BaseServiceProvider {
-  readonly extensions = [
-    Extensions.Providers,
-    ConfigExtension,
-    ConnectionManagerExtension,
-  ];
+  readonly extensions = [Extensions.Providers, ConfigExtension, ConnectionManagerExtension];
 }
 
 describe('Connection manager', () => {

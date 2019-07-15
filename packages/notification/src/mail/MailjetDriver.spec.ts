@@ -4,6 +4,7 @@ import nock from 'nock';
 import chaiNock from 'chai-nock';
 
 import { ConfigInterfaceResolver, TemplateInterfaceResolver } from '@ilos/common';
+
 import { Notification } from '../Notification';
 
 chai.use(chaiNock);
@@ -26,7 +27,7 @@ class FakeConfig extends ConfigInterfaceResolver {
       mail: {
         debug: false,
         driver: 'mailjet',
-        driverOptions: { },
+        driverOptions: {},
         sendOptions: {
           template: 123456,
         },

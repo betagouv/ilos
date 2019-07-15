@@ -18,9 +18,7 @@ import { Env } from '.';
 export class EnvExtension implements RegisterHookInterface, InitHookInterface {
   protected toBeInit = false;
 
-  constructor(
-    protected readonly path?: string,
-  ) {
+  constructor(protected readonly path?: string) {
     //
   }
 

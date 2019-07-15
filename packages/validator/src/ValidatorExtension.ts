@@ -1,9 +1,4 @@
-import {
-  RegisterHookInterface,
-  ServiceContainerInterface,
-  ValidatorInterfaceResolver,
-  extension,
-} from '@ilos/common';
+import { RegisterHookInterface, ServiceContainerInterface, ValidatorInterfaceResolver, extension } from '@ilos/common';
 
 import { AjvValidator } from './AjvValidator';
 
@@ -15,10 +10,12 @@ export class ValidatorExtension implements RegisterHookInterface {
   protected keywords: any[] = [];
 
   constructor(
-    config: [string, any][] | {
-      validators?: [string, any][],
-      keywords?: any[],
-    },
+    config:
+      | [string, any][]
+      | {
+        validators?: [string, any][];
+        keywords?: any[];
+      },
   ) {
     if (Array.isArray(config)) {
       this.validators = config;

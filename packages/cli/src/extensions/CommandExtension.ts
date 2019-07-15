@@ -14,9 +14,7 @@ import { CommandRegistry } from '../providers/CommandRegistry';
   autoload: true,
 })
 export class CommandExtension implements RegisterHookInterface, InitHookInterface {
-  constructor(
-    readonly commands: NewableType<CommandInterface>[] = [],
-  ) {
+  constructor(readonly commands: NewableType<CommandInterface>[] = []) {
     //
   }
 
@@ -48,7 +46,7 @@ export class CommandExtension implements RegisterHookInterface, InitHookInterfac
       if (typeof coerce === 'function') {
         args.push(coerce);
       }
-      if (typeof def !== 'undefined') { //tslint:disable-line
+      if (def !== undefined) {
         args.push(def);
       }
       command.option(signature, description, ...args);

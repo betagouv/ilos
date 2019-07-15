@@ -11,12 +11,10 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
   constructor(config: ConnectionConfigurationType) {
     if (!!config.connectionString) {
       const { connectionString, ...other } = config;
-      this.client = new Redis(
-        connectionString,
-        {
-          ...other,
-          lazyConnect: true,
-        });
+      this.client = new Redis(connectionString, {
+        ...other,
+        lazyConnect: true,
+      });
     } else {
       this.client = new Redis({
         ...config,

@@ -34,7 +34,7 @@ describe('Queue handler', () => {
     sandbox.stub(Bull, 'bullFactory').callsFake(
       // @ts-ignore
       () => ({
-      // @ts-ignore
+        // @ts-ignore
         async add(data) {
           if (!!data.method && data.method !== 'nope') {
             return data;
@@ -44,7 +44,8 @@ describe('Queue handler', () => {
         async isReady() {
           return this;
         },
-      }));
+      }),
+    );
   });
   afterEach(() => {
     sandbox.restore();
@@ -78,4 +79,3 @@ describe('Queue handler', () => {
     );
   });
 });
-

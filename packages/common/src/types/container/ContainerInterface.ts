@@ -1,10 +1,7 @@
-/* tslint:disable:no-empty-interface */
 import { interfaces } from 'inversify';
+
 import { NewableType } from '../shared';
-import {
-  HandlerInterface,
-  HandlerConfigType,
-} from '../handler';
+import { HandlerInterface, HandlerConfigType } from '../handler';
 
 export interface ContainerInterface extends interfaces.Container {
   root: ContainerInterface;

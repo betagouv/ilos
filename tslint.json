@@ -1,6 +1,7 @@
 {
   "extends": ["tslint-config-airbnb", "tslint-eslint-rules", "tslint-import-group-ordering"],
   "rules": {
+    "align": false,
     "arrow-return-shorthand": true,
     "callable-types": true,
     "class-name": true,
@@ -62,6 +63,14 @@
     "array-type": [true, "array"],
     "encoding": true,
     "new-parens": true,
+    "space-before-function-paren": [
+      true,
+      {
+        "anonymous": "never",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
     "no-irregular-whitespace": true,
     "no-redundant-jsdoc": false,
     "no-unnecessary-callback-wrapper": true,
@@ -121,7 +130,7 @@
       }
     ],
     "no-parameter-reassignment": true,
-    "max-line-length": [true, 140],
+    "max-line-length": [true, 120],
     "no-return-await": true,
     "promise-function-async": true,
     "no-implicit-dependencies": [true, "dev", ["~"]],

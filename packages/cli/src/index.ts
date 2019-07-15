@@ -4,10 +4,4 @@ import { CommandRegistry } from './providers';
 import { CommandExtension } from './extensions/CommandExtension';
 import { CliTransport } from './transports/CliTransport';
 
-export {
-  CliTransport,
-  CommandRegistry,
-  Command,
-  CommandExtension,
-  Commands,
-};
+export { CliTransport, CommandRegistry, Command, CommandExtension, Commands };

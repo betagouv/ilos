@@ -4,13 +4,7 @@ import path from 'path';
 import jsYaml from 'js-yaml';
 import { camelCase, get, set, has } from 'lodash';
 
-import {
-  provider,
-  EnvInterfaceResolver,
-  ConfigInterface,
-  ConfigInterfaceResolver,
-  HasLogger,
-} from '@ilos/common';
+import { provider, EnvInterfaceResolver, ConfigInterface, ConfigInterfaceResolver, HasLogger } from '@ilos/common';
 
 /**
  * Config provider

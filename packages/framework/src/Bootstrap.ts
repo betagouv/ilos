@@ -132,7 +132,7 @@ export class Bootstrap {
     function handle() {
       setTimeout(() => {
         process.exit(0);
-      },         5000);
+      }, 5000);
 
       transport
         .down()

@@ -11,8 +11,7 @@ export class HandlebarsTemplate implements TemplateInterface {
   protected metadata: Map<string, any> = new Map();
   protected hbs: typeof Handlebars;
 
-  constructor(
-  ) {
+  constructor() {
     this.hbs = Handlebars.create();
   }
 

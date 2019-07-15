@@ -12,7 +12,7 @@ export abstract class Command implements CommandInterface {
   public readonly description: string;
   public readonly options: CommandOptionType[] = [];
 
-  public async call(...args: any[]):Promise<ResultType> {
+  public async call(...args: any[]): Promise<ResultType> {
     throw new Error('No implementation found');
   }
 }

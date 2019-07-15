@@ -1,8 +1,4 @@
-import {
-  IdentifierType,
-  HookInterface,
-  ServiceContainerInterface,
-} from '@ilos/common';
+import { IdentifierType, HookInterface, ServiceContainerInterface } from '@ilos/common';
 
 import { hasInterface } from '../helpers/types/hasInterface';
 
@@ -10,23 +6,15 @@ export class HookRegistry<T> {
   protected registry: Set<HookInterface> = new Set();
   protected dispatched = false;
 
-  constructor(
-    protected method: string,
-    protected authorizeIdentifierLookup = true,
-  ) {
+  constructor(protected method: string, protected authorizeIdentifierLookup = true) {
     //
   }
 
   public register(hooker: object, identifier?: IdentifierType): void {
-    if (
-      hasInterface<T>(hooker, this.method)
-      && (
-        !identifier
-        || this.authorizeIdentifierLookup
-      )
-    ) {
+    if (hasInterface<T>(hooker, this.method) && (!identifier || this.authorizeIdentifierLookup)) {
       let hook = async (container: ServiceContainerInterface) => hooker[this.method](container);
       if (identifier) {
+        // prettier-ignore
         hook = async (container: ServiceContainerInterface) =>
           container
             .getContainer()

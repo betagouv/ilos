@@ -12,7 +12,6 @@ export interface TemplateMailInterface {
   opts: any;
 }
 
-
 export interface MailDriverInterface {
-  send(mail: MailInterface, opts?: { [key:string]: any}): Promise<void>;
+  send(mail: MailInterface, opts?: { [key: string]: any }): Promise<void>;
 }

@@ -35,4 +35,3 @@ describe('Env', () => {
     expect(env.get('HELLO2', 'world')).to.equal('world');
   });
 });
-

@@ -1,4 +1,5 @@
 import nodeMailjet from 'node-mailjet';
+
 import { MailDriverInterface, MailInterface } from '@ilos/common';
 
 interface MailjetConnectOptionsInterface {
@@ -12,15 +13,15 @@ export class MailjetDriver implements MailDriverInterface {
   constructor(
     generalConfig: {
       from: {
-        email: string,
-        name: string,
-      },
-      defaultSubject: string,
+        email: string;
+        name: string;
+      };
+      defaultSubject: string;
     },
     driverConfig: {
-      public: string,
-      private: string,
-      options: MailjetConnectOptionsInterface,
+      public: string;
+      private: string;
+      options: MailjetConnectOptionsInterface;
     },
   ) {
     this.config = generalConfig;
@@ -28,13 +29,8 @@ export class MailjetDriver implements MailDriverInterface {
     this.mj = nodeMailjet.connect(driverConfig.public, driverConfig.private, connectOptions);
   }
 
-  async send(mail: MailInterface, opts: { [key:string]: any} = {}): Promise<void> {
-    const {
-      email,
-      fullname,
-      subject,
-      content,
-    } = mail;
+  async send(mail: MailInterface, opts: { [key: string]: any } = {}): Promise<void> {
+    const { email, fullname, subject, content } = mail;
 
     let message: any = {
       From: {
@@ -63,9 +59,7 @@ export class MailjetDriver implements MailDriverInterface {
     }
 
     this.mj.post('send').request({
-      Messages: [
-        message,
-      ],
+      Messages: [message],
     });
   }
 }

@@ -1,15 +1,27 @@
 import { expect } from 'chai';
-import { injectable, extension, serviceProvider, extensionConfigurationMetadataKey, InitHookInterface, ServiceContainerInterface, ExtensionInterface, NewableType } from '@ilos/common';
+import {
+  injectable,
+  extension,
+  serviceProvider,
+  extensionConfigurationMetadataKey,
+  InitHookInterface,
+  ServiceContainerInterface,
+  ExtensionInterface,
+  NewableType,
+} from '@ilos/common';
 
 import { ExtensionRegistry } from './ExtensionRegistry';
 import { ServiceContainer } from '../foundation/ServiceContainer';
 
 @injectable()
 class Registry {
-  public db: Set<{ config: any, data: any }> = new Set();
+  public db: Set<{ config: any; data: any }> = new Set();
 }
 
-function createExtensionRegistry(extensions: NewableType<ExtensionInterface>[], config): [ExtensionRegistry, ServiceContainerInterface&InitHookInterface] {
+function createExtensionRegistry(
+  extensions: NewableType<ExtensionInterface>[],
+  config,
+): [ExtensionRegistry, ServiceContainerInterface & InitHookInterface] {
   @serviceProvider(config)
   class CustomServiceContainer extends ServiceContainer {}
 
@@ -24,15 +36,15 @@ function createExtensionRegistry(extensions: NewableType<ExtensionInterface>[], 
 function createExtension(config): NewableType<ExtensionInterface> {
   @extension(config)
   class CustomExtension {
-    constructor(
-      public data,
-    ) {
+    constructor(public data) {
       //
     }
     init(serviceContainer: ServiceContainerInterface) {
       const registry = serviceContainer.get<Registry>('registry');
       registry.db.add({
-        config: Reflect.getMetadata(extensionConfigurationMetadataKey, this.constructor), data: this.data });
+        config: Reflect.getMetadata(extensionConfigurationMetadataKey, this.constructor),
+        data: this.data,
+      });
     }
   }
   return CustomExtension;
@@ -94,7 +106,7 @@ describe('Extension registry', () => {
     const extensions = extensionRegistry.get();
     expect(extensions).to.be.an('array');
     expect(extensions.length).to.eq(2);
-    expect(extensions.find(cfg => cfg.name === 'world').autoload).to.be.eq(true);
+    expect(extensions.find((cfg) => cfg.name === 'world').autoload).to.be.eq(true);
   });
 
   it('get ordered', async () => {
@@ -155,19 +167,9 @@ describe('Extension registry', () => {
       require: [ext4],
     });
 
-    const [extensionRegistry] = createExtensionRegistry(
-      [
-        ext1,
-        ext2,
-        ext3,
-        ext4,
-        ext5,
-        ext6,
-      ],
-      {
-        hello: true,
-      }
-    );
+    const [extensionRegistry] = createExtensionRegistry([ext1, ext2, ext3, ext4, ext5, ext6], {
+      hello: true,
+    });
 
     const extensions = extensionRegistry.get();
     expect(extensions).to.be.an('array');
@@ -209,6 +211,6 @@ describe('Extension registry', () => {
     expect(registry[0].config.name).to.be.eq('hello');
     expect(registry[0].data).to.be.eq(true);
     expect(registry[1].config.name).to.be.eq('world');
-    expect(registry[1].data).to.be.eq(undefined);    
+    expect(registry[1].data).to.be.eq(undefined);
   });
-})
+});

@@ -17,7 +17,9 @@ import { Config } from './Config';
   autoload: true,
 })
 export class ConfigExtension implements RegisterHookInterface, InitHookInterface {
-  constructor(protected readonly params: string | { workingPath: string; configDir: string } | { [k: string]: any } = {}) {}
+  constructor(
+    protected readonly params: string | { workingPath: string; configDir: string } | { [k: string]: any } = {},
+  ) {}
 
   async register(serviceContainer: ServiceContainerInterface) {
     serviceContainer.bind(Config);
