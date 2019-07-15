@@ -1,0 +1,66 @@
+{
+  "name": "@ilos/common",
+  "version": "0.2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "Apache-2.0",
+  "author": "Nicolas Mérigot <nicolas@belenio.fr>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/betagouv/ilos.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "exit 0",
+    "test:integration": "exit 0",
+    "watch": "tsc -w",
+    "lint": "tslint -c ../../tslint.json -p tsconfig.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "ilos-cli": "./dist/cli.js"
+  },
+  "mocha": {
+    "require": [
+      "ts-node/register",
+      "tsconfig-paths/register"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/**/*.spec.ts",
+      "src/exceptions/**",
+      "src/**/index.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "dependencies": {
+    "inversify": "^5.0.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^11.13.7",
+    "ts-node": "^8.1.0",
+    "tsconfig-paths": "^3.8.0",
+    "tslint": "^5.15.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-eslint-rules": "^5.4.0",
+    "tslint-import-group-ordering": "^2.1.1",
+    "typescript": "^3.4.3"
+  }
+}

@@ -1,7 +1,7 @@
-import { Types } from '@ilos/core';
+import { RPCResponseType } from '@ilos/common';
 
 // https://www.jsonrpc.org/historical/json-rpc-over-http.html#response-codes
-export function mapStatusCode(results: Types.RPCResponseType): number {
+export function mapStatusCode(results: RPCResponseType): number {
   // Notifications have no results and must return a 204 No Content
   if (!results) {
     return 204;

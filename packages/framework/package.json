@@ -79,11 +79,15 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
+    "@ilos/common": "^0.2.0",
     "@ilos/cli": "^0.2.0",
     "@ilos/config": "^0.2.0",
     "@ilos/core": "^0.2.0",
     "@ilos/queue": "^0.2.0",
     "@ilos/env": "^0.2.0",
+    "@ilos/notification": "^0.2.0",
+    "@ilos/template": "^0.2.0",
+    "@ilos/validator": "^0.2.0",
     "@ilos/logger": "^0.2.0",
     "@ilos/connection-manager": "^0.2.0",
     "@ilos/transport-http": "^0.2.0",

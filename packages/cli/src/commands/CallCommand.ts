@@ -1,6 +1,5 @@
-import { Container, Interfaces, Types } from '@ilos/core';
+import { command, KernelInterfaceResolver, ResultType, CommandOptionType } from '@ilos/common';
 
-import { CommandOptionType } from '../types';
 import { Command } from '../parents/Command';
 
 /**
@@ -9,7 +8,7 @@ import { Command } from '../parents/Command';
  * @class CallCommand
  * @extends {Command}
  */
-@Container.command()
+@command()
 export class CallCommand extends Command {
   public readonly signature: string = 'call <method>';
   public readonly description: string = 'Make an RPC call';
@@ -27,12 +26,12 @@ export class CallCommand extends Command {
   ];
 
   constructor(
-    private kernel: Interfaces.KernelInterfaceResolver,
+    private kernel: KernelInterfaceResolver,
   ) {
     super();
   }
 
-  public async call(method, options?):Promise<Types.ResultType> {
+  public async call(method, options?):Promise<ResultType> {
     try {
       const call = {
         method,

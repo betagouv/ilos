@@ -23,9 +23,6 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "bin": {
-    "ilos-cli": "./dist/cli.js"
-  },
   "mocha": {
     "require": [
       "ts-node/register",
@@ -38,10 +35,8 @@
     ],
     "exclude": [
       "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**",
-      "src/**/index.ts"
+      "src/**/index.ts",
+      "src/types/**"
     ],
     "extension": [
       ".ts"
@@ -81,7 +76,8 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "commander": "^2.20.0"
+    "commander": "^2.20.0",
+    "@ilos/common": "^0.2.0"
   },
   "peerDependencies": {
     "@ilos/core": "~0",

@@ -77,7 +77,9 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "dotenv": "^7.0.0"
+    "dotenv": "^7.0.0",
+    "@ilos/logger": "^0.2.0",
+    "@ilos/common": "^0.2.0"
   },
   "peerDependencies": {
     "@ilos/core": "~0"

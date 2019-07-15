@@ -42,9 +42,6 @@
     "extension": [
       ".ts"
     ],
-    "require": [
-      "ts-node/register"
-    ],
     "reporter": [
       "text-summary"
     ],
@@ -78,6 +75,7 @@
   },
   "dependencies": {
     "@ilos/config": "^0.2.0",
+    "@ilos/common": "^0.2.0",
     "winston": "^3.2.1"
   },
   "peerDependencies": {

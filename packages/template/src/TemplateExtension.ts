@@ -1,34 +1,46 @@
-import { Interfaces } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import {
+  ConfigInterfaceResolver,
+  RegisterHookInterface,
+  InitHookInterface,
+  ServiceContainerInterface,
+  TemplateInterfaceResolver,
+  extension,
+} from '@ilos/common';
+import { ConfigExtension } from '@ilos/config';
 
-import { TemplateInterfaceResolver } from './TemplateInterface';
 import { HandlebarsTemplate } from './HandlebarsTemplate';
 
-export class TemplateExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
-  static readonly key:string = 'template';
-
+@extension({
+  name: 'template',
+  require: [
+    ConfigExtension,
+  ],
+  autoload: true,
+})
+export class TemplateExtension implements RegisterHookInterface, InitHookInterface {
   constructor(protected config?: {
     path: string,
     meta: string | { [k:string]: any },
   }) {
-
+    //
   }
 
-  register(serviceContainer: Interfaces.ServiceContainerInterface) {
+  register(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
-
-    if (!container.isBound(ConfigInterfaceResolver)) {
-      throw new Error('Unable to find config provider');
-    }
 
     container.bind(HandlebarsTemplate).toSelf();
     container.bind(TemplateInterfaceResolver).toService(HandlebarsTemplate);
     serviceContainer.registerHooks(HandlebarsTemplate.prototype, TemplateInterfaceResolver);
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     if (this.config) {
       const container = serviceContainer.getContainer();
+
+      if (!container.isBound(ConfigInterfaceResolver)) {
+        throw new Error('Unable to find config provider');
+      }
+
       container
         .get(TemplateInterfaceResolver)
         .loadTemplatesFromDirectory(

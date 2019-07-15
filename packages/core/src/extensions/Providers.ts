@@ -1,12 +1,17 @@
-import { RegisterHookInterface } from '../interfaces/hooks/RegisterHookInterface';
-import { ServiceIdentifier } from '../container';
-import { NewableType } from '../types';
-import { ServiceContainerInterface } from '../interfaces';
+import {
+  RegisterHookInterface,
+  NewableType,
+  ServiceContainerInterface,
+  IdentifierType,
+  extension,
+} from '@ilos/common';
 
+@extension({
+  name: 'providers',
+  // TODO add require: ['*'] in order to process this extension last
+})
 export class Providers implements RegisterHookInterface {
-  static readonly key = 'providers';
-
-  constructor(protected readonly alias: (NewableType<any> | [ServiceIdentifier, NewableType<any>])[]) {
+  constructor(protected readonly alias: (NewableType<any> | [IdentifierType, NewableType<any>])[]) {
     //
   }
 
@@ -24,7 +29,7 @@ export class Providers implements RegisterHookInterface {
         container.bind(target).toSelf();
         container.bind(identifier).toService(target);
       } else {
-        const customIdentifier = <ServiceIdentifier | ServiceIdentifier[]>Reflect.getMetadata('extension:identifier', def);
+        const customIdentifier = <IdentifierType | IdentifierType[]>Reflect.getMetadata(Symbol.for('extension:identifier'), def);
         target = def;
         container.bind(target).toSelf();
         if (customIdentifier) {

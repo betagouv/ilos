@@ -78,7 +78,8 @@
   },
   "dependencies": {
     "handlebars": "^4.1.2",
-    "@ilos/config": "^0.2.0"
+    "@ilos/config": "^0.2.0",
+    "@ilos/common": "^0.2.0"
   },
   "peerDependencies": {
     "@ilos/core": "^0.2.0"

@@ -8,7 +8,13 @@ import path from 'path';
 import { HttpTransport } from '@ilos/transport-http';
 import { QueueTransport } from '@ilos/transport-redis';
 
-import { Container, Interfaces } from '@ilos/core';
+import {
+  TransportInterface,
+  KernelInterface,
+  serviceProvider,
+  kernel as kernelDecorator,
+  handler,
+} from '@ilos/common';
 
 import { Kernel } from '../src/Kernel';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
@@ -20,7 +26,7 @@ process.env.APP_LOG_PATH = logPath;
 
 const redisUrl = process.env.APP_REDIS_URL;
 
-@Container.serviceProvider({
+@serviceProvider({
   config: {
     redis: {
       connectionString: process.env.APP_REDIS_URL,
@@ -33,7 +39,7 @@ const redisUrl = process.env.APP_REDIS_URL;
 })
 class StringServiceProvider extends ParentStringServiceProvider {}
 
-@Container.kernel({
+@kernelDecorator({
   children: [StringServiceProvider],
 })
 class StringKernel extends Kernel {
@@ -55,10 +61,10 @@ function makeRPCNotify(port: number, req: { method: string; params?: any }) {
   });
 }
 
-let stringTransport: Interfaces.TransportInterface;
-let queueTransport: Interfaces.TransportInterface;
-let stringCallerKernel: Interfaces.KernelInterface;
-let stringCalleeKernel: Interfaces.KernelInterface;
+let stringTransport: TransportInterface;
+let queueTransport: TransportInterface;
+let stringCallerKernel: KernelInterface;
+let stringCalleeKernel: KernelInterface;
 
 describe('Queue integration', () => {
   before(async () => {
@@ -98,7 +104,7 @@ describe('Queue integration', () => {
 // // tslint:disable max-classes-per-file
 // import { expect } from 'chai';
 
-// import { Parents, Container, Interfaces, Extensions } from '@ilos/core';
+// import { Kernel, Actions, Container, Extensions } from '@ilos/core';
 // import { ConfigExtension } from '@ilos/config';
 // import { RedisConnection } from '@ilos/connection-redis';
 
@@ -116,13 +122,13 @@ describe('Queue integration', () => {
 // };
 
 // function createKernel(done, testParams) {
-//   @Container.handler({
+//   handler({
 //     service: 'hello',
 //     method: 'world',
 //   })
-//   class HelloWorldAction extends Parents.Action {
+//   class HelloWorldAction extends Action {
 //     constructor(
-//       protected kernel: Interfaces.KernelInterfaceResolver,
+//       protected kernel: KernelInterfaceResolver,
 //     ) {
 //       super();
 //     }
@@ -135,11 +141,11 @@ describe('Queue integration', () => {
 //     }
 //   }
 
-//   @Container.handler({
+//   handler({
 //     service: 'hello',
 //     method: 'asyncWorld',
 //   })
-//   class HelloAsyncWorldAction extends Parents.Action {
+//   class HelloAsyncWorldAction extends Action {
 //     protected async handle(params):Promise<void> {
 //       expect(params).to.deep.eq(testParams);
 //       done();
@@ -147,7 +153,7 @@ describe('Queue integration', () => {
 //     }
 //   }
   
-//   @Container.kernel({
+//   kernel({
 //     config,
 //     env: null,
 //     connections: [
@@ -159,7 +165,7 @@ describe('Queue integration', () => {
 //     ],
 //     queues: ['hello'],
 //   })
-//   class Kernel extends Parents.Kernel {
+//   class Kernel extends Kernel {
 //     extensions = [
 //       EnvExtension,
 //       ConfigExtension,

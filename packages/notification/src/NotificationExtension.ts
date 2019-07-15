@@ -1,11 +1,26 @@
-import { Interfaces } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
-import { TemplateInterfaceResolver } from '@ilos/template';
+import {
+  ConfigInterfaceResolver,
+  TemplateInterfaceResolver,
+  NotificationInterfaceResolver,
+  RegisterHookInterface,
+  InitHookInterface,
+  ServiceContainerInterface,
+  extension,
+} from '@ilos/common';
 
-import { NotificationInterfaceResolver } from './NotificationInterface';
+import { ConfigExtension } from '@ilos/config';
+import { TemplateExtension } from '@ilos/template';
+
 import { Notification } from './Notification';
 
-export class NotificationExtension implements Interfaces.RegisterHookInterface, Interfaces.InitHookInterface {
+@extension({
+  name: 'notification',
+  require: [
+    ConfigExtension,
+    TemplateExtension,
+  ],
+})
+export class NotificationExtension implements RegisterHookInterface, InitHookInterface {
   static readonly key:string = 'notification';
 
   constructor(protected config?: {
@@ -15,25 +30,23 @@ export class NotificationExtension implements Interfaces.RegisterHookInterface, 
 
   }
 
-  register(serviceContainer: Interfaces.ServiceContainerInterface) {
-    const container = serviceContainer.getContainer();
-
-    if (!container.isBound(TemplateInterfaceResolver)) {
-      throw new Error('Unable to find template provider');
-    }
-
-    if (!container.isBound(ConfigInterfaceResolver)) {
-      throw new Error('Unable to find config provider');
-    }
-
-    container.bind(Notification).toSelf();
-    container.bind(NotificationInterfaceResolver).toService(Notification);
+  register(serviceContainer: ServiceContainerInterface) {
+    serviceContainer.bind(Notification);
     serviceContainer.registerHooks(Notification.prototype, NotificationInterfaceResolver);
   }
 
-  async init(serviceContainer: Interfaces.ServiceContainerInterface) {
+  async init(serviceContainer: ServiceContainerInterface) {
     if (this.config) {
       const container = serviceContainer.getContainer();
+
+      if (!container.isBound(TemplateInterfaceResolver)) {
+        throw new Error('Unable to find template provider');
+      }
+
+      if (!container.isBound(ConfigInterfaceResolver)) {
+        throw new Error('Unable to find config provider');
+      }
+
       container
         .get(TemplateInterfaceResolver)
         .loadTemplatesFromDirectory(

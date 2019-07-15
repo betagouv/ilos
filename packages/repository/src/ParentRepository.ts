@@ -5,12 +5,15 @@ import {
   ObjectId,
   DbInterface,
 } from '@ilos/connection-mongo';
-import { Types, Exceptions } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import {
+  NotFoundException,
+  ConfigInterfaceResolver,
+  RepositoryInterface,
+  NewableType,
+  RepositoryModelType,
+} from '@ilos/common';
 
-import { ParentRepositoryInterface, Model } from './ParentRepositoryInterface';
-
-export abstract class ParentRepository implements ParentRepositoryInterface {
+export abstract class ParentRepository implements RepositoryInterface {
   protected readonly castObjectIds: string[] = ['_id'];
 
   constructor(
@@ -30,7 +33,7 @@ export abstract class ParentRepository implements ParentRepositoryInterface {
     throw new Error('Database not set');
   }
 
-  public getModel(): Types.NewableType<any> {
+  public getModel(): NewableType<any> {
     return Object;
   }
 
@@ -54,21 +57,21 @@ export abstract class ParentRepository implements ParentRepositoryInterface {
     return this.getCollectionFromDb(this.getKey(), this.getDbName());
   }
 
-  async find(id: string | ObjectId): Promise<Model> {
+  async find(id: string | ObjectId): Promise<RepositoryModelType> {
     const collection = await this.getCollection();
     const normalizedId = typeof id === 'string' ? new ObjectId(id) : id;
     const result = await collection.findOne({ _id: normalizedId });
-    if (!result) throw new Exceptions.NotFoundException('id not found');
+    if (!result) throw new NotFoundException('id not found');
     return this.instanciate(result);
   }
 
-  async all(): Promise<Model[]> {
+  async all(): Promise<RepositoryModelType[]> {
     const collection = await this.getCollection();
     const results = await collection.find().toArray();
     return this.instanciateMany(results);
   }
 
-  async create(data: Model): Promise<Model> {
+  async create(data: RepositoryModelType): Promise<RepositoryModelType> {
     const collection = await this.getCollection();
     const { result, ops } = await collection.insertOne(data);
     if (result.ok !== 1) {
@@ -77,7 +80,7 @@ export abstract class ParentRepository implements ParentRepositoryInterface {
     return this.instanciate(ops[0]);
   }
 
-  async delete(data: Model | string | ObjectId): Promise<void> {
+  async delete(data: RepositoryModelType | string | ObjectId): Promise<void> {
     const collection = await this.getCollection();
     let id = typeof data === 'string' ? data : '_id' in data ? data._id : data;
     id = typeof id === 'string' ? new ObjectId(id) : id;
@@ -88,7 +91,7 @@ export abstract class ParentRepository implements ParentRepositoryInterface {
     return;
   }
 
-  async update(data: Model): Promise<Model> {
+  async update(data: RepositoryModelType): Promise<RepositoryModelType> {
     const normalizedData = this.castObjectIdFromString(data);
     const collection = await this.getCollection();
     const selector = { _id: normalizedData._id };
@@ -99,7 +102,7 @@ export abstract class ParentRepository implements ParentRepositoryInterface {
     return this.instanciate(data);
   }
 
-  async updateOrCreate(data: Model): Promise<Model> {
+  async updateOrCreate(data: RepositoryModelType): Promise<RepositoryModelType> {
     const collection = await this.getCollection();
     const selector = { _id: data._id };
     const { modifiedCount } = await collection.replaceOne(selector, data, { upsert: true });
@@ -109,7 +112,7 @@ export abstract class ParentRepository implements ParentRepositoryInterface {
     return data;
   }
 
-  async patch(id: ObjectId | string, patch: any): Promise<Model> {
+  async patch(id: ObjectId | string, patch: any): Promise<RepositoryModelType> {
     const castedPatch = this.castObjectIdFromString(patch);
     const collection = await this.getCollection();
     const normalizedId = typeof id === 'string' ? new ObjectId(id) : id;
@@ -137,17 +140,17 @@ export abstract class ParentRepository implements ParentRepositoryInterface {
     return;
   }
 
-  protected instanciate(data: any): Model {
+  protected instanciate(data: any): RepositoryModelType {
     const constructor = this.getModel();
 
     return new constructor(this.castStringFromObjectId(data));
   }
 
-  protected instanciateMany(data: any[]): Model[] {
+  protected instanciateMany(data: any[]): RepositoryModelType[] {
     return data.map(d => this.instanciate(d));
   }
 
-  protected castObjectIdFromString(data: Model) {
+  protected castObjectIdFromString(data: RepositoryModelType) {
     const castedData = { ...data };
     this.castObjectIds.forEach((path: string) => {
       if (path in castedData) {

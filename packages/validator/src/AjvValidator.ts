@@ -1,13 +1,16 @@
 import ajv from 'ajv';
 import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
 
-import { Container, Types } from '@ilos/core';
-import { ConfigInterfaceResolver } from '@ilos/config';
+import {
+  provider,
+  ConfigInterfaceResolver,
+  NewableType,
+  ValidatorInterface,
+} from '@ilos/common';
 
-import { ValidatorInterface } from './ValidatorInterface';
 import { Cache } from './Cache';
 
-@Container.provider()
+@provider()
 export class AjvValidator implements ValidatorInterface {
   protected ajv: ajv.Ajv;
   protected bindings: Map<any, ajv.ValidateFunction> = new Map();
@@ -35,7 +38,7 @@ export class AjvValidator implements ValidatorInterface {
     this.isSchemaSecure = this.ajv.compile(jsonSchemaSecureJson);
   }
 
-  registerValidator(definition: any, target?: Types.NewableType<any> | string): ValidatorInterface {
+  registerValidator(definition: any, target?: NewableType<any> | string): ValidatorInterface {
     return this.addSchema(definition, target);
   }
 
@@ -55,7 +58,7 @@ export class AjvValidator implements ValidatorInterface {
     }
   }
 
-  protected addSchema(schema: object, target?: Types.NewableType<any> | string): ValidatorInterface {
+  protected addSchema(schema: object, target?: NewableType<any> | string): ValidatorInterface {
     if (!this.ajv.validateSchema(schema)) {
       throw new Error(this.ajv.errorsText(this.ajv.errors));
     }
