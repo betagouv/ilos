@@ -21,23 +21,11 @@ describe('Helpers: resolve method', () => {
   });
 
   it('from string works raise error', () => {
-    assert.throw(
-      () => getConfigBySignature(':method'),
-      MethodNotFoundException,
-      'Method not found',
-    ); // Invalid method string (:method)
+    assert.throw(() => getConfigBySignature(':method'), MethodNotFoundException, 'Method not found'); // Invalid method string (:method)
 
-    assert.throw(
-      () => getConfigBySignature('service:'),
-      MethodNotFoundException,
-      'Method not found',
-    ); // Invalid method string (service:)
+    assert.throw(() => getConfigBySignature('service:'), MethodNotFoundException, 'Method not found'); // Invalid method string (service:)
 
-    assert.throw(
-      () => getConfigBySignature('service:0.0.1'),
-      MethodNotFoundException,
-      'Method not found',
-    ); // Invalid method string (service:0.0.1)
+    assert.throw(() => getConfigBySignature('service:0.0.1'), MethodNotFoundException, 'Method not found'); // Invalid method string (service:0.0.1)
   });
 
   it('from object works', () => {
@@ -60,6 +48,6 @@ describe('Helpers: resolve method', () => {
       () => getSignatureByConfig({ service: '', method: 'method' }),
       MethodNotFoundException,
       'Method not found', // Invalid method object (service:, method:method, version:undefined)
-      );
+    );
   });
 });

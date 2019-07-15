@@ -12,16 +12,16 @@ import { HandlebarsTemplate } from './HandlebarsTemplate';
 
 @extension({
   name: 'template',
-  require: [
-    ConfigExtension,
-  ],
+  require: [ConfigExtension],
   autoload: true,
 })
 export class TemplateExtension implements RegisterHookInterface, InitHookInterface {
-  constructor(protected config?: {
-    path: string,
-    meta: string | { [k:string]: any },
-  }) {
+  constructor(
+    protected config?: {
+      path: string;
+      meta: string | { [k: string]: any };
+    },
+  ) {
     //
   }
 
@@ -45,11 +45,9 @@ export class TemplateExtension implements RegisterHookInterface, InitHookInterfa
         .get(TemplateInterfaceResolver)
         .loadTemplatesFromDirectory(
           this.config.path,
-          (typeof this.config.meta === 'string') ?
-            container
-              .get(ConfigInterfaceResolver)
-              .get(this.config.meta, {}) :
-            this.config.meta,
+          typeof this.config.meta === 'string'
+            ? container.get(ConfigInterfaceResolver).get(this.config.meta, {})
+            : this.config.meta,
         );
     }
   }

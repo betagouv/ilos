@@ -1,11 +1,7 @@
 import { Queue } from 'bull';
 
 import { QueueExtension } from '@ilos/queue';
-import {
-  TransportInterface,
-  KernelInterface,
-  ContainerInterface,
-} from '@ilos/common';
+import { TransportInterface, KernelInterface, ContainerInterface } from '@ilos/common';
 
 import { bullFactory } from './helpers/bullFactory';
 
@@ -51,7 +47,7 @@ export class QueueTransport implements TransportInterface {
 
       this.registerListeners(queue, key);
       this.queues.push(queue);
-      queue.process(async job =>
+      queue.process(async (job) =>
         this.kernel.handle({
           jsonrpc: '2.0',
           id: 1,

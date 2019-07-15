@@ -1,7 +1,7 @@
 import { CallType, ResultType } from '../call';
 
 export interface HandlerInterface {
-  readonly middlewares?: (string|[string, any])[];
+  readonly middlewares?: (string | [string, any])[];
 
   /**
    * Handler, put here your business logic
@@ -9,5 +9,5 @@ export interface HandlerInterface {
    * @returns {Promise<ResultType>}
    * @memberof HandlerInterface
    */
-  call(call: CallType):Promise<ResultType>;
+  call(call: CallType): Promise<ResultType>;
 }

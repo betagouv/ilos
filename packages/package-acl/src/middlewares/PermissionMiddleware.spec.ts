@@ -2,13 +2,7 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {
-  ParamsType,
-  ContextType,
-  ResultType,
-  InvalidParamsException,
-  ForbiddenException,
-} from '@ilos/common';
+import { ParamsType, ContextType, ResultType, InvalidParamsException, ForbiddenException } from '@ilos/common';
 
 import { PermissionMiddleware } from './PermissionMiddleware';
 
@@ -74,6 +68,8 @@ describe('Permission middleware', () => {
   it('fails: not matching all permissions', async () => {
     const permissions: string[] = ['test.perm1'];
     const { params, context } = callFactory(permissions);
-    await expect(middleware.process(params, context, noop, ['test.perm1', 'test.perm2'])).to.be.rejectedWith(ForbiddenException);
+    await expect(middleware.process(params, context, noop, ['test.perm1', 'test.perm2'])).to.be.rejectedWith(
+      ForbiddenException,
+    );
   });
 });

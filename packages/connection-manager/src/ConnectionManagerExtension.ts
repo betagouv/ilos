@@ -17,12 +17,9 @@ import { ConfigExtension } from '@ilos/config';
 
 @extension({
   name: 'connections',
-  require: [
-    ConfigExtension,
-  ],
+  require: [ConfigExtension],
 })
-export class ConnectionManagerExtension
-  implements RegisterHookInterface, InitHookInterface, DestroyHookInterface {
+export class ConnectionManagerExtension implements RegisterHookInterface, InitHookInterface, DestroyHookInterface {
   protected config: ConfigInterface;
   protected connectionRegistry: Map<Symbol, ConnectionInterface> = new Map();
 
@@ -48,10 +45,7 @@ export class ConnectionManagerExtension
    * @type {Map<NewableType<ConnectionInterface>, Symbol>}
    * @memberof ConnectionManagerExtension
    */
-  protected mappingRegistry: Map<
-    NewableType<ConnectionInterface>,
-    Map<NewableType<any>, Symbol>
-  > = new Map();
+  protected mappingRegistry: Map<NewableType<ConnectionInterface>, Map<NewableType<any>, Symbol>> = new Map();
 
   constructor(protected readonly connections: ConnectionDeclarationType[]) {}
 

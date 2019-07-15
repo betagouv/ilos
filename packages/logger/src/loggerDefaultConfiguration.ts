@@ -12,20 +12,20 @@ export enum LogLevel {
 }
 
 export type LoggerFileConfigurationType = winston.transports.FileTransportOptions & {
-  type: 'file',
+  type: 'file';
 };
 
 export type LoggerConsoleConfigurationType = winston.transports.ConsoleTransportOptions & {
-  type: 'console',
+  type: 'console';
 };
 
 export type LoggerConfigurationType = {
   level: keyof typeof LogLevel;
   meta?: any;
   loggers: {
-    default: (LoggerConsoleConfigurationType | LoggerFileConfigurationType)[],
-    [k: string]: (LoggerConsoleConfigurationType | LoggerFileConfigurationType)[],
-  }
+    default: (LoggerConsoleConfigurationType | LoggerFileConfigurationType)[];
+    [k: string]: (LoggerConsoleConfigurationType | LoggerFileConfigurationType)[];
+  };
 };
 
 export const loggerDefaultConfiguration: LoggerConfigurationType = {
@@ -58,15 +58,9 @@ export const loggerDefaultConfiguration: LoggerConfigurationType = {
 
 export const loggerDefaultFormat = winston.format.simple();
 
-export const loggerDefaultConsoleFormat = winston.format.combine(
-  winston.format.timestamp(),
-  winston.format.cli(),
-);
+export const loggerDefaultConsoleFormat = winston.format.combine(winston.format.timestamp(), winston.format.cli());
 
-export const loggerDefaultFileFormat = winston.format.combine(
-  winston.format.timestamp(),
-  winston.format.json(),
-);
+export const loggerDefaultFileFormat = winston.format.combine(winston.format.timestamp(), winston.format.json());
 
 export function createConsoleLogger(opts = {}) {
   return new winston.transports.Console({
@@ -89,8 +83,11 @@ export function createFileLogger(opts = {}) {
   });
 }
 
-export function buildLoggerConfiguration(config: LoggerConfigurationType, env: string = 'default'): winston.LoggerOptions {
-  const transports = (env in config.loggers) ? config.loggers[env] : config.loggers.default;
+export function buildLoggerConfiguration(
+  config: LoggerConfigurationType,
+  env: string = 'default',
+): winston.LoggerOptions {
+  const transports = env in config.loggers ? config.loggers[env] : config.loggers.default;
   return {
     level: config.level,
     defaultMeta: config.meta,

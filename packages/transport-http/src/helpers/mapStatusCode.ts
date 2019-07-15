@@ -23,22 +23,18 @@ export function mapStatusCode(results: RPCResponseType): number {
   const { error } = results;
   if (error) {
     switch (error.code) {
-      // Unauthorized
-      case -32501:
-        return 501;
-
-      // Forbidden
-      case -32503:
-        return 503;
-
-      // Conflict
-      case -32509:
-        return 409;
-
       // Bad Request
       case -32600:
       case -32602:
         return 400;
+
+      // Unauthorized
+      case -32501:
+        return 401;
+
+      // Forbidden
+      case -32503:
+        return 403;
 
       // Not Found (ressource)
       case -32504:
@@ -47,6 +43,10 @@ export function mapStatusCode(results: RPCResponseType): number {
       // Method Not found
       case -32601:
         return 405;
+
+      // Conflict
+      case -32509:
+        return 409;
 
       // Parse error --> Unprocessable entity
       case -32700:

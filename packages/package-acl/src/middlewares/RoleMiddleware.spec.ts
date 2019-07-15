@@ -1,13 +1,8 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { describe } from 'mocha';
-import {
-  ParamsType,
-  ContextType,
-  ResultType,
-  ForbiddenException,
-  InvalidParamsException,
-} from '@ilos/common';
+
+import { ParamsType, ContextType, ResultType, ForbiddenException, InvalidParamsException } from '@ilos/common';
 
 import { RoleMiddleware } from './RoleMiddleware';
 

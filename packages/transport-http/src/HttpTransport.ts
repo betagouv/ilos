@@ -1,12 +1,8 @@
 import http from 'http';
 
+import { TransportInterface, KernelInterface, RPCCallType, RPCResponseType } from '@ilos/common';
+
 import { mapStatusCode } from './helpers/mapStatusCode';
-import {
-  TransportInterface,
-  KernelInterface,
-  RPCCallType,
-  RPCResponseType,
-} from '@ilos/common';
 
 /**
  * Http Transport

@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+
 import { command, TemplateInterfaceResolver, CommandOptionType } from '@ilos/common';
 
 import { Command } from '../parents/Command';
@@ -16,13 +17,11 @@ export class ScaffoldCommand extends Command {
   public readonly description: string = 'Generate service, provider, or handler';
   public readonly options: CommandOptionType[] = [];
 
-  constructor(
-    private template: TemplateInterfaceResolver,
-  ) {
+  constructor(private template: TemplateInterfaceResolver) {
     super();
   }
 
-  public async call(type: string, name?: string):Promise<string> {
+  public async call(type: string, name?: string): Promise<string> {
     this.loadStubs();
     return this.generate(type, { name });
   }
@@ -45,7 +44,7 @@ export class ScaffoldCommand extends Command {
     });
   }
 
-  protected generate(templateName: string, params: any = {}):string {
+  protected generate(templateName: string, params: any = {}): string {
     try {
       const metadata = this.template.getMetadata(templateName);
       const fileContent = this.template.get(templateName, params);

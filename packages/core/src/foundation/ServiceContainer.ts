@@ -35,7 +35,7 @@ export abstract class ServiceContainer
   protected readonly parent?: ServiceContainerInterface;
 
   constructor(container?: ContainerInterface) {
-    this.container = (container) ? container.createChild() : new Container();
+    this.container = container ? container.createChild() : new Container();
     this.registerSelf();
     this.registerLogger();
   }
@@ -83,7 +83,6 @@ export abstract class ServiceContainer
     return this.container;
   }
 
-
   public registerHooks(hooker: object, identifier?: IdentifierType): void {
     this.registerHookRegistry.register(hooker, identifier);
     this.initHookRegistry.register(hooker, identifier);
@@ -118,7 +117,9 @@ export abstract class ServiceContainer
       return;
     }
 
-    const taggedIdentifier = <IdentifierType | IdentifierType[]>Reflect.getMetadata(Symbol.for('extension:identifier'), ctor);
+    const taggedIdentifier = <IdentifierType | IdentifierType[]>(
+      Reflect.getMetadata(Symbol.for('extension:identifier'), ctor)
+    );
     if (taggedIdentifier) {
       if (!Array.isArray(taggedIdentifier)) {
         this.container.bind(taggedIdentifier).toService(ctor);
@@ -140,9 +141,12 @@ export abstract class ServiceContainer
       return;
     }
 
-    const name = (typeof identifier === 'string') ?
-      identifier : (typeof identifier === 'function') ?
-      identifier.name : identifier.toString();
+    const name =
+      typeof identifier === 'string'
+        ? identifier
+        : typeof identifier === 'function'
+        ? identifier.name
+        : identifier.toString();
     throw new Error(`Unable to find bindings for ${name}`);
   }
 

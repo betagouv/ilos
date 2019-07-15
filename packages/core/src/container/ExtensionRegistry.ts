@@ -15,9 +15,7 @@ export class ExtensionRegistry {
   protected registry: Map<symbol, ExtensionConfigurationType> = new Map();
   protected container: ContainerInterface;
 
-  constructor(
-    protected serviceContainer: ServiceContainerInterface,
-  ) {
+  constructor(protected serviceContainer: ServiceContainerInterface) {
     this.container = serviceContainer.getContainer();
   }
 
@@ -47,11 +45,11 @@ export class ExtensionRegistry {
     const tree = new DependencyTree();
     this.all()
       .filter((config: ExtensionConfigurationType) => config.autoload || isConfigured(config.decoratorKey))
-      .map(config => ({
+      .map((config) => ({
         ...config,
-        require: config.require.map(extensionConstructor => this.getExtentionConfig(extensionConstructor).key),
+        require: config.require.map((extensionConstructor) => this.getExtentionConfig(extensionConstructor).key),
       }))
-      .forEach(cfg => tree.add(cfg.key, cfg, cfg.require));
+      .forEach((cfg) => tree.add(cfg.key, cfg, cfg.require));
 
     return tree.resolve();
   }
@@ -71,7 +69,7 @@ export class ExtensionRegistry {
       this.registry.delete(config.key);
     }
 
-    this.container.bind(config.key).toFactory(() => cfg => new extensionConstructor(cfg));
+    this.container.bind(config.key).toFactory(() => (cfg) => new extensionConstructor(cfg));
     this.container.bind(ExtensionRegistry.key).toConstantValue(config);
     this.registry.set(config.key, config);
   }

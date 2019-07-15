@@ -1,16 +1,12 @@
 import { Job, Queue, JobOptions } from 'bull';
 
 import { RedisConnection } from '@ilos/connection-redis';
-import {
-  HandlerInterface,
-  InitHookInterface,
-  CallType,
-} from '@ilos/common';
+import { HandlerInterface, InitHookInterface, CallType } from '@ilos/common';
 
 import { bullFactory } from './helpers/bullFactory';
 
 export class QueueHandler implements HandlerInterface, InitHookInterface {
-  public readonly middlewares: (string|[string, any])[] = [];
+  public readonly middlewares: (string | [string, any])[] = [];
 
   protected readonly service: string;
   protected readonly version: string;
@@ -21,9 +17,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
 
   private client: Queue;
 
-  constructor(
-    protected redis: RedisConnection,
-  ) {}
+  constructor(protected redis: RedisConnection) {}
 
   public async init() {
     this.client = bullFactory(this.service, this.redis.getClient());

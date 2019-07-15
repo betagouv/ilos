@@ -3,14 +3,7 @@ import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-import {
-  HandlerInterface,
-  CallType,
-  handler,
-  lib,
-  provider,
-  inject,
-} from '@ilos/common';
+import { HandlerInterface, CallType, handler, lib, provider, inject } from '@ilos/common';
 
 import { Container } from '.';
 
@@ -61,8 +54,7 @@ describe('Container', () => {
       public world = '!!';
       @inject(HelloLib) helloLib: HelloLib;
 
-      boot(
-      ) {
+      boot() {
         this.world = this.helloLib.world;
       }
     }

@@ -14,7 +14,7 @@ export interface ServiceContainerInterface {
    * @returns {ContainerInterface}
    * @memberof ServiceProviderInterface
    */
-  getContainer():ContainerInterface;
+  getContainer(): ContainerInterface;
 
   get<T>(identifier: IdentifierType<T>): T;
   bind(ctor: NewableType<any>, identifier?: IdentifierType): void;
@@ -29,7 +29,7 @@ export abstract class ServiceContainerInterfaceResolver implements ServiceContai
     throw new Error();
   }
 
-  getContainer():ContainerInterface {
+  getContainer(): ContainerInterface {
     throw new Error();
   }
 
