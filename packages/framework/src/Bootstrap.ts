@@ -62,7 +62,7 @@ export class Bootstrap {
 
     const bootstrapPath = path.resolve(basePath, bootstrapFile);
     if (!fs.existsSync(bootstrapPath)) {
-      console.error('No bootstrap file provided');
+      console.error(`No bootstrap file provided (${bootstrapPath})`);
       return;
     }
     return bootstrapPath;
