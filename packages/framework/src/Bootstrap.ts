@@ -1,8 +1,15 @@
 // tslint:disable max-classes-per-file
 import fs from 'fs';
 import path from 'path';
-import { kernel, BootstrapType, TransportInterface, KernelInterface, NewableType, ServiceContainerInterface } from '@ilos/common';
 
+import {
+  kernel,
+  BootstrapType,
+  TransportInterface,
+  KernelInterface,
+  NewableType,
+  ServiceContainerInterface,
+} from '@ilos/common';
 import { CliTransport } from '@ilos/cli';
 import { HttpTransport } from '@ilos/transport-http';
 import { QueueTransport } from '@ilos/transport-redis';
@@ -12,17 +19,15 @@ import { Kernel } from './Kernel';
 const defaultBootstrapObject: BootstrapType = {
   kernel: () => Kernel,
   transport: {
-    cli: k => new CliTransport(k),
-    http: k => new HttpTransport(k),
-    queue: k => new QueueTransport(k),
+    cli: (k) => new CliTransport(k),
+    http: (k) => new HttpTransport(k),
+    queue: (k) => new QueueTransport(k),
   },
   serviceProviders: [],
 };
 
 export class Bootstrap {
-  constructor(
-    public bootstrapObject: BootstrapType = {},
-  ) {}
+  constructor(public bootstrapObject: BootstrapType = {}) {}
 
   static getWorkingPath(): string {
     const basePath = process.cwd();
@@ -39,30 +44,31 @@ export class Bootstrap {
   }
 
   static setEnv(): void {
-    process.env.APP_ENV = ('NODE_ENV' in process.env && process.env.NODE_ENV !== undefined) ? process.env.NODE_ENV : 'dev';
+    process.env.APP_ENV =
+      'NODE_ENV' in process.env && process.env.NODE_ENV !== undefined ? process.env.NODE_ENV : 'dev';
   }
 
-  static setEnvFromPackage():void {
+  static setEnvFromPackage(): void {
     // Define config from npm package
     Reflect.ownKeys(process.env)
-    .filter((key: string) => /npm_package_config_app/.test(key))
-    .forEach((key: string) => {
-      const oldKey = key;
-      const newKey = key.replace('npm_package_config_', '').toUpperCase();
-      if (!(newKey in process.env)) {
-        process.env[newKey] = process.env[oldKey];
-      }
-    });
+      .filter((key: string) => /npm_package_config_app/.test(key))
+      .forEach((key: string) => {
+        const oldKey = key;
+        const newKey = key.replace('npm_package_config_', '').toUpperCase();
+        if (!(newKey in process.env)) {
+          process.env[newKey] = process.env[oldKey];
+        }
+      });
   }
 
   static getBootstrapFilePath(): string {
     const basePath = Bootstrap.getWorkingPath();
-    const bootstrapFile = ('npm_package_config_bootstrap' in process.env) ?
-      process.env.npm_package_config_bootstrap : './bootstrap.js';
+    const bootstrapFile =
+      'npm_package_config_bootstrap' in process.env ? process.env.npm_package_config_bootstrap : './bootstrap.js';
 
     const bootstrapPath = path.resolve(basePath, bootstrapFile);
     if (!fs.existsSync(bootstrapPath)) {
-      console.error('No bootstrap file provided');
+      console.error(`No bootstrap file provided (${bootstrapPath})`);
       return;
     }
     return bootstrapPath;
@@ -100,25 +106,20 @@ export class Bootstrap {
     @kernel({
       children: serviceProviders,
     })
-    class Kernel extends kernelConstructor {}
+    class CustomKernel extends kernelConstructor {}
 
-    const kernelInstance = new Kernel();
+    const kernelInstance = new CustomKernel();
     await kernelInstance.bootstrap();
 
     let transport: TransportInterface;
 
     if (typeof command !== 'string') {
       transport = command;
-    } else if (command !== 'cli' && (command in bootstrapObject.transport)) {
+    } else if (command !== 'cli' && command in bootstrapObject.transport) {
       transport = bootstrapObject.transport[command](kernelInstance);
     } else {
       transport = bootstrapObject.transport.cli(kernelInstance);
-      options = [
-        '',
-        '',
-        command,
-        ...opts,
-      ];
+      options = ['', '', command, ...opts];
     }
 
     await transport.up(options);
@@ -130,16 +131,15 @@ export class Bootstrap {
 
   protected registerShutdownHook(kernelInstance: KernelInterface, transport: TransportInterface) {
     function handle() {
-      setTimeout(
-        () => {
-          process.exit(0);
-        },
-        5000,
-      );
+      setTimeout(() => {
+        process.exit(0);
+      },         5000);
 
-      transport.down()
+      transport
+        .down()
         .then(() => {
-          kernelInstance.shutdown()
+          kernelInstance
+            .shutdown()
             .then(() => {
               process.exit(0);
             })
