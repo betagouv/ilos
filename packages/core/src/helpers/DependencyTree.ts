@@ -30,10 +30,10 @@ export class DependencyTree {
       if (unresolvableDependencies.size > 0) {
         // if dependency is no resolvable, just warn
         console.warn(
-          `Unsolvable extenion dependencies : ${[...unresolvableDependencies].map((k) => k.toString()).join(', ')}`,
+          `Unsolvable extension dependencies : ${[...unresolvableDependencies].map((k) => k.toString()).join(', ')}`,
         );
         [...unresolvableDependencies].forEach((x) => unmetDeps.delete(x));
-        // throw new Error(`Unsolvable extenion dependencies : ${[...unresolvableDependencies].join(', ')}`);
+        // throw new Error(`Unsolvable extension dependencies : ${[...unresolvableDependencies].join(', ')}`);
       }
 
       // if not unmet, add nodeId to met
