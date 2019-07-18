@@ -117,8 +117,10 @@ export class HttpTransport implements TransportInterface {
         res.end();
       });
     });
-    const [optsPort] = opts;
-    const port = optsPort ? Number(optsPort) : 8080;
+
+    // Passing 0 as port lets the net stack use a random free port
+    const optsPort = parseInt(opts[0], 10);
+    const port = optsPort || optsPort === 0 ? optsPort : 8080;
 
     this.server.listen(port);
   }
