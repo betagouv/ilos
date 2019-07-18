@@ -77,13 +77,13 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/common": "^0.3.1",
-    "@ilos/config": "^0.3.1",
-    "@ilos/env": "^0.3.1",
-    "@ilos/queue": "^0.3.1",
     "bull": "^3.7.0"
   },
   "peerDependencies": {
-    "@ilos/core": "^0.2.0"
+    "@ilos/core": "~0",
+    "@ilos/common": "~0",
+    "@ilos/config": "~0",
+    "@ilos/env": "~0",
+    "@ilos/queue": "~0"
   }
 }
