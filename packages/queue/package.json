@@ -76,15 +76,14 @@
     "tslint-import-group-ordering": "^2.1.1",
     "typescript": "^3.4.3"
   },
-  "dependencies": {
-    "@ilos/common": "^0.3.0",
-    "@ilos/config": "^0.3.0",
-    "@ilos/connection-manager": "^0.3.0",
-    "@ilos/connection-redis": "^0.3.0",
-    "@ilos/env": "^0.3.0",
-    "@ilos/handler-redis": "^0.3.0"
-  },
+  "dependencies": {},
   "peerDependencies": {
-    "@ilos/core": "^0.2.0"
+    "@ilos/core": "~0",
+    "@ilos/common": "~0",
+    "@ilos/config": "~0",
+    "@ilos/connection-manager": "~0",
+    "@ilos/connection-redis": "~0",
+    "@ilos/env": "~0",
+    "@ilos/handler-redis": "~0"
   }
 }

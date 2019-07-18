@@ -76,10 +76,10 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/common": "^0.3.0",
     "commander": "^2.20.0"
   },
   "peerDependencies": {
+    "@ilos/common": "~0",
     "@ilos/core": "~0",
     "@ilos/template": "~0"
   }

@@ -77,11 +77,11 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/common": "^0.3.0",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
+    "@ilos/common": "~0",
     "@ilos/core": "~0",
     "@ilos/env": "~0"
   }

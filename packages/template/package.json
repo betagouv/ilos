@@ -77,11 +77,11 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/common": "^0.3.0",
-    "@ilos/config": "^0.3.0",
     "handlebars": "^4.1.2"
   },
   "peerDependencies": {
-    "@ilos/core": "^0.2.0"
+    "@ilos/core": "~0",
+    "@ilos/common": "~0",
+    "@ilos/config": "~0"
   }
 }

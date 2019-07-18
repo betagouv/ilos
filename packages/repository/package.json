@@ -43,13 +43,12 @@
     "sourceMap": true,
     "instrument": true
   },
-  "dependencies": {
-    "@ilos/cli": "^0.3.0",
-    "@ilos/common": "^0.3.0",
-    "@ilos/config": "^0.3.0",
-    "@ilos/connection-mongo": "^0.3.0"
-  },
+  "dependencies": {},
   "peerDependencies": {
+    "@ilos/cli": "~0",
+    "@ilos/common": "~0",
+    "@ilos/config": "~0",
+    "@ilos/connection-mongo": "~0",
     "@ilos/core": "~0"
   },
   "devDependencies": {

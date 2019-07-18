@@ -43,12 +43,12 @@
     "instrument": true
   },
   "dependencies": {
-    "@ilos/common": "^0.3.0",
-    "@ilos/config": "^0.3.0",
     "ajv": "^6.10.0"
   },
   "peerDependencies": {
-    "@ilos/core": "^0.2.0"
+    "@ilos/common": "~0",
+    "@ilos/config": "~0",
+    "@ilos/core": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
