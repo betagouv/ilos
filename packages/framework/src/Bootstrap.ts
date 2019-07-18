@@ -79,14 +79,16 @@ export class Bootstrap {
 
   static async createFromPath(bootstrapPath: string = Bootstrap.getBootstrapFilePath()): Promise<Bootstrap> {
     let currentBootstrap = {
-      bootstrap: {},
+      bootstrap: {
+        bootstrapObject: {},
+      },
     };
 
-    if (!bootstrapPath) {
+    if (bootstrapPath) {
       currentBootstrap = await import(bootstrapPath);
     }
 
-    return new Bootstrap({ ...defaultBootstrapObject, ...currentBootstrap.bootstrap });
+    return new Bootstrap({ ...defaultBootstrapObject, ...currentBootstrap.bootstrap.bootstrapObject });
   }
 
   get serviceProviders(): NewableType<ServiceContainerInterface>[] {
