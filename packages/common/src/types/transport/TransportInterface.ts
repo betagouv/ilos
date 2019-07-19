@@ -10,10 +10,10 @@ export interface TransportInterface {
 
   /**
    * Get Server instance such as httpServer, queue, etc.
-   * @returns {T | void}
+   * @returns {T | T[] | void}
    * @memberof TransportInterface
    */
-  getInstance<T>(): T | void;
+  getInstance<T>(): T | T[] | void;
 
   /**
    * Start the transport

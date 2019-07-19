@@ -29,10 +29,11 @@ export class QueueTransport implements TransportInterface {
 
   async up(opts: string[] = []) {
     const [redisUrl] = opts;
-    // throw error
+    if (!redisUrl || !/^redis:\/\//.test(redisUrl)) {
+      throw new Error('Redis connection string not configured');
+    }
 
     const container = <ContainerInterface>this.kernel.getContainer();
-
     if (!container.isBound(QueueExtension.containerKey)) {
       throw new Error('No queue declared');
     }
@@ -100,7 +101,7 @@ export class QueueTransport implements TransportInterface {
 
     queue.on('completed', (job) => {
       console.log(`🐮/${name}: completed ${job.id} ${job.data.type}`);
-      job.remove();
+      // job.remove();
     });
 
     queue.on('failed', (job, err) => {
