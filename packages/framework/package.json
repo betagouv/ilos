@@ -1,6 +1,6 @@
 {
   "name": "@ilos/framework",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "publishConfig": {
     "access": "public"
   },
@@ -79,18 +79,18 @@
     "typescript": "^3.4.3"
   },
   "dependencies": {
-    "@ilos/cli": "^0.3.0",
-    "@ilos/common": "^0.3.0",
-    "@ilos/config": "^0.3.0",
-    "@ilos/connection-manager": "^0.3.0",
-    "@ilos/core": "^0.3.2",
-    "@ilos/env": "^0.3.0",
-    "@ilos/logger": "^0.3.0",
-    "@ilos/notification": "^0.3.0",
-    "@ilos/queue": "^0.3.0",
-    "@ilos/template": "^0.3.0",
-    "@ilos/transport-http": "^0.3.2",
-    "@ilos/transport-redis": "^0.3.0",
-    "@ilos/validator": "^0.3.0"
+    "@ilos/cli": "^0.3.1",
+    "@ilos/common": "^0.3.1",
+    "@ilos/config": "^0.3.1",
+    "@ilos/connection-manager": "^0.3.1",
+    "@ilos/core": "^0.3.3",
+    "@ilos/env": "^0.3.1",
+    "@ilos/logger": "^0.3.1",
+    "@ilos/notification": "^0.3.1",
+    "@ilos/queue": "^0.3.1",
+    "@ilos/template": "^0.3.1",
+    "@ilos/transport-http": "^0.3.3",
+    "@ilos/transport-redis": "^0.3.1",
+    "@ilos/validator": "^0.3.1"
   }
 }
