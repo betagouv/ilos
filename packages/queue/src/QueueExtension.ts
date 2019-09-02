@@ -19,7 +19,7 @@ import { queueHandlerFactory } from '@ilos/handler-redis';
 })
 export class QueueExtension implements RegisterHookInterface, InitHookInterface {
   static get containerKey() {
-    return Symbol.for('container:queues');
+    return Symbol.for('queues:handlers');
   }
 
   protected isWorker = false;
