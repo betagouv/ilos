@@ -26,7 +26,18 @@ const defaultBootstrapObject: BootstrapType = {
 };
 
 export class Bootstrap {
-  constructor(public bootstrapObject: BootstrapType = {}) {}
+  private readonly kernel: () => NewableType<KernelInterface>;
+  public serviceProviders: NewableType<ServiceContainerInterface>[];
+  private transports: {
+    [key: string]: (kernel: KernelInterface) => TransportInterface;
+  };
+
+  constructor(currentBootstrapObject: BootstrapType) {
+    const bootstrapObject = { ...defaultBootstrapObject, ...currentBootstrapObject };
+    this.kernel = bootstrapObject.kernel;
+    this.serviceProviders = bootstrapObject.serviceProviders;
+    this.transports = bootstrapObject.transport;
+  }
 
   static getWorkingPath(): string {
     const basePath = process.cwd();
@@ -74,35 +85,32 @@ export class Bootstrap {
   }
 
   static create(bootstrapObject: BootstrapType): Bootstrap {
-    return new Bootstrap({ ...defaultBootstrapObject, ...bootstrapObject });
+    return new Bootstrap(bootstrapObject);
   }
 
   static async createFromPath(bootstrapPath: string = Bootstrap.getBootstrapFilePath()): Promise<Bootstrap> {
-    let currentBootstrap = {
-      bootstrap: {
-        bootstrapObject: {},
-      },
-    };
-
     if (bootstrapPath) {
-      currentBootstrap = await import(bootstrapPath);
+      const currentBootstrap = await import(bootstrapPath);
+      const exportName = path.parse(bootstrapPath).name;
+      if (exportName in currentBootstrap) {
+        return currentBootstrap[exportName];
+      }
     }
 
-    return new Bootstrap({ ...defaultBootstrapObject, ...currentBootstrap.bootstrap.bootstrapObject });
+    throw new Error(`Unable to load bootstrap file ${bootstrapPath}`);
   }
 
-  get serviceProviders(): NewableType<ServiceContainerInterface>[] {
-    return this.bootstrapObject.serviceProviders;
-  }
-
-  async start(command: string | TransportInterface, ...opts: any[]): Promise<TransportInterface> {
+  async start(command: string | ((kernel: KernelInterface) => TransportInterface), ...opts: any[]): Promise<TransportInterface> {
     let options = [...opts];
 
-    const bootstrapObject = this.bootstrapObject;
+    const kernelConstructor = this.kernel();
+    let originalServiceProviders = [];
 
-    const kernelConstructor = bootstrapObject.kernel();
+    if (Reflect.hasMetadata(Symbol.for('extension:children'), kernelConstructor)) {
+      originalServiceProviders = Reflect.getMetadata(Symbol.for('extension:children'), kernelConstructor);
+    }
 
-    const serviceProviders = 'serviceProviders' in bootstrapObject ? bootstrapObject.serviceProviders : [];
+    const serviceProviders = [...originalServiceProviders, ...this.serviceProviders];
 
     @kernel({
       children: serviceProviders,
@@ -115,11 +123,11 @@ export class Bootstrap {
     let transport: TransportInterface;
 
     if (typeof command !== 'string') {
-      transport = command;
-    } else if (command !== 'cli' && command in bootstrapObject.transport) {
-      transport = bootstrapObject.transport[command](kernelInstance);
+      transport = command(kernelInstance);
+    } else if (command !== 'cli' && command in this.transports) {
+      transport = this.transports[command](kernelInstance);
     } else {
-      transport = bootstrapObject.transport.cli(kernelInstance);
+      transport = this.transports.cli(kernelInstance);
       options = ['', '', command, ...opts];
     }
 
