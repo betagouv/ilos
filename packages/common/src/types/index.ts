@@ -1,4 +1,5 @@
 export * from './bootstrap';
+export * from './cache';
 export * from './call';
 export * from './command';
 export * from './config';
