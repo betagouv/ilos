@@ -48,21 +48,18 @@ export class QueueTransport implements TransportInterface {
 
       this.registerListeners(queue, key);
       this.queues.push(queue);
-      queue.process(async (job) =>
-        this.kernel.handle({
-          jsonrpc: '2.0',
-          id: 1,
-          method: job.data.method,
-          params: {
-            params: job.data.params.params,
-            _context: {
-              ...job.data.params._context,
-              channel: {
-                transport: 'queue',
-              },
+      queue.process(async (job) => 
+        this.kernel.call(
+          job.data.method,
+          job.data.params.params,
+          {
+            ...job.data.params._context,
+            channel: {
+              ...job.data.params._context.channel,
+              transport: 'queue',
             },
           },
-        }),
+        ),
       );
     }
   }
