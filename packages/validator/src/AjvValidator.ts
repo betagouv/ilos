@@ -23,7 +23,7 @@ export class AjvValidator implements ValidatorInterface {
       removeAdditional: false,
       useDefaults: true,
       coerceTypes: false,
-      strictKeywords: true,
+      strictKeywords: false,
       cache: this.cache,
 
       ...this.config.get('ajv.config', {}),
