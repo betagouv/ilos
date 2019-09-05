@@ -121,7 +121,8 @@ export abstract class ParentMigrateCommand implements CommandInterface {
     const orderedDbMigrations = dbMigrations.filter((migration) => !!migration.success).reverse();
 
     let output = '';
-    for (let i = 0; i < round; i += 1) {
+    const max = dbMigrations.length > round ? round : dbMigrations.length;
+    for (let i = 0; i < max; i += 1) {
       const signature = orderedDbMigrations[i].signature;
       if (!this.availableMigrationsMap.has(signature)) {
         throw new Error(`Migration not found: ${signature}`);
