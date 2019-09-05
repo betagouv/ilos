@@ -20,7 +20,6 @@ import { ConfigExtension } from '@ilos/config';
   require: [ConfigExtension],
 })
 export class ConnectionManagerExtension implements RegisterHookInterface, InitHookInterface, DestroyHookInterface {
-  protected config: ConfigInterface;
   protected connectionRegistry: Map<Symbol, ConnectionInterface> = new Map();
 
   /**
@@ -72,9 +71,9 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    const container = serviceContainer.getContainer();
-    this.config = container.get(ConfigInterfaceResolver);
-    const connections = this.createAllConnections();
+    const connections = this.createAllConnections(
+      (k) => serviceContainer.get(ConfigInterfaceResolver).get(k)
+    );
 
     for (const connection of connections) {
       await connection.up();
@@ -103,15 +102,19 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
         for (const [requesterConstructor, instanceSymbol] of connectionMap) {
           container
             .bind(connectionConstructor)
-            .toDynamicValue(() => this.getConnection(instanceSymbol, connectionConstructor))
+            .toDynamicValue(
+              (context) => this.getConnection(instanceSymbol, connectionConstructor, (k) => context.container.get(ConfigInterfaceResolver).get(k)),
+            )
             .whenInjectedInto(requesterConstructor);
         }
       }
-
+  
       if (this.instanceSymbolRegistry.has(connectionSymbol)) {
         container
           .bind(connectionConstructor)
-          .toDynamicValue(() => this.getConnection(connectionSymbol, connectionConstructor))
+          .toDynamicValue(
+            (context) => this.getConnection(connectionSymbol, connectionConstructor, (k) => context.container.get(ConfigInterfaceResolver).get(k))
+          )
           .when((request) => {
             const parentRequest = request.parentRequest;
             if (parentRequest === null) {
@@ -144,7 +147,9 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
     }
   }
 
-  protected createAllConnections(): ConnectionInterface[] {
+    protected createAllConnections(
+      configGetter: (k: string) => any,
+    ): ConnectionInterface[] {
     const connections: ConnectionInterface[] = [];
     const connectionConstructorRegistry = this.connectionConstructorSymbolRegistry.entries();
 
@@ -154,12 +159,12 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
 
         const connectionMap = requesterMapRegistry.entries();
         for (const [_requesterConstructor, instanceSymbol] of connectionMap) {
-          connections.push(this.getConnection(instanceSymbol, connectionConstructor));
+          connections.push(this.getConnection(instanceSymbol, connectionConstructor, configGetter));
         }
       }
 
       if (this.instanceSymbolRegistry.has(connectionSymbol)) {
-        connections.push(this.getConnection(connectionSymbol, connectionConstructor));
+        connections.push(this.getConnection(connectionSymbol, connectionConstructor, configGetter));
       }
     }
     return connections;
@@ -168,22 +173,25 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
   protected getConnection(
     instanceToken: Symbol,
     connectionConstructor: NewableType<ConnectionInterface>,
+    configGetter: (k: string) => any,
   ): ConnectionInterface {
     if (!this.connectionRegistry.has(instanceToken)) {
       if (!this.instanceSymbolRegistry.has(instanceToken)) {
         throw new Error('Unable to find connection');
       }
-      this.createConnection(connectionConstructor, this.instanceSymbolRegistry.get(instanceToken), instanceToken);
+      const configKey = this.instanceSymbolRegistry.get(instanceToken);
+      const config = typeof configKey === 'string' ? configGetter(configKey) : configKey;
+      this.createConnection(connectionConstructor, config, instanceToken);
     }
+    // .get(configurationKey, {});
     return this.connectionRegistry.get(instanceToken);
   }
 
   protected createConnection(
     connectionConstructor: NewableType<ConnectionInterface>,
-    configKey: string | { [k: string]: any },
+    config: { [k: string]: any },
     instanceToken?: Symbol,
   ): ConnectionInterface {
-    const config = typeof configKey === 'string' ? this.getConfig(configKey) : configKey;
     const connection = new connectionConstructor(config);
 
     if (instanceToken) {
@@ -191,10 +199,6 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
     }
 
     return connection;
-  }
-
-  protected getConfig(configurationKey: string): ConnectionConfigurationType {
-    return this.config.get(configurationKey, {});
   }
 
   protected getConnectionConstructorSymbol(connConstructor: NewableType<ConnectionInterface>): Symbol {
