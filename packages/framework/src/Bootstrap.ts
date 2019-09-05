@@ -100,7 +100,7 @@ export class Bootstrap {
     throw new Error(`Unable to load bootstrap file ${bootstrapPath}`);
   }
 
-  async start(command: string | ((kernel: KernelInterface) => TransportInterface), ...opts: any[]): Promise<TransportInterface> {
+  async start(command: string | ((kernel: KernelInterface) => TransportInterface) | undefined, ...opts: any[]): Promise<TransportInterface> {
     let options = [...opts];
 
     const kernelConstructor = this.kernel();
@@ -122,13 +122,15 @@ export class Bootstrap {
 
     let transport: TransportInterface;
 
-    if (typeof command !== 'string') {
+    console.log('HERE', command, options);
+    if (typeof command === 'function') {
       transport = command(kernelInstance);
     } else if (command !== 'cli' && command in this.transports) {
       transport = this.transports[command](kernelInstance);
     } else {
       transport = this.transports.cli(kernelInstance);
-      options = ['', '', command, ...opts];
+      options = ['', '', (typeof command === 'undefined') ? '--help' : command, ...opts];
+      console.log('aaaa', options);
     }
 
     await transport.up(options);
@@ -165,7 +167,7 @@ export class Bootstrap {
     process.on('SIGTERM', handle);
   }
 
-  async boot(command: string, ...opts: any[]) {
+  async boot(command: string | undefined, ...opts: any[]) {
     Bootstrap.setPaths();
     Bootstrap.setEnv();
     Bootstrap.setEnvFromPackage();
