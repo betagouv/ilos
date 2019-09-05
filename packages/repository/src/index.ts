@@ -1,2 +1,2 @@
 export { ParentRepository } from './ParentRepository';
-export { ParentMigrateCommand } from './commands/ParentMigrateCommand';
+export { ParentMigrateCommand, ParentMigration } from './commands/ParentMigrateCommand';
