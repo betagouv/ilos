@@ -2,7 +2,6 @@ import * as winston from 'winston';
 
 import {
   LoggerInterfaceResolver,
-  ConfigInterfaceResolver,
   RegisterHookInterface,
   ServiceContainerInterface,
   extension,
@@ -28,11 +27,7 @@ export class LoggerExtension implements RegisterHookInterface {
       'APP_ENV' in process.env ? process.env.APP_ENV : 'NODE_ENV' in process.env ? process.env.NODE_ENV : 'default';
 
     if (!container.isBound(LoggerInterfaceResolver)) {
-      container.bind(LoggerInterfaceResolver).toDynamicValue((context) => {
-        const contextedContainer = context.container;
-        if (!contextedContainer.isBound(ConfigInterfaceResolver)) {
-          throw new Error(`Unable to load config provider`);
-        }
+      container.bind(LoggerInterfaceResolver).toDynamicValue(() => {
         return winston.createLogger(buildLoggerConfiguration(this.config, env));
       });
 
