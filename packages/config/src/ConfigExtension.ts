@@ -24,11 +24,18 @@ export class ConfigExtension implements RegisterHookInterface, InitHookInterface
   async register(serviceContainer: ServiceContainerInterface) {
     serviceContainer.bind(Config);
     serviceContainer.registerHooks(Config.prototype, ConfigInterfaceResolver);
+    // TODO: Refactoring
+    this.load(serviceContainer);
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    serviceContainer.ensureIsBound(EnvInterfaceResolver);
+    // this.load(serviceContainer);
+  }
+
+  protected load(serviceContainer: ServiceContainerInterface) {
     const config = serviceContainer.get(ConfigInterfaceResolver);
+    serviceContainer.ensureIsBound(EnvInterfaceResolver);
+
     if (typeof this.params === 'string') {
       config.loadConfigDirectory(this.params);
       return;

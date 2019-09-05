@@ -30,13 +30,20 @@ export class EnvExtension implements RegisterHookInterface, InitHookInterface {
       container.bind(EnvInterfaceResolver).toService(Env);
       serviceContainer.registerHooks(Env.prototype, EnvInterfaceResolver);
 
-      this.toBeInit = true;
+      // this.toBeInit = true;
+      // TODO: Refactoring !!!
+      this.load(serviceContainer);
     }
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    if (this.toBeInit) {
-      const container = serviceContainer.getContainer();
+    // if (this.toBeInit) {
+    //   this.load(serviceContainer);
+    // }
+  }
+
+  protected load(serviceContainer: ServiceContainerInterface) {
+    const container = serviceContainer.getContainer();
       const env = container.get(EnvInterfaceResolver);
       let envPath = this.path;
 
@@ -50,6 +57,5 @@ export class EnvExtension implements RegisterHookInterface, InitHookInterface {
 
       env.loadEnvFile(envPath);
       env.loadFromProcess();
-    }
   }
 }
