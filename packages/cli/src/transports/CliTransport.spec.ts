@@ -19,8 +19,9 @@ import { CliTransport } from './CliTransport';
 
 @commandDecorator()
 class BasicCommand extends Command {
-  public readonly signature: string = 'hello <name>';
-  public readonly options = [
+  static readonly signature: string = 'hello <name>';
+  static readonly description: string = 'The hello world command';
+  static readonly options = [
     {
       signature: '-h, --hi',
       description: 'Say hi',

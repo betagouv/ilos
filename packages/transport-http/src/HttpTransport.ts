@@ -10,7 +10,7 @@ import { mapStatusCode } from './helpers/mapStatusCode';
  * @class HttpTransport
  * @implements {TransportInterface}
  */
-export class HttpTransport implements TransportInterface {
+export class HttpTransport implements TransportInterface<http.Server> {
   protected server: http.Server;
   protected kernel: KernelInterface;
 

@@ -10,9 +10,9 @@ import { Command } from '../parents/Command';
  */
 @command()
 export class CallCommand extends Command {
-  public readonly signature: string = 'call <method>';
-  public readonly description: string = 'Make an RPC call';
-  public readonly options: CommandOptionType[] = [
+  static readonly signature: string = 'call <method>';
+  static readonly description: string = 'Make an RPC call';
+  static readonly options: CommandOptionType[] = [
     {
       signature: '-p, --params <params>',
       description: 'Set call parameters',

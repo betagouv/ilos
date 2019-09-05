@@ -11,7 +11,7 @@ import { bullFactory } from './helpers/bullFactory';
  * @class QueueTransport
  * @implements {TransportInterface}
  */
-export class QueueTransport implements TransportInterface {
+export class QueueTransport implements TransportInterface<Queue[]> {
   queues: Queue[] = [];
   kernel: KernelInterface;
 
@@ -55,7 +55,7 @@ export class QueueTransport implements TransportInterface {
           {
             ...job.data.params._context,
             channel: {
-              ...job.data.params._context.channel,
+              // ...job.data.params._context.channel,
               transport: 'queue',
             },
           },

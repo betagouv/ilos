@@ -33,16 +33,15 @@ export abstract class ParentMigration implements MigrationInterface {
 }
 
 export abstract class ParentMigrateCommand implements CommandInterface {
-  public readonly entity: string = '';
   protected readonly migrations: NewableType<ParentMigration>[] = [];
   protected availableMigrationsMap: Map<string, ParentMigration> = new Map();
 
-  get signature(): string {
-    return `migrate.${this.entity}`;
+  static get signature():string {
+    throw new Error(`Migrate command signature is not defined`);
   }
 
-  public readonly description: string = 'Make migration';
-  public readonly options: CommandOptionType[] = [
+  static readonly description: string = 'Make migration';
+  static readonly options: CommandOptionType[] = [
     {
       signature: '-b, --rollback <round>',
       description: 'Rollback',

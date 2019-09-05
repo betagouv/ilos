@@ -8,7 +8,7 @@ import { CommandRegistry } from '../providers/CommandRegistry';
  * @class CliTransport
  * @implements {TransportInterface}
  */
-export class CliTransport implements TransportInterface {
+export class CliTransport implements TransportInterface<void> {
   kernel: KernelInterface;
 
   constructor(kernel: KernelInterface) {

@@ -10,9 +10,9 @@ import { Command } from '../parents/Command';
  */
 @command()
 export class ListCommand extends Command {
-  public readonly signature: string = 'list';
-  public readonly description: string = 'List RPC methods';
-  public readonly options: CommandOptionType[] = [];
+  static readonly signature: string = 'list';
+  static readonly description: string = 'List RPC methods';
+  static readonly options: CommandOptionType[] = [];
 
   constructor(private kernel: KernelInterfaceResolver) {
     super();

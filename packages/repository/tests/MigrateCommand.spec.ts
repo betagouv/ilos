@@ -106,7 +106,9 @@ class SecondMigration extends ParentMigration {
 
 @command()
 class MigrateCommand extends ParentMigrateCommand {
-  entity = 'test';
+  static get signature(): string {
+    return 'migrate.test';
+  }
   migrations = [FirstMigration, SecondMigration];
 
   constructor(
