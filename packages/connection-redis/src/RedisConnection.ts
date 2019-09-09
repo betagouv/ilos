@@ -25,7 +25,7 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
 
   async up() {
     try {
-      if (!this.connected) {
+      if (!this.connected && this.client.status === 'wait') {
         await this.client.connect();
         this.connected = true;
         return;
