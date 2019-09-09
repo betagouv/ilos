@@ -122,7 +122,6 @@ export class Bootstrap {
 
     let transport: TransportInterface;
 
-    console.log('HERE', command, options);
     if (typeof command === 'function') {
       transport = command(kernelInstance);
     } else if (command !== 'cli' && command in this.transports) {
@@ -130,7 +129,6 @@ export class Bootstrap {
     } else {
       transport = this.transports.cli(kernelInstance);
       options = ['', '', (typeof command === 'undefined') ? '--help' : command, ...opts];
-      console.log('aaaa', options);
     }
 
     await transport.up(options);

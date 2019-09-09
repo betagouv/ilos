@@ -3,7 +3,7 @@ import {
   CommandInterface,
   NewableType,
   CommandOptionType,
-  KernelInterfaceResolver,
+  ServiceContainerInterfaceResolver,
 } from '@ilos/common';
 
 import { MongoConnection } from '@ilos/connection-mongo';
@@ -45,29 +45,25 @@ export abstract class ParentMigrateCommand implements CommandInterface {
     {
       signature: '-b, --rollback <round>',
       description: 'Rollback',
-      default: 1,
     },
     {
       signature: '-r, --reset',
       description: 'Reset migration',
-      default: false,
     },
     {
       signature: '-s, --status',
       description: 'List migrations status',
-      default: false,
     },
   ];
 
   constructor(
-    protected kernel: KernelInterfaceResolver,
+    protected container: ServiceContainerInterfaceResolver,
     protected connection: MongoConnection,
     protected config: ConfigInterfaceResolver,
   ) {}
 
   public async call({ rollback, reset, status }) {
     this.getAvailableMigrations();
-
     if (status) {
       return this.status();
     }
@@ -84,7 +80,7 @@ export abstract class ParentMigrateCommand implements CommandInterface {
   }
 
   protected getAvailableMigrations() {
-    const container = this.kernel.getContainer();
+    const container = this.container.getContainer();
     this.migrations.forEach((migration) => {
       const migrationInstance = container.get(migration);
       this.availableMigrationsMap.set(migrationInstance.signature, migrationInstance);
@@ -93,7 +89,7 @@ export abstract class ParentMigrateCommand implements CommandInterface {
 
   public async getMigrationCollection() {
     const collection = this.config.get('migration.collection', 'migrations');
-    const db = this.config.get('migration.db');
+    const db = this.config.get('migration.db', 'migrations');
     return this.connection
       .getClient()
       .db(db)
