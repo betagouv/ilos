@@ -1,11 +1,11 @@
 import { Job, Queue, JobOptions } from 'bull';
 
 import { RedisConnection } from '@ilos/connection-redis';
-import { HandlerInterface, InitHookInterface, CallType } from '@ilos/common';
+import { HandlerInterface, InitHookInterface, CallType, HasLogger } from '@ilos/common';
 
 import { bullFactory } from './helpers/bullFactory';
 
-export class QueueHandler implements HandlerInterface, InitHookInterface {
+export class QueueHandler extends HasLogger implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
 
   protected readonly service: string;
@@ -17,7 +17,9 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
 
   private client: Queue;
 
-  constructor(protected redis: RedisConnection) {}
+  constructor(protected redis: RedisConnection) {
+    super();
+  }
 
   public async init() {
     this.client = bullFactory(this.service, this.redis.getClient());
@@ -30,6 +32,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
 
     try {
       const { method, params, context } = call;
+      this.logger.debug(`Async call ${method}`, { params, context });
       const job = await this.client.add(
         {
           method,
@@ -47,6 +50,7 @@ export class QueueHandler implements HandlerInterface, InitHookInterface {
 
       return job;
     } catch (e) {
+      this.logger.debug(`Async call ${call.method} failed`, e);
       throw new Error('An error occured');
     }
   }

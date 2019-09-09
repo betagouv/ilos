@@ -8,6 +8,7 @@ import {
   MiddlewareInterface,
   ServiceContainerInterface,
   InitHookInterface,
+  HasLogger,
 } from '@ilos/common';
 
 import { compose } from '../helpers/compose';
@@ -19,7 +20,7 @@ import { compose } from '../helpers/compose';
  * @class Action
  * @implements {HandlerInterface}
  */
-export abstract class Action implements HandlerInterface, InitHookInterface {
+export abstract class Action extends HasLogger implements HandlerInterface, InitHookInterface {
   private wrapper: FunctionMiddlewareInterface = async (params, context, handle) => handle(params, context);
   public readonly middlewares: (string | [string, any])[] = [];
 
