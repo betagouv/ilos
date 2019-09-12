@@ -85,19 +85,19 @@ export class QueueTransport implements TransportInterface<Queue[]> {
     });
 
     queue.on('active', (job) => {
-      console.log(`🐮/${name}: active ${job.id} ${job.data.type}`);
+      console.log(`🐮/${name}: active ${job.id} ${job.data.method}`);
     });
 
     queue.on('stalled', (job) => {
-      console.log(`🐮/${name}: stalled ${job.id} ${job.data.type}`);
+      console.log(`🐮/${name}: stalled ${job.id} ${job.data.method}`);
     });
 
     queue.on('progress', (job, progress) => {
-      console.log(`🐮/${name}: progress ${job.id} ${job.data.type} : ${progress}`);
+      console.log(`🐮/${name}: progress ${job.id} ${job.data.method} : ${progress}`);
     });
 
     queue.on('completed', (job) => {
-      console.log(`🐮/${name}: completed ${job.id} ${job.data.type}`);
+      console.log(`🐮/${name}: completed ${job.id} ${job.data.method}`);
       // job.remove();
     });
 

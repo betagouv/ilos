@@ -97,6 +97,9 @@ describe('Queue integration', () => {
           done();
         }, 1000);
       })
+      .catch(e => {
+        done(e);
+      });
   });
 });
 

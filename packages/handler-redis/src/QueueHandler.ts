@@ -32,6 +32,13 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
 
     try {
       const { method, params, context } = call;
+      let options = { ...this.defaultJobOptions };
+
+      // easy path to repeated/delayed jobs
+      if (context && 'channel' in context && 'metadata' in context.channel) {
+        options = { ...options, ...context.channel.metadata };
+      }
+
       this.logger.debug(`Async call ${method}`, { params, context });
       const job = await this.client.add(
         {
@@ -43,9 +50,7 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
             _context: context,
           },
         },
-        {
-          ...this.defaultJobOptions,
-        },
+        options,
       );
 
       return job;
