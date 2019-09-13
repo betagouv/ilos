@@ -71,9 +71,7 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    const connections = this.createAllConnections(
-      (k) => serviceContainer.get(ConfigInterfaceResolver).get(k)
-    );
+    const connections = this.createAllConnections((k) => serviceContainer.get(ConfigInterfaceResolver).get(k));
 
     for (const connection of connections) {
       await connection.up();
@@ -102,18 +100,22 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
         for (const [requesterConstructor, instanceSymbol] of connectionMap) {
           container
             .bind(connectionConstructor)
-            .toDynamicValue(
-              (context) => this.getConnection(instanceSymbol, connectionConstructor, (k) => context.container.get(ConfigInterfaceResolver).get(k)),
+            .toDynamicValue((context) =>
+              this.getConnection(instanceSymbol, connectionConstructor, (k) =>
+                context.container.get(ConfigInterfaceResolver).get(k),
+              ),
             )
             .whenInjectedInto(requesterConstructor);
         }
       }
-  
+
       if (this.instanceSymbolRegistry.has(connectionSymbol)) {
         container
           .bind(connectionConstructor)
-          .toDynamicValue(
-            (context) => this.getConnection(connectionSymbol, connectionConstructor, (k) => context.container.get(ConfigInterfaceResolver).get(k))
+          .toDynamicValue((context) =>
+            this.getConnection(connectionSymbol, connectionConstructor, (k) =>
+              context.container.get(ConfigInterfaceResolver).get(k),
+            ),
           )
           .when((request) => {
             const parentRequest = request.parentRequest;
@@ -147,9 +149,7 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
     }
   }
 
-    protected createAllConnections(
-      configGetter: (k: string) => any,
-    ): ConnectionInterface[] {
+  protected createAllConnections(configGetter: (k: string) => any): ConnectionInterface[] {
     const connections: ConnectionInterface[] = [];
     const connectionConstructorRegistry = this.connectionConstructorSymbolRegistry.entries();
 

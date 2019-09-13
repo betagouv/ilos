@@ -1,6 +1,6 @@
-
 import { Client, ClientConfig } from 'pg';
-import { ConnectionInterface, ConnectionConfigurationType } from '@ilos/common';
+
+import { ConnectionInterface } from '@ilos/common';
 
 export class PostgresConnection implements ConnectionInterface<Client> {
   protected client: Client;

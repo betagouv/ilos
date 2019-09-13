@@ -36,9 +36,7 @@ export class HookRegistry<T> {
     const promises: Promise<void>[] = [];
 
     for (const [hook] of this.registry.entries()) {
-      promises.push(
-        (async () => hook(serviceContainer))()
-      );
+      promises.push((async () => hook(serviceContainer))());
     }
     await Promise.all(promises);
     this.registry.clear();

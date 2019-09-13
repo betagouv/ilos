@@ -1,11 +1,5 @@
 import { Action } from '@ilos/core';
-import {
-  handler,
-  ParamsType,
-  ContextType,
-  ResultType,
-  InvalidParamsException,
-} from '@ilos/common';
+import { handler, ParamsType, ContextType, ResultType, InvalidParamsException } from '@ilos/common';
 
 import { CustomProvider } from '../../Providers/CustomProvider';
 
@@ -14,9 +8,7 @@ import { CustomProvider } from '../../Providers/CustomProvider';
   method: 'add',
 })
 export class AddAction extends Action {
-  constructor(
-    public custom: CustomProvider,
-  ) {
+  constructor(public custom: CustomProvider) {
     super();
   }
 

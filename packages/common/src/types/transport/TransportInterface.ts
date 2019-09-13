@@ -1,6 +1,6 @@
 import { KernelInterface } from '../core/KernelInterface';
 
-export interface TransportInterface<T=any> {
+export interface TransportInterface<T = any> {
   /**
    * Get Kernel instance
    * @returns {KernelInterface}

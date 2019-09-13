@@ -27,9 +27,9 @@ export class LoggerExtension implements RegisterHookInterface {
       'APP_ENV' in process.env ? process.env.APP_ENV : 'NODE_ENV' in process.env ? process.env.NODE_ENV : 'default';
 
     if (!container.isBound(LoggerInterfaceResolver)) {
-      container.bind(LoggerInterfaceResolver).toDynamicValue(() => {
-        return winston.createLogger(buildLoggerConfiguration(this.config, env));
-      });
+      container
+        .bind(LoggerInterfaceResolver)
+        .toDynamicValue(() => winston.createLogger(buildLoggerConfiguration(this.config, env)));
 
       if (container.isBound(CONTAINER_LOGGER_KEY)) {
         container.unbind(CONTAINER_LOGGER_KEY);

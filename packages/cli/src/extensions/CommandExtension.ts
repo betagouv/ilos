@@ -38,7 +38,11 @@ export class CommandExtension implements RegisterHookInterface, InitHookInterfac
     }
   }
 
-  protected registerCommand(registry: CommandRegistry, cmd: CommandStaticInterface, processCommand: (...args: any[]) => Promise<ResultType>): any {
+  protected registerCommand(
+    registry: CommandRegistry,
+    cmd: CommandStaticInterface,
+    processCommand: (...args: any[]) => Promise<ResultType>,
+  ): any {
     const command = registry.command(cmd.signature);
 
     command.description(cmd.description);

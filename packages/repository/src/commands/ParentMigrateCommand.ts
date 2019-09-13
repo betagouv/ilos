@@ -36,7 +36,7 @@ export abstract class ParentMigrateCommand implements CommandInterface {
   protected readonly migrations: NewableType<ParentMigration>[] = [];
   protected availableMigrationsMap: Map<string, ParentMigration> = new Map();
 
-  static get signature():string {
+  static get signature(): string {
     throw new Error(`Migrate command signature is not defined`);
   }
 

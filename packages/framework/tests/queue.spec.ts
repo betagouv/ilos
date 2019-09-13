@@ -8,13 +8,7 @@ import path from 'path';
 import { HttpTransport } from '@ilos/transport-http';
 import { QueueTransport } from '@ilos/transport-redis';
 
-import {
-  TransportInterface,
-  KernelInterface,
-  serviceProvider,
-  kernel as kernelDecorator,
-  handler,
-} from '@ilos/common';
+import { TransportInterface, KernelInterface, serviceProvider, kernel as kernelDecorator, handler } from '@ilos/common';
 
 import { Kernel } from '../src/Kernel';
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
@@ -33,9 +27,9 @@ const redisUrl = process.env.APP_REDIS_URL;
       connectionOptions: {},
     },
     log: {
-      path: process.env.APP_LOG_PATH
+      path: process.env.APP_LOG_PATH,
     },
-  }
+  },
 })
 class StringServiceProvider extends ParentStringServiceProvider {}
 
@@ -89,20 +83,19 @@ describe('Queue integration', () => {
   it('should works', (done) => {
     const data = { name: 'sam' };
     makeRPCNotify(8081, { method: 'string:log', params: data })
-      .then(responseString => {
+      .then((responseString) => {
         expect(responseString.data).to.equal('');
         setTimeout(() => {
-          const content = fs.readFileSync(logPath,  { encoding:'utf8', flag: 'r' });
+          const content = fs.readFileSync(logPath, { encoding: 'utf8', flag: 'r' });
           expect(content).to.eq(JSON.stringify(data));
           done();
         }, 1000);
       })
-      .catch(e => {
+      .catch((e) => {
         done(e);
       });
   });
 });
-
 
 // // tslint:disable max-classes-per-file
 // import { expect } from 'chai';
@@ -115,7 +108,6 @@ describe('Queue integration', () => {
 // import { QueueExtension } from '@ilos/queue';
 // import { QueueTransport } from '@ilos/transport-redis';
 // import { EnvExtension } from '@ilos/env';
-
 
 // const config = {
 //   redis: {
@@ -155,7 +147,7 @@ describe('Queue integration', () => {
 //       return;
 //     }
 //   }
-  
+
 //   kernel({
 //     config,
 //     env: null,

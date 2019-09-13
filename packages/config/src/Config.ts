@@ -32,7 +32,7 @@ export class Config extends HasLogger implements ConfigInterface {
     const configSubFolder = configDir ? configDir : this.env.get('APP_CONFIG_DIR', './config');
     const configFolder = path.resolve(workingPath, configSubFolder);
 
-    this.logger.info(`Loading directory folder ${configFolder}`);
+    this.logger.debug(`Loading directory folder ${configFolder}`);
     if (!fs.existsSync(configFolder) || !fs.lstatSync(configFolder).isDirectory()) {
       return;
     }

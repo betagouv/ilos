@@ -9,22 +9,16 @@ import { CustomProvider } from '../Providers/CustomProvider';
 
 @serviceProvider({
   config: __dirname,
-  providers: [
-    CustomProvider,
-  ],
-  handlers: [
-    HelloAction,
-    ResultAction,
-    LogAction,
-  ],
+  providers: [CustomProvider],
+  handlers: [HelloAction, ResultAction, LogAction],
   queues: ['string'],
-  connections: [
-    [RedisConnection, 'redis'],
-  ],
+  connections: [[RedisConnection, 'redis']],
 })
 export class ServiceProvider extends BaseServiceProvider {
   async init() {
     await super.init();
-    this.getContainer().get(CustomProvider).set('string:');
+    this.getContainer()
+      .get(CustomProvider)
+      .set('string:');
   }
 }

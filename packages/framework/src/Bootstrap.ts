@@ -100,7 +100,10 @@ export class Bootstrap {
     throw new Error(`Unable to load bootstrap file ${bootstrapPath}`);
   }
 
-  async start(command: string | ((kernel: KernelInterface) => TransportInterface) | undefined, ...opts: any[]): Promise<TransportInterface> {
+  async start(
+    command: string | ((kernel: KernelInterface) => TransportInterface) | undefined,
+    ...opts: any[]
+  ): Promise<TransportInterface> {
     let options = [...opts];
 
     const kernelConstructor = this.kernel();
@@ -128,7 +131,7 @@ export class Bootstrap {
       transport = this.transports[command](kernelInstance);
     } else {
       transport = this.transports.cli(kernelInstance);
-      options = ['', '', (typeof command === 'undefined') ? '--help' : command, ...opts];
+      options = ['', '', !command ? '--help' : command, ...opts];
     }
 
     await transport.up(options);

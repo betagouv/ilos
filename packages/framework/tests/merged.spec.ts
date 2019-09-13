@@ -2,11 +2,7 @@
 import { expect } from 'chai';
 import axios from 'axios';
 import { HttpTransport } from '@ilos/transport-http';
-import {
-  kernel as kernelDecorator,
-  TransportInterface,
-  KernelInterface,
-} from '@ilos/common';
+import { kernel as kernelDecorator, TransportInterface, KernelInterface } from '@ilos/common';
 
 import { Kernel } from '../src/Kernel';
 
@@ -16,13 +12,9 @@ import { ServiceProvider as StringServiceProvider } from './mock/StringService/S
 // process.env.APP_REDIS_URL = 'redis://127.0.0.1:6379';
 
 @kernelDecorator({
-  children: [
-    MathServiceProvider,
-    StringServiceProvider,
-  ],
+  children: [MathServiceProvider, StringServiceProvider],
 })
-class MyKernel extends Kernel {
-}
+class MyKernel extends Kernel {}
 
 function makeRPCCall(port: number, req: { method: string; params?: any }[]) {
   let data;
@@ -69,18 +61,14 @@ describe('Merged integration', () => {
   });
 
   it('should works', async () => {
-    const responseMath = await makeRPCCall(8080, [
-      { method: 'math:add', params: [1, 1] },
-    ]);
+    const responseMath = await makeRPCCall(8080, [{ method: 'math:add', params: [1, 1] }]);
     expect(responseMath.data).to.deep.equal({
       jsonrpc: '2.0',
       id: 0,
       result: 'math:2',
     });
 
-    const responseString = await makeRPCCall(8080, [
-      { method: 'string:hello', params: { name: 'sam' } },
-    ]);
+    const responseString = await makeRPCCall(8080, [{ method: 'string:hello', params: { name: 'sam' } }]);
     expect(responseString.data).to.deep.equal({
       jsonrpc: '2.0',
       id: 0,

@@ -15,14 +15,11 @@ import { CustomProvider } from '../../Providers/CustomProvider';
   method: 'hello',
 })
 export class HelloAction extends Action {
-  constructor(
-    public custom: CustomProvider,
-    private config: ConfigInterfaceResolver,
-  ) {
+  constructor(public custom: CustomProvider, private config: ConfigInterfaceResolver) {
     super();
   }
 
-  protected async handle(params: ParamsType, context: ContextType):Promise<ResultType> {
+  protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     if (Array.isArray(params) || !('name' in params)) {
       throw new InvalidParamsException();
     }

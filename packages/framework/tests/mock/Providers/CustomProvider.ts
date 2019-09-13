@@ -12,7 +12,7 @@ export class CustomProvider implements ProviderInterface {
     return this.value;
   }
 
-  set(value:string) {
+  set(value: string) {
     this.value = value;
   }
 }

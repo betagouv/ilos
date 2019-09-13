@@ -23,7 +23,7 @@ export interface CommandStaticInterface {
    */
   readonly options: CommandOptionType[];
 
-  new(...args: any): CommandInterface;
+  new (...args: any): CommandInterface;
 }
 
 export interface CommandInterface {
