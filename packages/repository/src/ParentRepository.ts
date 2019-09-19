@@ -51,8 +51,7 @@ export abstract class ParentRepository implements RepositoryInterface {
 
   async find(id: string | ObjectId): Promise<RepositoryModelType> {
     const collection = await this.getCollection();
-    const normalizedId = typeof id === 'string' ? new ObjectId(id) : id;
-    const result = await collection.findOne({ _id: normalizedId });
+    const result = await collection.findOne({ _id: new ObjectId(id) });
     if (!result) throw new NotFoundException('id not found');
     return this.instanciate(result);
   }
@@ -75,9 +74,8 @@ export abstract class ParentRepository implements RepositoryInterface {
 
   async delete(data: RepositoryModelType | string | ObjectId): Promise<void> {
     const collection = await this.getCollection();
-    let id = typeof data === 'string' ? data : '_id' in data ? data._id : data;
-    id = typeof id === 'string' ? new ObjectId(id) : id;
-    const result = await collection.deleteOne({ _id: id });
+    const id = typeof data === 'string' ? data : '_id' in data ? data._id : data;
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
     if (result.deletedCount !== 1) {
       throw new MongoException();
     }

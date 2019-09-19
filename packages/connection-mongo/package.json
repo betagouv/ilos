@@ -43,7 +43,8 @@
     "instrument": true
   },
   "dependencies": {
-    "mongodb": "^3.2.4"
+    "mongodb": "^3.2.4",
+    "saslprep": "^1.0.3"
   },
   "peerDependencies": {
     "@ilos/common": "~0",

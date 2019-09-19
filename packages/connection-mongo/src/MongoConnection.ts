@@ -10,6 +10,7 @@ export class MongoConnection implements ConnectionInterface<MongoClient> {
     const { connectionString, connectionOptions } = this.config;
     const mongoConfig = {
       useNewUrlParser: true,
+      useUnifiedTopology: true,
       ...connectionOptions,
     };
 
