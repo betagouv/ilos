@@ -144,7 +144,7 @@ export abstract class ParentRepository implements RepositoryInterface {
   protected castObjectIdFromString(data: RepositoryModelType) {
     const castedData = { ...data };
     this.castObjectIds.forEach((path: string) => {
-      if (path in castedData) {
+      if (path in castedData && typeof castedData[path] === 'string') {
         castedData[path] = new ObjectId(castedData[path]);
       }
     });
