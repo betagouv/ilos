@@ -49,7 +49,10 @@ export class Bootstrap {
 
   static setPaths(): void {
     process.env.APP_ROOT_PATH = process.cwd();
-    process.chdir(Bootstrap.getWorkingPath());
+    const workingPath = Bootstrap.getWorkingPath();
+    if (fs.existsSync(workingPath)) {
+      process.chdir(workingPath);
+    }
     process.env.APP_WORKING_PATH = process.cwd();
   }
 
