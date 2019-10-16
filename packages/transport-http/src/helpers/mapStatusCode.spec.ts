@@ -119,4 +119,10 @@ describe('RPC/HTTP status codes mapping', () => {
       }),
     ).to.eq(409);
   });
+
+  it('handles array response', () => {
+    expect(
+      mapStatusCode([{ id: 1, error: { data: 'email conflict', code: -32509, message: 'Conflict' }, jsonrpc: '2.0' }]),
+    ).to.eq(409);
+  });
 });
