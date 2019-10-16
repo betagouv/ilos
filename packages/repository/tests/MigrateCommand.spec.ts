@@ -12,8 +12,8 @@ import {
 } from '@ilos/common';
 import { Config } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
-
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
+
 import { ParentMigrateCommand, ParentMigration } from '../src/commands/ParentMigrateCommand';
 
 // process.env.APP_MONGO_URL = ' mongodb://mongo:mongo@127.0.0.1:27017';

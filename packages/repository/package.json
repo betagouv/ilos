@@ -43,12 +43,12 @@
     "sourceMap": true,
     "instrument": true
   },
-  "dependencies": {},
   "peerDependencies": {
     "@ilos/cli": "~0",
     "@ilos/common": "~0",
     "@ilos/config": "~0",
     "@ilos/connection-mongo": "~0",
+    "@ilos/connection-manager": "~0",
     "@ilos/core": "~0"
   },
   "devDependencies": {
@@ -60,6 +60,7 @@
     "chai-as-promised": "^7.1.1",
     "mocha": "^6.1.4",
     "mock-fs": "^4.9.0",
+    "nock": "^11.3.5",
     "nyc": "^14.1.1",
     "sinon": "^7.3.2",
     "ts-node": "^8.1.0",

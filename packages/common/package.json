@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "@types/node": "^12.6.8",
+    "nock": "^11.3.5",
     "ts-node": "^8.1.0",
     "tsconfig-paths": "^3.8.0",
     "tslint": "^5.15.0",
