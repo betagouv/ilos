@@ -43,7 +43,8 @@
     "instrument": true
   },
   "dependencies": {
-    "ajv": "^6.10.0"
+    "ajv": "^6.10.0",
+    "ajv-keywords": "^3.4.1"
   },
   "peerDependencies": {
     "@ilos/common": "~0",

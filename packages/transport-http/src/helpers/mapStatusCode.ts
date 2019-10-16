@@ -19,7 +19,7 @@ export function mapStatusCode(results: RPCResponseType): number {
   }
 
   // ONE SHOT requests
-  // 500 -32700            Parse error.
+  // 422 -32700            Parse error.
   // 400 -32600            Invalid Request.
   // 404 -32601            Method not found.
   // 400 -32602            Invalid params.

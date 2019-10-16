@@ -1,4 +1,5 @@
 import ajv from 'ajv';
+import ajvKeywords from 'ajv-keywords';
 import jsonSchemaSecureJson from 'ajv/lib/refs/json-schema-secure.json';
 
 import { provider, ConfigInterfaceResolver, NewableType, ValidatorInterface } from '@ilos/common';
@@ -30,6 +31,10 @@ export class AjvValidator implements ValidatorInterface {
     };
 
     this.ajv = new ajv(ajvConfig);
+
+    // activate ajv-keywords plugin
+    ajvKeywords(this.ajv);
+
     this.isSchemaSecure = this.ajv.compile(jsonSchemaSecureJson);
   }
 
@@ -79,7 +84,7 @@ export class AjvValidator implements ValidatorInterface {
     const validator = this.bindings.get(resolver);
     const valid = await validator(data);
     if (!valid) {
-      throw new Error(this.ajv.errorsText(validator.errors));
+      throw new Error(JSON.stringify(validator.errors));
     }
     return true;
   }
