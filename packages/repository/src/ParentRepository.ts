@@ -66,41 +66,33 @@ export abstract class ParentRepository implements RepositoryInterface {
     const normalizedData = this.castObjectIdFromString(data);
     const collection = await this.getCollection();
     const { result, ops } = await collection.insertOne(normalizedData);
-    if (result.ok !== 1) {
-      throw new MongoException();
-    }
-    return this.instanciate(ops[0]);
+    if ('ok' in result && result.ok === 1) return this.instanciate(ops[0]);
+    throw new MongoException();
   }
 
   async delete(data: RepositoryModelType | string | ObjectId): Promise<void> {
     const collection = await this.getCollection();
     const id = typeof data === 'string' ? data : '_id' in data ? data._id : data;
-    const result = await collection.deleteOne({ _id: new ObjectId(id) });
-    if (result.deletedCount !== 1) {
-      throw new MongoException();
-    }
-    return;
+    const { result } = await collection.deleteOne({ _id: new ObjectId(id) });
+    if ('ok' in result && result.ok === 1) return;
+    throw new MongoException();
   }
 
   async update(data: RepositoryModelType): Promise<RepositoryModelType> {
     const normalizedData = this.castObjectIdFromString(data);
     const collection = await this.getCollection();
     const selector = { _id: normalizedData._id };
-    const { modifiedCount } = await collection.replaceOne(selector, normalizedData);
-    if (modifiedCount !== 1) {
-      throw new MongoException();
-    }
-    return this.instanciate(data);
+    const { result } = await collection.replaceOne(selector, normalizedData);
+    if ('ok' in result && result.ok === 1) return this.instanciate(data);
+    throw new MongoException();
   }
 
   async updateOrCreate(data: RepositoryModelType): Promise<RepositoryModelType> {
     const collection = await this.getCollection();
     const selector = { _id: data._id };
-    const { modifiedCount } = await collection.replaceOne(selector, data, { upsert: true });
-    if (modifiedCount !== 1) {
-      throw new MongoException();
-    }
-    return data;
+    const { result } = await collection.replaceOne(selector, data, { upsert: true });
+    if ('ok' in result && result.ok === 1) return data;
+    throw new MongoException();
   }
 
   async patch(id: ObjectId | string, patch: any): Promise<RepositoryModelType> {
@@ -116,19 +108,15 @@ export abstract class ParentRepository implements RepositoryInterface {
         returnOriginal: false,
       },
     );
-    if (result.ok !== 1) {
-      throw new MongoException();
-    }
-    return this.instanciate(result.value);
+    if ('ok' in result && result.ok === 1) return this.instanciate(result.value);
+    throw new MongoException();
   }
 
   async clear(): Promise<void> {
     const collection = await this.getCollection();
     const { result } = await collection.deleteMany({});
-    if (result.ok !== 1) {
-      throw new MongoException();
-    }
-    return;
+    if ('ok' in result && result.ok === 1) return;
+    throw new MongoException();
   }
 
   protected instanciate(data: any): RepositoryModelType {
