@@ -137,9 +137,9 @@ export class Bootstrap {
       options = ['', '', !command ? '--help' : command, ...opts];
     }
 
-    await transport.up(options);
-
     this.registerShutdownHook(kernelInstance, transport);
+
+    await transport.up(options);
 
     return transport;
   }
