@@ -1,22 +1,18 @@
-import { Client, ClientConfig } from 'pg';
+import { Pool, PoolConfig } from 'pg';
 
 import { ConnectionInterface } from '@ilos/common';
 
-export class PostgresConnection implements ConnectionInterface<Client> {
-  protected client: Client;
-  protected connected = false;
+export class PostgresConnection implements ConnectionInterface<Pool> {
+  protected pool: Pool;
 
-  constructor(protected config: ClientConfig) {
-    this.client = new Client(config);
+  constructor(protected config: PoolConfig) {
+    this.pool = new Pool(config);
   }
 
   async up() {
     try {
-      if (!this.connected) {
-        await this.client.connect();
-        this.connected = true;
-        return;
-      }
+      await this.pool.query('SELECT NOW()');
+      return;
     } catch (err) {
       throw err;
     }
@@ -24,16 +20,13 @@ export class PostgresConnection implements ConnectionInterface<Client> {
 
   async down() {
     try {
-      if (this.connected) {
-        await this.client.end();
-        this.connected = false;
-      }
+      await this.pool.end();
     } catch (err) {
       throw err;
     }
   }
 
-  getClient(): Client {
-    return this.client;
+  getClient(): Pool {
+    return this.pool;
   }
 }
