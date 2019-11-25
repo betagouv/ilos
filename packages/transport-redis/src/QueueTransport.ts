@@ -52,7 +52,7 @@ export class QueueTransport implements TransportInterface<Queue[]> {
         this.kernel.call(job.data.method, job.data.params.params, {
           ...job.data.params._context,
           channel: {
-            // ...job.data.params._context.channel,
+            ...(job.data.params._context && job.data.params._context.channel ? job.data.params._context.channel : {}),
             transport: 'queue',
           },
         }),
