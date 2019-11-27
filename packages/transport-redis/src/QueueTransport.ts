@@ -98,8 +98,8 @@ export class QueueTransport implements TransportInterface<Queue[]> {
     });
 
     queue.on('failed', (job, err) => {
-      console.log(`🐮/${name}: failed ${job.id} ${job.data.type}`, err.message);
-      console.log(job, err);
+      console.log(`🐮/${name}: failed ${job.id}`, err.message);
+      console.log(JSON.stringify(job.data));
       if (errorHandler && typeof errorHandler === 'function') {
         errorHandler(err);
       }
