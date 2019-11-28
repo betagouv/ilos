@@ -27,7 +27,8 @@ export class QueueHandler extends HasLogger implements HandlerInterface, InitHoo
 
   public async call(call: CallType): Promise<Job> {
     if (!this.client) {
-      throw new Error('Redis queue handler initialization error');
+      await this.init(); // FIXME
+      // throw new Error('Redis queue handler initialization error');
     }
 
     try {
