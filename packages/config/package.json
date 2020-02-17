@@ -80,8 +80,8 @@
     "lodash": "^4.17.11"
   },
   "peerDependencies": {
-    "@ilos/common": "~0",
-    "@ilos/core": "~0",
-    "@ilos/env": "~0"
+    "@ilos/common": "^0.4.0",
+    "@ilos/core": "^0.4.0",
+    "@ilos/env": "^0.4.0"
   }
 }

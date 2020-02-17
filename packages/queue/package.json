@@ -76,12 +76,12 @@
     "typescript": "^3.4.3"
   },
   "peerDependencies": {
-    "@ilos/common": "~0",
-    "@ilos/config": "~0",
-    "@ilos/connection-manager": "~0",
-    "@ilos/connection-redis": "~0",
-    "@ilos/core": "~0",
-    "@ilos/env": "~0",
-    "@ilos/handler-redis": "~0"
+    "@ilos/common": "^0.4.0",
+    "@ilos/config": "^0.4.0",
+    "@ilos/connection-manager": "^0.4.0",
+    "@ilos/connection-redis": "^0.4.0",
+    "@ilos/core": "^0.4.0",
+    "@ilos/env": "^0.4.0",
+    "@ilos/handler-redis": "^0.4.0"
   }
 }

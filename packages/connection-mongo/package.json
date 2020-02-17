@@ -47,8 +47,8 @@
     "saslprep": "^1.0.3"
   },
   "peerDependencies": {
-    "@ilos/common": "~0",
-    "@ilos/connection-manager": "~0"
+    "@ilos/common": "^0.4.0",
+    "@ilos/connection-manager": "^0.4.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

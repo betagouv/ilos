@@ -76,8 +76,8 @@
     "winston": "^3.2.1"
   },
   "peerDependencies": {
-    "@ilos/common": "~0",
-    "@ilos/config": "~0",
-    "@ilos/core": "~0"
+    "@ilos/common": "^0.4.0",
+    "@ilos/config": "^0.4.0",
+    "@ilos/core": "^0.4.0"
   }
 }

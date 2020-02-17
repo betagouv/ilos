@@ -79,10 +79,10 @@
     "bull": "^3.7.0"
   },
   "peerDependencies": {
-    "@ilos/common": "~0",
-    "@ilos/config": "~0",
-    "@ilos/core": "~0",
-    "@ilos/env": "~0",
-    "@ilos/queue": "~0"
+    "@ilos/common": "^0.4.0",
+    "@ilos/config": "^0.4.0",
+    "@ilos/core": "^0.4.0",
+    "@ilos/env": "^0.4.0",
+    "@ilos/queue": "^0.4.0"
   }
 }
