@@ -24,15 +24,15 @@ describe('Http handler', () => {
       .post('/')
       .reply(
         200,
-      {
-        jsonrpc: '2.0',
-        id: 1,
-        result: 'hello world',
-      },
-      {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          result: 'hello world',
+        },
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
       );
 
     const provider = new (httpHandlerFactory('service', url))();
@@ -62,15 +62,15 @@ describe('Http handler', () => {
       .post('/')
       .reply(
         200,
-      {
-        jsonrpc: '2.0',
-        id: 1,
-        result: 'hello world',
-      },
-      {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          result: 'hello world',
+        },
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
       );
 
     const provider = new (httpHandlerFactory('service', url))();
@@ -93,15 +93,15 @@ describe('Http handler', () => {
       .post('/')
       .reply(
         500,
-      {
-        jsonrpc: '2.0',
-        id: 1,
-        result: 'hello world',
-      },
-      {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          result: 'hello world',
+        },
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
       );
 
     const provider = new (httpHandlerFactory('service', url))();
@@ -120,15 +120,15 @@ describe('Http handler', () => {
       .post('/')
       .reply(
         200,
-      {
-        jsonrpc: '2.0',
-        id: 1,
-        error: { message: 'wrong!' },
-      },
-      {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          error: { message: 'wrong!' },
+        },
+        {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
       );
 
     const provider = new (httpHandlerFactory('service', url))();

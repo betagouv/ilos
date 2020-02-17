@@ -1,6 +1,6 @@
 {
   "name": "@ilos/common",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "publishConfig": {
     "access": "public"
   },
@@ -15,7 +15,7 @@
     "test": "exit 0",
     "test:integration": "exit 0",
     "watch": "tsc -w",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'"
+    "lint": "eslint 'src/**/*.ts'"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

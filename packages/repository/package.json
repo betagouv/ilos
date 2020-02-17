@@ -43,7 +43,7 @@
     "sourceMap": true,
     "instrument": true
   },
-  "peerDependencies": {
+  "dependencies": {
     "@ilos/cli": "^0.4.1",
     "@ilos/common": "^0.4.1",
     "@ilos/config": "^0.4.1",
@@ -51,7 +51,7 @@
     "@ilos/connection-mongo": "^0.4.1",
     "@ilos/core": "^0.4.1"
   },
-  "dependencies": {
+  "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^7.0.1",

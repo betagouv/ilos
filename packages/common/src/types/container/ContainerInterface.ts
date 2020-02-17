@@ -11,4 +11,5 @@ export interface ContainerInterface extends interfaces.Container {
   createChild(containerOptions?: interfaces.ContainerOptions): ContainerInterface;
 }
 
+/* eslint-disable @typescript-eslint/no-empty-interface */
 export interface Factory<T> extends interfaces.Factory<T> {}

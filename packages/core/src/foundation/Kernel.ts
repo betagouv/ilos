@@ -68,7 +68,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
       throw new InvalidRequestException('jsonrpc call must have a method property');
     }
 
-    if ('id' in call && (typeof call.id !== 'string' && typeof call.id !== 'number' && call.id !== null)) {
+    if ('id' in call && typeof call.id !== 'string' && typeof call.id !== 'number' && call.id !== null) {
       throw new InvalidRequestException('id property should be either a string, a number or null');
     }
     return;

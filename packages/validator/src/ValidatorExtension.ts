@@ -13,9 +13,9 @@ export class ValidatorExtension implements RegisterHookInterface {
     config:
       | [string, any][]
       | {
-        validators?: [string, any][];
-        keywords?: any[];
-      },
+          validators?: [string, any][];
+          keywords?: any[];
+        },
   ) {
     if (Array.isArray(config)) {
       this.validators = config;

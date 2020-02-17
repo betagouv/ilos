@@ -82,7 +82,7 @@ describe('Action', () => {
       }
     }
     const action = new BasicAction();
-    const container = new class extends ServiceContainer {}();
+    const container = new (class extends ServiceContainer {})();
     container
       .getContainer()
       .bind('minus')
@@ -111,7 +111,7 @@ describe('Action', () => {
       }
     }
     const action = new BasicAction();
-    const container = new class extends ServiceContainer {}();
+    const container = new (class extends ServiceContainer {})();
     container
       .getContainer()
       .bind('hello')

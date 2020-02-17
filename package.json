@@ -76,6 +76,9 @@
     "instrument": true
   },
   "devDependencies": {
-    "lerna": "^3.20.2"
+    "eslint": "^6.8.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "lerna": "^3.20.2",
+    "prettier": "^1.19.1"
   }
 }

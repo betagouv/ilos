@@ -52,7 +52,7 @@ export class QueueExtension implements RegisterHookInterface, InitHookInterface 
       new Set(
         rootContainer
           .getHandlers()
-          .filter((cfg) => 'local' in cfg && cfg.local && ('queue' in cfg && !cfg.queue))
+          .filter((cfg) => 'local' in cfg && cfg.local && 'queue' in cfg && !cfg.queue)
           .map((cfg) => cfg.service),
       ),
     );
