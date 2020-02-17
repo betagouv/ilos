@@ -8,9 +8,9 @@ import { CommandInterface, CommandOptionType, ResultType } from '@ilos/common';
  * @implements {CommandInterface}
  */
 export abstract class Command implements CommandInterface {
-  public readonly signature: string;
-  public readonly description: string;
-  public readonly options: CommandOptionType[] = [];
+  static readonly signature: string;
+  static readonly description: string;
+  static readonly options: CommandOptionType[] = [];
 
   public async call(...args: any[]): Promise<ResultType> {
     throw new Error('No implementation found');

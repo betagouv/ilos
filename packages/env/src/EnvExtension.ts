@@ -30,26 +30,32 @@ export class EnvExtension implements RegisterHookInterface, InitHookInterface {
       container.bind(EnvInterfaceResolver).toService(Env);
       serviceContainer.registerHooks(Env.prototype, EnvInterfaceResolver);
 
-      this.toBeInit = true;
+      // this.toBeInit = true;
+      // TODO: Refactoring !!!
+      this.load(serviceContainer);
     }
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    if (this.toBeInit) {
-      const container = serviceContainer.getContainer();
-      const env = container.get(EnvInterfaceResolver);
-      let envPath = this.path;
+    // if (this.toBeInit) {
+    //   this.load(serviceContainer);
+    // }
+  }
 
-      if (!envPath) {
-        envPath = process.env.APP_ROOT_PATH;
-      }
+  protected load(serviceContainer: ServiceContainerInterface) {
+    const container = serviceContainer.getContainer();
+    const env = container.get(EnvInterfaceResolver);
+    let envPath = this.path;
 
-      if (!envPath) {
-        envPath = process.cwd();
-      }
-
-      env.loadEnvFile(envPath);
-      env.loadFromProcess();
+    if (!envPath) {
+      envPath = process.env.APP_ROOT_PATH;
     }
+
+    if (!envPath) {
+      envPath = process.cwd();
+    }
+
+    env.loadEnvFile(envPath);
+    env.loadFromProcess();
   }
 }

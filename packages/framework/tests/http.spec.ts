@@ -5,12 +5,7 @@ import axios from 'axios';
 import { HttpTransport } from '@ilos/transport-http';
 import { httpHandlerFactory } from '@ilos/handler-http';
 import { ServiceProvider } from '@ilos/core';
-import {
-  serviceProvider,
-  kernel as kernelDecorator,
-  TransportInterface,
-  KernelInterface,
-} from '@ilos/common';
+import { serviceProvider, kernel as kernelDecorator, TransportInterface, KernelInterface } from '@ilos/common';
 
 import { Kernel } from '../src/Kernel';
 
@@ -20,12 +15,8 @@ import { ServiceProvider as ParentStringServiceProvider } from './mock/StringSer
 // process.env.APP_REDIS_URL = 'redis://127.0.0.1:6379';
 
 @serviceProvider({
-  children: [
-    ParentStringServiceProvider,
-  ],
-  handlers: [
-    httpHandlerFactory('math', 'http://127.0.0.1:8080'),
-  ]
+  children: [ParentStringServiceProvider],
+  handlers: [httpHandlerFactory('math', 'http://127.0.0.1:8080')],
 })
 class StringServiceProvider extends ServiceProvider {}
 

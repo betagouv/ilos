@@ -3,7 +3,7 @@ import {
   CommandInterface,
   NewableType,
   CommandOptionType,
-  KernelInterfaceResolver,
+  ServiceContainerInterfaceResolver,
 } from '@ilos/common';
 
 import { MongoConnection } from '@ilos/connection-mongo';
@@ -33,42 +33,37 @@ export abstract class ParentMigration implements MigrationInterface {
 }
 
 export abstract class ParentMigrateCommand implements CommandInterface {
-  public readonly entity: string = '';
   protected readonly migrations: NewableType<ParentMigration>[] = [];
   protected availableMigrationsMap: Map<string, ParentMigration> = new Map();
 
-  get signature(): string {
-    return `migrate.${this.entity}`;
+  static get signature(): string {
+    throw new Error(`Migrate command signature is not defined`);
   }
 
-  public readonly description: string = 'Make migration';
-  public readonly options: CommandOptionType[] = [
+  static readonly description: string = 'Make migration';
+  static readonly options: CommandOptionType[] = [
     {
       signature: '-b, --rollback <round>',
       description: 'Rollback',
-      default: 1,
     },
     {
       signature: '-r, --reset',
       description: 'Reset migration',
-      default: false,
     },
     {
       signature: '-s, --status',
       description: 'List migrations status',
-      default: false,
     },
   ];
 
   constructor(
-    protected kernel: KernelInterfaceResolver,
+    protected container: ServiceContainerInterfaceResolver,
     protected connection: MongoConnection,
     protected config: ConfigInterfaceResolver,
   ) {}
 
   public async call({ rollback, reset, status }) {
     this.getAvailableMigrations();
-
     if (status) {
       return this.status();
     }
@@ -85,7 +80,7 @@ export abstract class ParentMigrateCommand implements CommandInterface {
   }
 
   protected getAvailableMigrations() {
-    const container = this.kernel.getContainer();
+    const container = this.container.getContainer();
     this.migrations.forEach((migration) => {
       const migrationInstance = container.get(migration);
       this.availableMigrationsMap.set(migrationInstance.signature, migrationInstance);
@@ -94,7 +89,7 @@ export abstract class ParentMigrateCommand implements CommandInterface {
 
   public async getMigrationCollection() {
     const collection = this.config.get('migration.collection', 'migrations');
-    const db = this.config.get('migration.db');
+    const db = this.config.get('migration.db', 'migrations');
     return this.connection
       .getClient()
       .db(db)
@@ -122,7 +117,8 @@ export abstract class ParentMigrateCommand implements CommandInterface {
     const orderedDbMigrations = dbMigrations.filter((migration) => !!migration.success).reverse();
 
     let output = '';
-    for (let i = 0; i < round; i += 1) {
+    const max = dbMigrations.length > round ? round : dbMigrations.length;
+    for (let i = 0; i < max; i += 1) {
       const signature = orderedDbMigrations[i].signature;
       if (!this.availableMigrationsMap.has(signature)) {
         throw new Error(`Migration not found: ${signature}`);

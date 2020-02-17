@@ -142,11 +142,7 @@ describe('Queue transport', () => {
         },
       },
     });
-    expect(response).to.deep.equal({
-      id: 1,
-      jsonrpc: '2.0',
-      result: 3,
-    });
+    expect(response).to.equal(3);
     await queueTransport.down();
   });
 });

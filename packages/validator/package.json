@@ -43,12 +43,13 @@
     "instrument": true
   },
   "dependencies": {
-    "@ilos/common": "^0.3.1",
-    "@ilos/config": "^0.3.1",
-    "ajv": "^6.10.0"
+    "ajv": "^6.10.0",
+    "ajv-keywords": "^3.4.1"
   },
   "peerDependencies": {
-    "@ilos/core": "^0.2.0"
+    "@ilos/common": "~0",
+    "@ilos/config": "~0",
+    "@ilos/core": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
@@ -58,6 +59,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "mocha": "^6.1.4",
+    "nock": "^11.3.5",
     "nyc": "^14.1.1",
     "sinon": "^7.3.2",
     "ts-node": "^8.1.0",

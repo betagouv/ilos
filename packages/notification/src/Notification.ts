@@ -47,15 +47,23 @@ export class Notification implements NotificationInterface {
   }
 
   async sendByEmail(mail: MailInterface): Promise<void> {
-    if ('debug' in this.config.mail.sendOptions) {
-      // FIX ME : add a check on debug > "to" options erase initial target
+    // override the to: address when 'debug' is set in the config
+    // use: APP_MAILJET_DEBUG_NAME and APP_MAILJET_DEBUG_EMAIL env vars
+    if ('debug' in this.config.mail && this.config.mail.debug) {
+      mail.email = this.config.mail.to.email;
+      mail.fullname = this.config.mail.to.name;
     }
+
     return this.mailDriver.send(mail, this.config.mail.sendOptions);
   }
 
   async sendTemplateByEmail(mail: TemplateMailInterface): Promise<void> {
     const { template, email, fullname, opts } = mail;
 
+    // Get the subject from the config/template.ts file
+    // in the calling service (e.g. service-user)
+    // fallback the default subject configures in config/notification.ts
+    // TODO: consolidate config files
     let subject;
     try {
       const meta = this.template.getMetadata(template);

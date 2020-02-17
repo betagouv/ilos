@@ -1,6 +1,6 @@
 import { KernelInterface } from '../core/KernelInterface';
 
-export interface TransportInterface {
+export interface TransportInterface<T = any> {
   /**
    * Get Kernel instance
    * @returns {KernelInterface}
@@ -10,10 +10,10 @@ export interface TransportInterface {
 
   /**
    * Get Server instance such as httpServer, queue, etc.
-   * @returns {T | void}
+   * @returns {T | T[] | void}
    * @memberof TransportInterface
    */
-  getInstance<T>(): T | void;
+  getInstance(): T | T[] | void;
 
   /**
    * Start the transport

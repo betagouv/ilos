@@ -12,8 +12,8 @@ import {
 } from '@ilos/common';
 import { Config } from '@ilos/config';
 import { MongoConnection } from '@ilos/connection-mongo';
-
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
+
 import { ParentMigrateCommand, ParentMigration } from '../src/commands/ParentMigrateCommand';
 
 // process.env.APP_MONGO_URL = ' mongodb://mongo:mongo@127.0.0.1:27017';
@@ -32,7 +32,7 @@ const config = {
   migration: {
     db: migrationDb,
     collection: migrationCollection,
-  }
+  },
 };
 
 @provider()
@@ -49,12 +49,8 @@ class FakeConfig extends Config {
 }
 
 @kernelDecorator({
-  providers: [
-    [ConfigInterfaceResolver, FakeConfig],
-  ],
-  connections: [
-    [MongoConnection, 'mongo'],
-  ],
+  providers: [[ConfigInterfaceResolver, FakeConfig]],
+  connections: [[MongoConnection, 'mongo']],
 })
 class Kernel extends BaseKernel {
   extensions = [Extensions.Providers, ConnectionManagerExtension];
@@ -106,7 +102,9 @@ class SecondMigration extends ParentMigration {
 
 @command()
 class MigrateCommand extends ParentMigrateCommand {
-  entity = 'test';
+  static get signature(): string {
+    return 'migrate.test';
+  }
   migrations = [FirstMigration, SecondMigration];
 
   constructor(
@@ -129,7 +127,10 @@ describe('Repository provider: migrate', () => {
 
   afterEach(async () => {
     const mongo = <MongoConnection>kernel.getContainer().get(MongoConnection);
-    const collection = await mongo.getClient().db(migrationDb).collection(migrationCollection);
+    const collection = await mongo
+      .getClient()
+      .db(migrationDb)
+      .collection(migrationCollection);
     try {
       await collection.drop();
     } catch {
@@ -147,7 +148,10 @@ describe('Repository provider: migrate', () => {
     const command = <MigrateCommand>kernel.getContainer().get(MigrateCommand);
     const mongo = <MongoConnection>kernel.getContainer().get(MongoConnection);
     const db = await mongo.getClient().db(targetDb);
-    const migrationCollectionInstance = await mongo.getClient().db(migrationDb).collection(migrationCollection);
+    const migrationCollectionInstance = await mongo
+      .getClient()
+      .db(migrationDb)
+      .collection(migrationCollection);
     const result = await command.call({ status: false, rollback: false, reset: false });
     expect(result).to.eq(`${FirstMigration.signature}: success\n${SecondMigration.signature}: success\n`);
     const migrations = await migrationCollectionInstance.find({}).toArray();
@@ -177,7 +181,10 @@ describe('Repository provider: migrate', () => {
     const command = <MigrateCommand>kernel.getContainer().get(MigrateCommand);
     const mongo = <MongoConnection>kernel.getContainer().get(MongoConnection);
     const db = await mongo.getClient().db(targetDb);
-    const migrationCollectionInstance = await mongo.getClient().db(migrationDb).collection(migrationCollection);
+    const migrationCollectionInstance = await mongo
+      .getClient()
+      .db(migrationDb)
+      .collection(migrationCollection);
     await command.call({ status: false, rollback: false, reset: false });
     const result = await command.call({ status: false, rollback: 1, reset: false });
 
@@ -203,7 +210,10 @@ describe('Repository provider: migrate', () => {
     const command = <MigrateCommand>kernel.getContainer().get(MigrateCommand);
     const mongo = <MongoConnection>kernel.getContainer().get(MongoConnection);
     const db = await mongo.getClient().db(targetDb);
-    const migrationCollectionInstance = await mongo.getClient().db(migrationDb).collection(migrationCollection);
+    const migrationCollectionInstance = await mongo
+      .getClient()
+      .db(migrationDb)
+      .collection(migrationCollection);
     await command.call({ status: false, rollback: false, reset: false });
     const result = await command.call({ status: false, rollback: false, reset: 1 });
     expect(result).to.eq(`${SecondMigration.signature}: success\n${FirstMigration.signature}: success\n`);

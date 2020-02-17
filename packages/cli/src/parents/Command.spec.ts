@@ -8,9 +8,9 @@ import { Command } from './Command';
 describe('Command', () => {
   it('works', async () => {
     class BasicCommand extends Command {
-      public readonly signature: string = 'hello <name>';
-      public readonly description: string = 'basic hello command';
-      public readonly options: CommandOptionType[] = [{ signature: '-h, --hi', description: 'hi' }];
+      static readonly signature: string = 'hello <name>';
+      static readonly description: string = 'basic hello command';
+      static readonly options: CommandOptionType[] = [{ signature: '-h, --hi', description: 'hi' }];
       public async call(name, opts): Promise<ResultType> {
         if (name === 'crash') {
           throw new Error();

@@ -11,7 +11,7 @@ import { bullFactory } from './helpers/bullFactory';
  * @class QueueTransport
  * @implements {TransportInterface}
  */
-export class QueueTransport implements TransportInterface {
+export class QueueTransport implements TransportInterface<Queue[]> {
   queues: Queue[] = [];
   kernel: KernelInterface;
 
@@ -29,10 +29,11 @@ export class QueueTransport implements TransportInterface {
 
   async up(opts: string[] = []) {
     const [redisUrl] = opts;
-    // throw error
+    if (!redisUrl || !/^redis:\/\//.test(redisUrl)) {
+      throw new Error('Redis connection string not configured');
+    }
 
     const container = <ContainerInterface>this.kernel.getContainer();
-
     if (!container.isBound(QueueExtension.containerKey)) {
       throw new Error('No queue declared');
     }
@@ -48,18 +49,11 @@ export class QueueTransport implements TransportInterface {
       this.registerListeners(queue, key);
       this.queues.push(queue);
       queue.process(async (job) =>
-        this.kernel.handle({
-          jsonrpc: '2.0',
-          id: 1,
-          method: job.data.method,
-          params: {
-            params: job.data.params.params,
-            _context: {
-              ...job.data.params._context,
-              channel: {
-                transport: 'queue',
-              },
-            },
+        this.kernel.call(job.data.method, job.data.params.params, {
+          ...job.data.params._context,
+          channel: {
+            ...(job.data.params._context && job.data.params._context.channel ? job.data.params._context.channel : {}),
+            transport: 'queue',
           },
         }),
       );
@@ -87,25 +81,25 @@ export class QueueTransport implements TransportInterface {
     });
 
     queue.on('active', (job) => {
-      console.log(`🐮/${name}: active ${job.id} ${job.data.type}`);
+      console.log(`🐮/${name}: active ${job.id} ${job.data.method}`);
     });
 
     queue.on('stalled', (job) => {
-      console.log(`🐮/${name}: stalled ${job.id} ${job.data.type}`);
+      console.log(`🐮/${name}: stalled ${job.id} ${job.data.method}`);
     });
 
     queue.on('progress', (job, progress) => {
-      console.log(`🐮/${name}: progress ${job.id} ${job.data.type} : ${progress}`);
+      console.log(`🐮/${name}: progress ${job.id} ${job.data.method} : ${progress}`);
     });
 
     queue.on('completed', (job) => {
-      console.log(`🐮/${name}: completed ${job.id} ${job.data.type}`);
-      job.remove();
+      console.log(`🐮/${name}: completed ${job.id} ${job.data.method}`);
+      // job.remove();
     });
 
     queue.on('failed', (job, err) => {
-      console.log(`🐮/${name}: failed ${job.id} ${job.data.type}`, err.message);
-      console.log(job, err);
+      console.log(`🐮/${name}: failed ${job.id}`, err.message);
+      console.log(JSON.stringify(job.data));
       if (errorHandler && typeof errorHandler === 'function') {
         errorHandler(err);
       }

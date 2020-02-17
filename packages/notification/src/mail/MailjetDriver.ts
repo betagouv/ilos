@@ -26,10 +26,14 @@ export class MailjetDriver implements MailDriverInterface {
   ) {
     this.config = generalConfig;
     const connectOptions: MailjetConnectOptionsInterface = driverConfig.options;
-    this.mj = nodeMailjet.connect(driverConfig.public, driverConfig.private, connectOptions);
+    this.mj = nodeMailjet.connect(driverConfig.public, driverConfig.private, {
+      version: 'v3.1',
+      ...connectOptions,
+    });
   }
 
-  async send(mail: MailInterface, opts: { [key: string]: any } = {}): Promise<void> {
+  // TODO : create an interface for the return type ?
+  async send(mail: MailInterface, opts: { [key: string]: any } = {}): Promise<any> {
     const { email, fullname, subject, content } = mail;
 
     let message: any = {
@@ -49,17 +53,16 @@ export class MailjetDriver implements MailDriverInterface {
     if ('template' in opts) {
       message = {
         ...message,
-        TemplateID: opts.template,
+        TemplateID: parseInt(opts.template, 10),
         TemplateLanguage: true,
         Variables: {
           content,
           title: subject || this.config.defaultSubject,
         },
+        SandboxMode: !this.config.debug,
       };
     }
 
-    this.mj.post('send').request({
-      Messages: [message],
-    });
+    return this.mj.post('send').request({ Messages: [message] });
   }
 }

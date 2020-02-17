@@ -1,10 +1,11 @@
 import {
-  NewableType,
   ServiceContainerInterface,
   InitHookInterface,
   RegisterHookInterface,
+  CommandStaticInterface,
   CommandInterface,
   extension,
+  ResultType,
 } from '@ilos/common';
 
 import { CommandRegistry } from '../providers/CommandRegistry';
@@ -14,7 +15,7 @@ import { CommandRegistry } from '../providers/CommandRegistry';
   autoload: true,
 })
 export class CommandExtension implements RegisterHookInterface, InitHookInterface {
-  constructor(readonly commands: NewableType<CommandInterface>[] = []) {
+  constructor(readonly commands: CommandStaticInterface[] = []) {
     //
   }
 
@@ -30,12 +31,18 @@ export class CommandExtension implements RegisterHookInterface, InitHookInterfac
     const commandRegistry = serviceContainer.get<CommandRegistry>(CommandRegistry);
 
     for (const command of this.commands) {
-      const cmd = serviceContainer.get(command);
-      this.registerCommand(commandRegistry, cmd);
+      const processCommand = async (...args: any[]): Promise<ResultType> =>
+        serviceContainer.get<CommandInterface>(command).call(...args);
+
+      this.registerCommand(commandRegistry, command, processCommand);
     }
   }
 
-  protected registerCommand(registry: CommandRegistry, cmd: CommandInterface): any {
+  protected registerCommand(
+    registry: CommandRegistry,
+    cmd: CommandStaticInterface,
+    processCommand: (...args: any[]) => Promise<ResultType>,
+  ): any {
     const command = registry.command(cmd.signature);
 
     command.description(cmd.description);
@@ -55,10 +62,12 @@ export class CommandExtension implements RegisterHookInterface, InitHookInterfac
     command.action(async (...args: any[]) => {
       const logger = registry.output;
       try {
-        const result = await cmd.call(...args);
+        const result = await processCommand(...args);
         logger(result);
+        process.exit(0);
       } catch (e) {
         logger(e);
+        process.exit(1);
       }
     });
 

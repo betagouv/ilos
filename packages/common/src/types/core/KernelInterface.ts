@@ -12,9 +12,9 @@ export interface KernelInterface extends ServiceContainerInterface, BootstrapHoo
    */
   handle(call: RPCCallType): Promise<RPCResponseType | void>;
 
-  call(method: string, params: ParamsType, context: ContextType): Promise<ResultType>;
+  call<P = ParamsType, R = ResultType>(method: string, params: P, context: ContextType): Promise<R>;
 
-  notify(method: string, params: ParamsType, context: ContextType): Promise<void>;
+  notify<P = ParamsType>(method: string, params: P, context: ContextType): Promise<void>;
 }
 
 export abstract class KernelInterfaceResolver extends ServiceContainerInterfaceResolver implements KernelInterface {
@@ -22,11 +22,11 @@ export abstract class KernelInterfaceResolver extends ServiceContainerInterfaceR
     throw new Error();
   }
 
-  async call(method: string, params: ParamsType, context: ContextType): Promise<ResultType> {
+  async call<P = ParamsType, R = ResultType>(method: string, params: P, context: ContextType): Promise<R> {
     throw new Error();
   }
 
-  async notify(method: string, params: ParamsType, context: ContextType): Promise<void> {
+  async notify<P = ParamsType>(method: string, params: P, context: ContextType): Promise<void> {
     throw new Error();
   }
 

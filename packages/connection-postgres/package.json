@@ -1,6 +1,6 @@
 {
-  "name": "@ilos/repository",
-  "version": "0.3.1",
+  "name": "@ilos/connection-postgres",
+  "version": "0.3.0",
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
@@ -11,9 +11,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "tslint -c ../../tslint.json -p tsconfig.json",
-    "coverage": "nyc --all --reporter=text mocha src/*.spec.ts tests/**/*.spec.ts src/**/*.spec.ts",
-    "test": "mocha src/*.spec.ts src/**/*.spec.ts",
-    "test:integration": "mocha tests/**/*.spec.ts"
+    "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts",
+    "test": "mocha src/*.spec.ts src/**/*.spec.ts"
   },
   "mocha": {
     "require": [
@@ -43,23 +42,23 @@
     "sourceMap": true,
     "instrument": true
   },
+  "dependencies": {
+    "pg": "^7.12.1",
+    "pg-cursor": "^2.0.0"
+  },
   "peerDependencies": {
-    "@ilos/cli": "~0",
     "@ilos/common": "~0",
-    "@ilos/config": "~0",
-    "@ilos/connection-mongo": "~0",
-    "@ilos/connection-manager": "~0",
-    "@ilos/core": "~0"
+    "@ilos/connection-manager": "~0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^5.2.6",
     "@types/mongodb": "^3.1.27",
+    "@types/pg": "^7.11.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "mocha": "^6.1.4",
-    "mock-fs": "^4.9.0",
     "nock": "^11.3.5",
     "nyc": "^14.1.1",
     "sinon": "^7.3.2",

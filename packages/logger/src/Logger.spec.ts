@@ -49,10 +49,9 @@ describe('Logger provider', () => {
 
     @serviceProvider({
       config: {},
-      providers: [[EnvInterfaceResolver, FakeEnv]],
     })
     class Service extends ServiceContainer {
-      extensions = [LoggerExtension, ConfigExtension, Extensions.Providers];
+      extensions = [LoggerExtension];
     }
     const serviceContainer = new Service();
     serviceContainer.bind(Test);

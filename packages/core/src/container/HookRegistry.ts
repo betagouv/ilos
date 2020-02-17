@@ -33,9 +33,12 @@ export class HookRegistry<T> {
 
   public async dispatch(serviceContainer: ServiceContainerInterface) {
     this.dispatched = true;
+    const promises: Promise<void>[] = [];
+
     for (const [hook] of this.registry.entries()) {
-      await hook(serviceContainer);
+      promises.push((async () => hook(serviceContainer))());
     }
+    await Promise.all(promises);
     this.registry.clear();
   }
 }

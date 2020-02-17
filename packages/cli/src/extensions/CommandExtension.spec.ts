@@ -11,8 +11,9 @@ import { Command } from '../parents/Command';
 
 @command()
 class BasicCommand extends Command {
-  public readonly signature: string = 'hello <name>';
-  public readonly options = [
+  static readonly signature: string = 'hello <name>';
+  static readonly description: string = 'toto';
+  static readonly options = [
     {
       signature: '-h, --hi',
       description: 'Say hi',

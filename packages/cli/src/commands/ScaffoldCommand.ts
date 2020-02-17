@@ -13,9 +13,9 @@ import { Command } from '../parents/Command';
  */
 @command()
 export class ScaffoldCommand extends Command {
-  public readonly signature: string = 'generate <type> [name]';
-  public readonly description: string = 'Generate service, provider, or handler';
-  public readonly options: CommandOptionType[] = [];
+  static readonly signature: string = 'generate <type> [name]';
+  static readonly description: string = 'Generate service, provider, or handler';
+  static readonly options: CommandOptionType[] = [];
 
   constructor(private template: TemplateInterfaceResolver) {
     super();

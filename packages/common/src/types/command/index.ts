@@ -1,2 +1,2 @@
-export { CommandInterface } from './CommandInterface';
+export { CommandInterface, CommandStaticInterface } from './CommandInterface';
 export { CommandOptionType } from './CommandOptionType';
