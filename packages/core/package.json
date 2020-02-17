@@ -80,7 +80,7 @@
   },
   "dependencies": {
     "inversify": "^5.0.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "reflect-metadata": "^0.1.13"
   }
 }
