@@ -10,7 +10,6 @@ export * from './handler';
 export * from './hooks';
 export * from './logger';
 export * from './shared';
-export * from './template';
 export * from './transport';
 export * from './queue';
 export * from './validator';
