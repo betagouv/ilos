@@ -10,7 +10,6 @@ export * from './handler';
 export * from './hooks';
 export * from './logger';
 export * from './notification';
-export * from './repository';
 export * from './shared';
 export * from './template';
 export * from './transport';
