@@ -64,7 +64,10 @@ describe('Json Schema provider', () => {
     };
 
     provider.addSchema(schema, FakeObject);
-    return assert.isRejected(provider.validate(new FakeObject({ hello: 1 })), 'data.hello should be string');
+    return assert.isRejected(
+      provider.validate(new FakeObject({ hello: 1 })),
+      '[{"keyword":"type","dataPath":".hello","schemaPath":"#/properties/hello/type","params":{"type":"string"},"message":"should be string"}]',
+    );
   });
 
   it('should works with ref', async () => {

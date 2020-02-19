@@ -43,13 +43,17 @@ describe('Command extension', () => {
 
     const basicCommand = basicServiceProvider.getContainer().get(CommandRegistry).commands[0];
 
+    console.log({
+      n: basicCommand.name(),
+      o: basicCommand.options,
+      o1: basicCommand.options[0],
+    });
     expect(basicCommand.name()).to.equal('hello');
     expect(basicCommand.options).to.have.length(1);
     expect(basicCommand.options[0]).to.deep.include({
       flags: '-h, --hi',
       required: false,
       optional: false,
-      bool: true,
       short: '-h',
       long: '--hi',
       description: 'Say hi',
