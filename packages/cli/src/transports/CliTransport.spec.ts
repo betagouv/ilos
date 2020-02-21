@@ -1,5 +1,4 @@
 // tslint:disable max-classes-per-file
-import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -17,34 +16,39 @@ import { Command } from '../parents/Command';
 import { CommandRegistry } from '../providers/CommandRegistry';
 import { CliTransport } from './CliTransport';
 
-@commandDecorator()
-class BasicCommand extends Command {
-  static readonly signature: string = 'hello <name>';
-  static readonly description: string = 'The hello world command';
-  static readonly options = [
-    {
-      signature: '-h, --hi',
-      description: 'Say hi',
-    },
-  ];
+describe('Cli transport', function () {
+  @commandDecorator()
+  class BasicCommand extends Command {
+    static readonly signature: string = 'hello <name>';
+    static readonly description: string = 'The hello world command';
+    static readonly options = [
+      {
+        signature: '-h, --hi',
+        description: 'Say hi',
+      },
+    ];
 
-  public async call(name, options?): Promise<ResultType> {
-    if (options && 'hi' in options) {
-      return `Hi ${name}`;
+    public async call(name, options?): Promise<ResultType> {
+      if (options && 'hi' in options) {
+        return `Hi ${name}`;
+      }
+      return `Hello ${name}`;
     }
-    return `Hello ${name}`;
   }
-}
 
-@kernelDecorator({
-  commands: [BasicCommand],
-})
-class BasicKernel extends Kernel {
-  readonly extensions: NewableType<ExtensionInterface>[] = [CommandExtension];
-}
+  @kernelDecorator({
+    commands: [BasicCommand],
+  })
+  class BasicKernel extends Kernel {
+    readonly extensions: NewableType<ExtensionInterface>[] = [CommandExtension];
+  }
 
-describe('Cli transport', () => {
-  it('should work', (done) => {
+  after(function () {
+    sinon.restore();
+  });
+
+  it('should work', function (done) {
+    this.timeout(1000);
     const kernel = new BasicKernel();
     kernel.bootstrap().then(() => {
       const cliTransport = new CliTransport(kernel);
@@ -57,7 +61,6 @@ describe('Cli transport', () => {
       container.unbind(CommandRegistry);
       container.bind(CommandRegistry).toConstantValue(commander);
       cliTransport.up(['', '', 'hello', 'john']);
-      sinon.restore();
     });
   });
 });

@@ -1,12 +1,11 @@
-import { describe } from 'mocha';
 import { expect } from 'chai';
 
 import { ResultType, CommandOptionType } from '@ilos/common';
 
 import { Command } from './Command';
 
-describe('Command', () => {
-  it('works', async () => {
+describe('Command', function() {
+  it('works', async function() {
     class BasicCommand extends Command {
       static readonly signature: string = 'hello <name>';
       static readonly description: string = 'basic hello command';

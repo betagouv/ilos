@@ -19,8 +19,8 @@
     "build": "yarn clean && yarn build:packages && yarn build:permissions",
     "build:packages": "lerna run --sort build",
     "build:permissions": "chmod u+x packages/framework/dist/cli.js",
-    "test": "mocha ./packages/*/src/*.spec.ts ./packages/*/src/**/*.spec.ts",
-    "test:integration": "mocha packages/*/tests/**/*.spec.ts",
+    "test": "mocha \"packages/*/src/**/*.spec.ts\"",
+    "test:integration": "mocha \"packages/*/tests/**/*.spec.ts\"",
     "coverage:ci": "nyc --all --reporter=lcov mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
     "coverage:unit": "nyc --all --reporter=text mocha packages/*/src/**/*.spec.ts",
     "coverage": "nyc --all --reporter=text mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
@@ -30,39 +30,17 @@
     "changed": "lerna changed",
     "publish": "lerna publish"
   },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "packages/*/src/**/*.ts"
-    ],
-    "exclude": [
-      "packages/*/src/**/*.spec.ts",
-      "packages/*/src/interfaces/**",
-      "packages/*/src/types/**",
-      "packages/*/src/exceptions/**",
-      "packages/*/src/**/index.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
-  },
   "devDependencies": {
+    "@types/mocha": "^7.0.1",
+    "@types/node": "^13.7.2",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
     "eslint": "^6.8.0",
     "eslint-plugin-prettier": "^3.1.2",
     "lerna": "^3.20.2",
-    "prettier": "^1.19.1"
+    "mocha": "^7.0.1",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.6.2",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^3.7.5"
   }
 }

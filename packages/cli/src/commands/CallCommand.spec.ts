@@ -1,4 +1,3 @@
-import { describe } from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -7,24 +6,25 @@ import { Kernel } from '@ilos/core';
 import { CallCommand } from './CallCommand';
 
 chai.use(chaiAsPromised);
-const { expect, assert } = chai;
 
-class FakeKernel extends Kernel {
-  async bootstrap() {
-    return;
-  }
-  async handle(call) {
-    if (call.method === 'nope') {
-      throw new Error();
+describe('Command: Call', function () {
+  const { expect, assert } = chai;
+
+  class FakeKernel extends Kernel {
+    async bootstrap() {
+      return;
     }
-    return call;
+    async handle(call) {
+      if (call.method === 'nope') {
+        throw new Error();
+      }
+      return call;
+    }
   }
-}
+  
+  const kernel = new FakeKernel();
 
-const kernel = new FakeKernel();
-
-describe('Command: Call', () => {
-  it('should work', async () => {
+  it('should work', async function () {
     const command = new CallCommand(kernel);
     const response = await command.call('method');
     expect(response).to.deep.equal({
@@ -42,7 +42,8 @@ describe('Command: Call', () => {
       },
     });
   });
-  it('should work with options', async () => {
+
+  it('should work with options', async function () {
     const command = new CallCommand(kernel);
     const response = await command.call('method', { params: [1, 2], context: { call: { user: 'michou' } } });
     expect(response).to.deep.equal({
@@ -64,7 +65,7 @@ describe('Command: Call', () => {
     });
   });
 
-  it('should throw exception on error', () => {
+  it('should throw exception on error', function() {
     const command = new CallCommand(kernel);
     return (<any>assert).isRejected(command.call('nope'));
   });

@@ -1,4 +1,3 @@
-import { describe } from 'mocha';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -9,45 +8,44 @@ import { CommandRegistry } from '../providers/CommandRegistry';
 import { CommandExtension } from './CommandExtension';
 import { Command } from '../parents/Command';
 
-@command()
-class BasicCommand extends Command {
-  static readonly signature: string = 'hello <name>';
-  static readonly description: string = 'toto';
-  static readonly options = [
-    {
-      signature: '-h, --hi',
-      description: 'Say hi',
-    },
-  ];
-
-  public async call(name, options?): Promise<ResultType> {
-    if (options && 'hi' in options) {
-      return `Hi ${name}`;
+describe('Command extension', function () {
+  @command()
+  class BasicCommand extends Command {
+    static readonly signature: string = 'hello <name>';
+    static readonly description: string = 'toto';
+    static readonly options = [
+      {
+        signature: '-h, --hi',
+        description: 'Say hi',
+      },
+    ];
+  
+    public async call(name, options?): Promise<ResultType> {
+      if (options && 'hi' in options) {
+        return `Hi ${name}`;
+      }
+      return `Hello ${name}`;
     }
-    return `Hello ${name}`;
   }
-}
 
-@serviceProvider({
-  commands: [BasicCommand],
-})
-class BasicServiceProvider extends ServiceProvider {
-  extensions = [CommandExtension];
-}
+  @serviceProvider({
+    commands: [BasicCommand],
+  })
+  class BasicServiceProvider extends ServiceProvider {
+    extensions = [CommandExtension];
+  }
 
-describe('Command extension', () => {
-  it('should register properly', async () => {
+  afterEach(function () {
+    sinon.restore();
+  });
+
+  it('should register properly', async function () {
     const basicServiceProvider = new BasicServiceProvider();
     await basicServiceProvider.register();
     await basicServiceProvider.init();
 
     const basicCommand = basicServiceProvider.getContainer().get(CommandRegistry).commands[0];
 
-    console.log({
-      n: basicCommand.name(),
-      o: basicCommand.options,
-      o1: basicCommand.options[0],
-    });
     expect(basicCommand.name()).to.equal('hello');
     expect(basicCommand.options).to.have.length(1);
     expect(basicCommand.options[0]).to.deep.include({
@@ -60,7 +58,8 @@ describe('Command extension', () => {
     });
   });
 
-  it('should work', (done) => {
+  it('should work', function (done) {
+    this.timeout(1000);
     const basicServiceProvider = new BasicServiceProvider();
     const container = basicServiceProvider.getContainer();
     basicServiceProvider.register().then(() => {
@@ -73,8 +72,7 @@ describe('Command extension', () => {
         container.unbind(CommandRegistry);
         container.bind(CommandRegistry).toConstantValue(commander);
         commander.parse(['', '', 'hello', 'john']);
-        sinon.restore();
-      });
-    });
+      }).catch(e => done(e));
+    }).catch(e => done(e));
   });
 });
