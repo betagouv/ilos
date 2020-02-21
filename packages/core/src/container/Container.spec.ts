@@ -1,119 +1,109 @@
 // tslint:disable max-classes-per-file
-import { describe } from 'mocha';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
+import test from 'ava';
 import { HandlerInterface, CallType, handler, lib, provider, inject } from '@ilos/common';
 
 import { Container } from '.';
 
-chai.use(chaiAsPromised);
-const { expect } = chai;
+test('Container: works', async (t) => {
+  @lib()
+  class Hello {
+    public world = '!!';
+  }
 
-describe('Container', () => {
-  it('works', async () => {
-    @lib()
-    class Hello {
-      public world = '!!';
+  @handler({
+    service: 'test',
+    method: 'hello',
+  })
+  class Test implements HandlerInterface {
+    public readonly middlewares = [];
+    constructor(public hello: Hello) {}
+
+    async call(call: CallType) {
+      return;
     }
+  }
 
-    @handler({
-      service: 'test',
-      method: 'hello',
-    })
-    class Test implements HandlerInterface {
-      public readonly middlewares = [];
-      constructor(public hello: Hello) {}
+  const container = new Container();
+  const h = container.resolve(Test);
+  t.is(h.hello.world, '!!');
+  
+  container.setHandler(Test);
 
-      async call(call: CallType) {
-        return;
-      }
+  const hBis = container.getHandler({
+    service: 'test',
+    method: 'hello',
+  }) as Test;
+  t.is(hBis.hello.world, '!!');
+});
+
+test('Container: works with provider', async (t) => {
+  @lib()
+  class HelloLib {
+    public world = 'yeah';
+  }
+
+  @provider()
+  class Hello {
+    public world = '!!';
+    @inject(HelloLib) helloLib: HelloLib;
+
+    boot() {
+      this.world = this.helloLib.world;
     }
+  }
 
-    const container = new Container();
-    const t = container.resolve(Test);
-    expect(t.hello.world).to.equal('!!');
+  @handler({
+    service: 'test',
+    method: 'hello',
+  })
+  class Test implements HandlerInterface {
+    public readonly middlewares = [];
+    constructor(public hello: Hello) {}
 
-    container.setHandler(Test);
-
-    const tbis = container.getHandler({
-      service: 'test',
-      method: 'hello',
-    }) as Test;
-    expect(tbis.hello.world).to.equal('!!');
-  });
-
-  it('works with provider', async () => {
-    @lib()
-    class HelloLib {
-      public world = 'yeah';
+    async call(call: CallType) {
+      return;
     }
+  }
 
-    @provider()
-    class Hello {
-      public world = '!!';
-      @inject(HelloLib) helloLib: HelloLib;
+  const container = new Container();
+  const h = container.resolve(Test);
+  t.is(h.hello.world, 'yeah');
 
-      boot() {
-        this.world = this.helloLib.world;
-      }
+  container.setHandler(Test);
+  const hbis = container.getHandler({
+    service: 'test',
+    method: 'hello',
+  }) as Test;
+  t.is(hbis.hello.world, 'yeah');
+});
+test('Container: works with no boot provider', async (t) => {
+  @provider()
+  class Hello {
+    public world = 'yeah';
+  }
+
+  @handler({
+    service: 'test',
+    method: 'hello',
+  })
+  class Test implements HandlerInterface {
+    public readonly middlewares = [];
+    constructor(public hello: Hello) {}
+
+    async call(call: CallType) {
+      return;
     }
+  }
 
-    @handler({
-      service: 'test',
-      method: 'hello',
-    })
-    class Test implements HandlerInterface {
-      public readonly middlewares = [];
-      constructor(public hello: Hello) {}
+  const container = new Container();
+  const h = container.resolve(Test);
+  t.is(h.hello.world, 'yeah');
 
-      async call(call: CallType) {
-        return;
-      }
-    }
+  container.setHandler(Test);
 
-    const container = new Container();
-    const t = container.resolve(Test);
-    expect(t.hello.world).to.equal('yeah');
-
-    container.setHandler(Test);
-
-    const tbis = container.getHandler({
-      service: 'test',
-      method: 'hello',
-    }) as Test;
-    expect(tbis.hello.world).to.equal('yeah');
-  });
-
-  it('works with no boot provider', async () => {
-    @provider()
-    class Hello {
-      public world = 'yeah';
-    }
-
-    @handler({
-      service: 'test',
-      method: 'hello',
-    })
-    class Test implements HandlerInterface {
-      public readonly middlewares = [];
-      constructor(public hello: Hello) {}
-
-      async call(call: CallType) {
-        return;
-      }
-    }
-
-    const container = new Container();
-    const t = container.resolve(Test);
-    expect(t.hello.world).to.equal('yeah');
-
-    container.setHandler(Test);
-
-    const tbis = container.getHandler({
-      service: 'test',
-      method: 'hello',
-    }) as Test;
-    expect(tbis.hello.world).to.equal('yeah');
-  });
+  const hbis = container.getHandler({
+    service: 'test',
+    method: 'hello',
+  }) as Test;
+  t.is(hbis.hello.world, 'yeah');
 });

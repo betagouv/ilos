@@ -1,151 +1,167 @@
 // tslint:disable max-classes-per-file
-import { expect } from 'chai';
-
+import test from 'ava';
 import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
 import { provider, serviceProvider, ConnectionInterface, EnvInterfaceResolver } from '@ilos/common';
 import { ConfigExtension } from '@ilos/config';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
 
-class FakeDriverOne implements ConnectionInterface {
-  constructor(public config: object) {
-    //
+function setup() {
+  class FakeDriverOne implements ConnectionInterface {
+    constructor(public config: object) {
+      //
+    }
+
+    async up(): Promise<void> {
+      return;
+    }
+
+    async down(): Promise<void> {
+      return;
+    }
+
+    getClient(): any {
+      return this.config;
+    }
   }
 
-  async up(): Promise<void> {
-    return;
+  class FakeDriverTwo implements ConnectionInterface {
+    constructor(public config: object) {
+      //
+    }
+
+    async up(): Promise<void> {
+      return;
+    }
+
+    async down(): Promise<void> {
+      return;
+    }
+
+    getClient(): any {
+      return this.config;
+    }
   }
 
-  async down(): Promise<void> {
-    return;
+  class FakeDriverThree implements ConnectionInterface {
+    constructor(public config: object) {
+      //
+    }
+
+    async up(): Promise<void> {
+      return;
+    }
+
+    async down(): Promise<void> {
+      return;
+    }
+
+    getClient() {
+      return this.config;
+    }
   }
 
-  getClient(): any {
-    return this.config;
-  }
-}
-
-class FakeDriverTwo implements ConnectionInterface {
-  constructor(public config: object) {
-    //
+  @provider()
+  class FakeProviderOne {
+    constructor(public driverOne: FakeDriverOne, public driverTwo: FakeDriverTwo, public driverThree: FakeDriverThree) {
+      //
+    }
   }
 
-  async up(): Promise<void> {
-    return;
+  @provider()
+  class FakeProviderTwo {
+    constructor(public driverOne: FakeDriverOne, public driverTwo: FakeDriverTwo, public driverThree: FakeDriverThree) {
+      //
+    }
   }
 
-  async down(): Promise<void> {
-    return;
+  @provider({
+    identifier: EnvInterfaceResolver,
+  })
+  class FakeEnv extends EnvInterfaceResolver {
+    get(_k, fb) {
+      return fb;
+    }
   }
 
-  getClient(): any {
-    return this.config;
-  }
-}
-
-class FakeDriverThree implements ConnectionInterface {
-  constructor(public config: object) {
-    //
-  }
-
-  async up(): Promise<void> {
-    return;
-  }
-
-  async down(): Promise<void> {
-    return;
-  }
-
-  getClient() {
-    return this.config;
-  }
-}
-
-@provider()
-class FakeProviderOne {
-  constructor(public driverOne: FakeDriverOne, public driverTwo: FakeDriverTwo, public driverThree: FakeDriverThree) {
-    //
-  }
-}
-
-@provider()
-class FakeProviderTwo {
-  constructor(public driverOne: FakeDriverOne, public driverTwo: FakeDriverTwo, public driverThree: FakeDriverThree) {
-    //
-  }
-}
-
-@provider({
-  identifier: EnvInterfaceResolver,
-})
-class FakeEnv extends EnvInterfaceResolver {
-  get(_k, fb) {
-    return fb;
-  }
-}
-
-@serviceProvider({
-  providers: [FakeEnv],
-  config: {
-    hello: {
-      world: {
-        hello: 'world',
+  @serviceProvider({
+    providers: [FakeEnv],
+    config: {
+      hello: {
+        world: {
+          hello: 'world',
+        },
+        you: {
+          hello: 'you',
+        },
       },
-      you: {
-        hello: 'you',
+    },
+    connections: [
+      {
+        use: FakeDriverOne,
+        withConfig: 'hello.world',
+        inside: [FakeProviderOne],
       },
-    },
-  },
-  connections: [
-    {
-      use: FakeDriverOne,
-      withConfig: 'hello.world',
-      inside: [FakeProviderOne],
-    },
-    {
-      use: FakeDriverOne,
-      withConfig: 'hello.world',
-      inside: [FakeProviderTwo],
-    },
-    {
-      use: FakeDriverTwo,
-      withConfig: 'hello.you',
-      inside: [FakeProviderOne, FakeProviderTwo],
-    },
-    {
-      use: FakeDriverThree,
-      withConfig: 'hello.world',
-      inside: [FakeProviderOne],
-    },
-    [FakeDriverThree, 'hello.you'],
-  ],
-})
-class ServiceProvider extends BaseServiceProvider {
-  readonly extensions = [Extensions.Providers, ConfigExtension, ConnectionManagerExtension];
+      {
+        use: FakeDriverOne,
+        withConfig: 'hello.world',
+        inside: [FakeProviderTwo],
+      },
+      {
+        use: FakeDriverTwo,
+        withConfig: 'hello.you',
+        inside: [FakeProviderOne, FakeProviderTwo],
+      },
+      {
+        use: FakeDriverThree,
+        withConfig: 'hello.world',
+        inside: [FakeProviderOne],
+      },
+      [FakeDriverThree, 'hello.you'],
+    ],
+  })
+  class ServiceProvider extends BaseServiceProvider {
+    readonly extensions = [Extensions.Providers, ConfigExtension, ConnectionManagerExtension];
+  }
+
+  return {
+    serviceProvider: new ServiceProvider(),
+    FakeDriverOne,
+    FakeDriverTwo,
+    FakeDriverThree,
+    FakeProviderOne,
+    FakeProviderTwo,
+  };
 }
 
-describe('Connection manager', () => {
-  it('container should work', async () => {
-    const sp = new ServiceProvider();
-    await sp.register();
-    await sp.init();
-    const p1 = sp.getContainer().get(FakeProviderOne);
-    const p2 = sp.getContainer().get(FakeProviderTwo);
+test('Connection manager: container should work', async (t) => {
+  const {
+    serviceProvider,
+    FakeProviderOne,
+    FakeProviderTwo,
+    FakeDriverOne,
+    FakeDriverTwo,
+    FakeDriverThree,
+  } = setup();
 
-    // all instances are bound
-    expect(p1.driverOne).to.be.instanceOf(FakeDriverOne);
-    expect(p1.driverTwo).to.be.instanceOf(FakeDriverTwo);
-    expect(p1.driverThree).to.be.instanceOf(FakeDriverThree);
+  await serviceProvider.register();
+  await serviceProvider.init();
+  const p1 = serviceProvider.getContainer().get(FakeProviderOne);
+  const p2 = serviceProvider.getContainer().get(FakeProviderTwo);
 
-    expect(p2.driverOne).to.be.instanceOf(FakeDriverOne);
-    expect(p2.driverTwo).to.be.instanceOf(FakeDriverTwo);
-    expect(p2.driverThree).to.be.instanceOf(FakeDriverThree);
+  // all instances are bound
+  t.true(p1.driverOne instanceof FakeDriverOne);
+  t.true(p1.driverTwo instanceof FakeDriverTwo);
+  t.true(p1.driverThree instanceof FakeDriverThree);
 
-    // shared = false
-    expect(p1.driverOne).not.to.eq(p2.driverOne);
-    // shared = true
-    expect(p1.driverTwo).to.eq(p2.driverTwo);
-    // shared = true but config is different
-    expect(p1.driverThree).not.to.eq(p2.driverThree);
-  });
+  t.true(p2.driverOne instanceof FakeDriverOne);
+  t.true(p2.driverTwo instanceof FakeDriverTwo);
+  t.true(p2.driverThree instanceof FakeDriverThree);
+
+  // shared = false
+  t.falsy(p1.driverOne === p2.driverOne);
+  // shared = true
+  t.true(p1.driverTwo === p2.driverTwo);
+  // shared = true but config is different
+  t.falsy(p1.driverThree === p2.driverThree);
 });

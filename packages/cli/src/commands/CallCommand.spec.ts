@@ -1,72 +1,72 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
+import test from 'ava';
 import { Kernel } from '@ilos/core';
 
 import { CallCommand } from './CallCommand';
 
-chai.use(chaiAsPromised);
-
-describe('Command: Call', function() {
-  const { expect, assert } = chai;
-
+function setup() {
   class FakeKernel extends Kernel {
     async bootstrap() {
       return;
     }
     async handle(call) {
       if (call.method === 'nope') {
-        throw new Error();
+        throw new Error('This is not working');
       }
       return call;
     }
   }
 
   const kernel = new FakeKernel();
+  const command = new CallCommand(kernel);
 
-  it('should work', async function() {
-    const command = new CallCommand(kernel);
-    const response = await command.call('method');
-    expect(response).to.deep.equal({
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'method',
-      params: {
-        _context: {
-          channel: {
-            service: '',
-            transport: 'cli',
-          },
+  return { kernel, command };
+}
+
+test('Command "call": should work', async (t) => {
+  const { command } = setup();
+  const response = await command.call('method');
+  t.deepEqual(response, {
+    id: 1,
+    jsonrpc: '2.0',
+    method: 'method',
+    params: {
+      _context: {
+        channel: {
+          service: '',
+          transport: 'cli',
         },
-        params: undefined,
       },
-    });
+      params: undefined,
+    },
   });
+});
 
-  it('should work with options', async function() {
-    const command = new CallCommand(kernel);
-    const response = await command.call('method', { params: [1, 2], context: { call: { user: 'michou' } } });
-    expect(response).to.deep.equal({
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'method',
-      params: {
-        _context: {
-          channel: {
-            service: '',
-            transport: 'cli',
-          },
-          call: {
-            user: 'michou',
-          },
+test('Command "call": should work with options', async (t) => {
+  t.plan(1);
+  const { command } = setup();
+  const response = await command.call('method', { params: [1, 2], context: { call: { user: 'michou' } } });
+  t.deepEqual(response, {
+    id: 1,
+    jsonrpc: '2.0',
+    method: 'method',
+    params: {
+      _context: {
+        channel: {
+          service: '',
+          transport: 'cli',
         },
-        params: [1, 2],
+        call: {
+          user: 'michou',
+        },
       },
-    });
+      params: [1, 2],
+    },
   });
+});
 
-  it('should throw exception on error', function() {
-    const command = new CallCommand(kernel);
-    return (assert as any).isRejected(command.call('nope'));
-  });
+test('Command "call": should throw exception on error', async (t) => {
+  t.plan(2);
+  const { command } = setup();
+  const err = await t.throwsAsync<Error>(async () => command.call('nope'));
+	t.is(err.message, 'This is not working');
 });

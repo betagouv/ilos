@@ -22,33 +22,6 @@
   "bin": {
     "ilos-cli": "./dist/cli.js"
   },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/exceptions/**",
-      "src/**/index.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
-  },
   "dependencies": {
     "inversify": "^5.0.1",
     "reflect-metadata": "^0.1.13"

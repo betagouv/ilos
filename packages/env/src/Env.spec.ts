@@ -1,37 +1,35 @@
 // tslint:disable no-shadowed-variable max-classes-per-file
-import { describe } from 'mocha';
-import { expect } from 'chai';
+import test from 'ava';
 import mockFs from 'mock-fs';
 
 import { Env } from './Env';
 
-describe('Env', () => {
-  before(() => {
-    mockFs({
-      [`${process.cwd()}/.env`]: 'HELLO=world\n',
-    });
+test.before(() => {
+  mockFs({
+    [`${process.cwd()}/.env`]: 'HELLO=world\n',
   });
+});
 
-  after(() => {
-    mockFs.restore();
-  });
+test.after(() => {
+  mockFs.restore();
+});
 
-  it('should work', async () => {
-    const env = new Env();
-    await env.init();
-    await env.loadEnvFile(process.cwd());
-    expect(env.get('HELLO')).to.equal('world');
-  });
+test('Env: should work', async (t) => {
+  const env = new Env();
+  await env.init();
+  await env.loadEnvFile(process.cwd());
+  t.is(env.get('HELLO'), 'world');
+});
 
-  it('should raise exception if key is not found', async () => {
-    const env = new Env();
-    await env.init();
-    expect(() => env.get('HELLO2')).throws(Error, 'Unknown env key HELLO2');
-  });
+test('Env: should raise exception if key is not found', async (t) => {
+  const env = new Env();
+  await env.init();
+  const err = t.throws(() => env.get('HELLO2'));
+  t.is(err.message, 'Unknown env key HELLO2');
+});
 
-  it('should return fallback if key not found', async () => {
-    const env = new Env();
-    await env.init();
-    expect(env.get('HELLO2', 'world')).to.equal('world');
-  });
+test('Env: should return fallback if key not found', async (t) => {
+  const env = new Env();
+  await env.init();
+  t.is(env.get('HELLO2', 'world'), 'world');
 });

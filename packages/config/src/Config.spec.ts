@@ -1,73 +1,75 @@
 // tslint:disable no-shadowed-variable max-classes-per-file no-invalid-this
-import { describe } from 'mocha';
-import { expect } from 'chai';
+import test from 'ava';
 import mockFs from 'mock-fs';
-
 import { EnvInterfaceResolver } from '@ilos/common';
 
 import { Config } from './Config';
 
-class FakeEnv extends EnvInterfaceResolver {
-  async init() {
-    return;
+function setup() {
+  class FakeEnv extends EnvInterfaceResolver {
+    async init() {
+      return;
+    }
+  
+    get(key: string, fallback?: any): any {
+      return fallback;
+    }
   }
 
-  get(key: string, fallback?: any): any {
-    return fallback;
-  }
+  return {
+    env: new FakeEnv(),
+  };
 }
 
-describe('Config provider', () => {
-  it('should work with yaml', async () => {
-    mockFs({
-      [`${process.cwd()}/config/hello-world.yml`]: `
-        hi:\n
-            - name: 'john' \n
-        \n`,
-    });
-
-    const config = new Config(new FakeEnv());
-    await config.init();
-    expect(config.get('helloWorld')).to.deep.equal({
-      hi: [{ name: 'john' }],
-    });
-
-    mockFs.restore();
+test('Config provider: should work with yaml', async (t) => {
+  mockFs({
+    [`${process.cwd()}/config/hello-world.yml`]: `
+      hi:\n
+          - name: 'john' \n
+      \n`,
+  });
+  const { env } = setup();
+  const config = new Config(env);
+  await config.init();
+  t.deepEqual(config.get('helloWorld'), {
+    hi: [{ name: 'john' }],
   });
 
-  it('should work with js', async () => {
-    mockFs({
-      [`${process.cwd()}/config/hello-world.js`]: `module.exports.hi = [
-        {
-          name: env('FAKE', 'john'),
-        },
-      ];
-      module.exports.test = false;`,
-    });
+  mockFs.restore();
+});
 
-    const config = new Config(new FakeEnv());
-    await config.init();
-    expect(config.get('helloWorld')).to.deep.include({
-      hi: [{ name: 'john' }],
-    });
-
-    mockFs.restore();
+test('Config provider: should work with js', async (t) => {
+  mockFs({
+    [`${process.cwd()}/config/hello-world.js`]: `module.exports.hi = [
+      {
+        name: env('FAKE', 'john'),
+      },
+    ];
+    module.exports.test = false;`,
+  });
+  const { env } = setup();
+  const config = new Config(env);
+  await config.init();
+  t.deepEqual(config.get('helloWorld'), {
+    hi: [{ name: 'john' }],
+    test: false,
   });
 
-  it('should return fallback if key not found', async () => {
-    mockFs({
-      [`${process.cwd()}/config/hello-world.js`]: `module.exports.hi = [
-        {
-          name: env('FAKE', 'john'),
-        },
-      ];
-      module.exports.test = false;`,
-    });
+  mockFs.restore();
+});
 
-    const config = new Config(new FakeEnv());
-    await config.init();
-    expect(config.get('hello', 'world')).to.equal('world');
-
-    mockFs.restore();
+test('Config provider: should return fallback if key not found', async (t) => {
+  mockFs({
+    [`${process.cwd()}/config/hello-world.js`]: `module.exports.hi = [
+      {
+        name: env('FAKE', 'john'),
+      },
+    ];
+    module.exports.test = false;`,
   });
+  const { env } = setup();
+  const config = new Config(env);
+  await config.init();
+  t.is(config.get('hello', 'world'), 'world');
+  mockFs.restore();
 });
