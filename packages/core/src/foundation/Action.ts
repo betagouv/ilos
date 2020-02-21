@@ -25,14 +25,14 @@ export abstract class Action implements HandlerInterface, InitHookInterface {
 
   async init(serviceContainer: ServiceContainerInterface) {
     const container = serviceContainer.getContainer();
-    const middlewares = <(MiddlewareInterface | [MiddlewareInterface, any])[]>this.middlewares.map((value) => {
+    const middlewares = this.middlewares.map((value) => {
       if (typeof value === 'string') {
-        return <MiddlewareInterface>container.get(value);
+        return container.get<MiddlewareInterface>(value);
       }
       const [key, config] = value;
-      const middleware = <MiddlewareInterface>container.get(key);
+      const middleware = container.get<MiddlewareInterface>(key);
       return [middleware, config];
-    });
+    }) as (MiddlewareInterface | [MiddlewareInterface, any])[];
     this.wrapper = compose(middlewares);
   }
 

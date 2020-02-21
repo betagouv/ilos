@@ -7,7 +7,7 @@ import { CallCommand } from './CallCommand';
 
 chai.use(chaiAsPromised);
 
-describe('Command: Call', function () {
+describe('Command: Call', function() {
   const { expect, assert } = chai;
 
   class FakeKernel extends Kernel {
@@ -21,10 +21,10 @@ describe('Command: Call', function () {
       return call;
     }
   }
-  
+
   const kernel = new FakeKernel();
 
-  it('should work', async function () {
+  it('should work', async function() {
     const command = new CallCommand(kernel);
     const response = await command.call('method');
     expect(response).to.deep.equal({
@@ -43,7 +43,7 @@ describe('Command: Call', function () {
     });
   });
 
-  it('should work with options', async function () {
+  it('should work with options', async function() {
     const command = new CallCommand(kernel);
     const response = await command.call('method', { params: [1, 2], context: { call: { user: 'michou' } } });
     expect(response).to.deep.equal({
@@ -67,6 +67,6 @@ describe('Command: Call', function () {
 
   it('should throw exception on error', function() {
     const command = new CallCommand(kernel);
-    return (<any>assert).isRejected(command.call('nope'));
+    return (assert as any).isRejected(command.call('nope'));
   });
 });

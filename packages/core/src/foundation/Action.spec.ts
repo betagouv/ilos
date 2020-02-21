@@ -135,7 +135,7 @@ describe('Action', () => {
   it('should raise an error if no handle method is defined', () => {
     class BasicAction extends Action {}
     const action = new BasicAction();
-    return (<any>expect(
+    return (expect(
       action.call({
         result: {},
         method: '',
@@ -146,7 +146,7 @@ describe('Action', () => {
         },
         context: defaultContext,
       }),
-    ).to).eventually.be
+    ).to as any).eventually.be
       .rejectedWith('No implementation found')
       .and.be.an.instanceOf(Error);
   });

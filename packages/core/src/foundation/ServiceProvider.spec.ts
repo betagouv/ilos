@@ -18,7 +18,7 @@ import { Action } from './Action';
 
 chai.use(chaiAsPromised);
 
-const { expect, assert } = chai;
+const { expect } = chai;
 const defaultContext = { channel: { service: '' } };
 
 describe('ServiceProvider', () => {

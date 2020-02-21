@@ -8,7 +8,7 @@ import { CommandRegistry } from '../providers/CommandRegistry';
 import { CommandExtension } from './CommandExtension';
 import { Command } from '../parents/Command';
 
-describe('Command extension', function () {
+describe('Command extension', function() {
   @command()
   class BasicCommand extends Command {
     static readonly signature: string = 'hello <name>';
@@ -19,7 +19,7 @@ describe('Command extension', function () {
         description: 'Say hi',
       },
     ];
-  
+
     public async call(name, options?): Promise<ResultType> {
       if (options && 'hi' in options) {
         return `Hi ${name}`;
@@ -35,11 +35,11 @@ describe('Command extension', function () {
     extensions = [CommandExtension];
   }
 
-  afterEach(function () {
+  afterEach(function() {
     sinon.restore();
   });
 
-  it('should register properly', async function () {
+  it('should register properly', async function() {
     const basicServiceProvider = new BasicServiceProvider();
     await basicServiceProvider.register();
     await basicServiceProvider.init();
@@ -58,21 +58,27 @@ describe('Command extension', function () {
     });
   });
 
-  it('should work', function (done) {
+  it('should work', function(done) {
     this.timeout(1000);
     const basicServiceProvider = new BasicServiceProvider();
     const container = basicServiceProvider.getContainer();
-    basicServiceProvider.register().then(() => {
-      basicServiceProvider.init().then(() => {
-        const commander = container.get<CommandRegistry>(CommandRegistry);
-        sinon.stub(commander, 'output').callsFake((...args: any[]) => {
-          expect(args[0]).to.equal('Hello john');
-          done();
-        });
-        container.unbind(CommandRegistry);
-        container.bind(CommandRegistry).toConstantValue(commander);
-        commander.parse(['', '', 'hello', 'john']);
-      }).catch(e => done(e));
-    }).catch(e => done(e));
+    basicServiceProvider
+      .register()
+      .then(() => {
+        basicServiceProvider
+          .init()
+          .then(() => {
+            const commander = container.get<CommandRegistry>(CommandRegistry);
+            sinon.stub(commander, 'output').callsFake((...args: any[]) => {
+              expect(args[0]).to.equal('Hello john');
+              done();
+            });
+            container.unbind(CommandRegistry);
+            container.bind(CommandRegistry).toConstantValue(commander);
+            commander.parse(['', '', 'hello', 'john']);
+          })
+          .catch((e) => done(e));
+      })
+      .catch((e) => done(e));
   });
 });

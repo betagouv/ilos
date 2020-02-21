@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "lint": "lerna run lint",
+    "lint": "eslint \"packages/**/src/**/*.ts\"",
     "clean:dep": "rm -rf packages/*/node_modules node_modules",
     "clean": "rm -rf packages/*/dist",
     "build": "yarn clean && yarn build:packages && yarn build:permissions",
@@ -34,7 +34,9 @@
     "@types/mocha": "^7.0.1",
     "@types/node": "^13.7.2",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
     "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-prettier": "^3.1.2",
     "lerna": "^3.20.2",
     "mocha": "^7.0.1",

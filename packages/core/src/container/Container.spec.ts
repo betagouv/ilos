@@ -36,10 +36,10 @@ describe('Container', () => {
 
     container.setHandler(Test);
 
-    const tbis = <Test>container.getHandler({
+    const tbis = container.getHandler({
       service: 'test',
       method: 'hello',
-    });
+    }) as Test;
     expect(tbis.hello.world).to.equal('!!');
   });
 
@@ -78,10 +78,10 @@ describe('Container', () => {
 
     container.setHandler(Test);
 
-    const tbis = <Test>container.getHandler({
+    const tbis = container.getHandler({
       service: 'test',
       method: 'hello',
-    });
+    }) as Test;
     expect(tbis.hello.world).to.equal('yeah');
   });
 
@@ -110,10 +110,10 @@ describe('Container', () => {
 
     container.setHandler(Test);
 
-    const tbis = <Test>container.getHandler({
+    const tbis = container.getHandler({
       service: 'test',
       method: 'hello',
-    });
+    }) as Test;
     expect(tbis.hello.world).to.equal('yeah');
   });
 });

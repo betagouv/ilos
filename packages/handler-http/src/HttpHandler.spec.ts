@@ -43,7 +43,7 @@ describe('Http handler', () => {
       context: defaultContext,
     });
 
-    return (<any>expect(nockRequest).to.have.been).requestedWith({
+    return (expect(nockRequest).to.have.been as any).requestedWith({
       id: 1,
       jsonrpc: '2.0',
       method: 'service@latest:method',
@@ -81,7 +81,7 @@ describe('Http handler', () => {
       context: defaultContext,
     });
 
-    return (<any>expect(nockRequest).to.have.been).requestedWithHeadersMatch({
+    return (expect(nockRequest).to.have.been as any).requestedWithHeadersMatch({
       accept: 'application/json',
       'content-type': 'application/json',
     });
@@ -89,7 +89,7 @@ describe('Http handler', () => {
 
   it('throw error on status code error', () => {
     const url = 'http://myfakeservice:8080';
-    const nockRequest = nock(url)
+    nock(url)
       .post('/')
       .reply(
         500,
@@ -111,12 +111,12 @@ describe('Http handler', () => {
       params: { param: true },
       context: defaultContext,
     });
-    return (<any>assert).isRejected(promise, Error, 'An error occured');
+    return (assert as any).isRejected(promise, Error, 'An error occured');
   });
 
   it('throw error on status code error', () => {
     const url = 'http://myfakeservice:8080';
-    const nockRequest = nock(url)
+    nock(url)
       .post('/')
       .reply(
         200,
@@ -138,6 +138,6 @@ describe('Http handler', () => {
       params: { param: true },
       context: defaultContext,
     });
-    return (<any>assert).isRejected(promise, Error, 'wrong!');
+    return (assert as any).isRejected(promise, Error, 'wrong!');
   });
 });

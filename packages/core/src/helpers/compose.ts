@@ -32,7 +32,6 @@ export function compose(
   ): Promise<ResultType> {
     // last called middleware #
     let index = -1;
-    return dispatch(0)(params, context);
     function dispatch(i: number) {
       if (i <= index) {
         throw new Error('next() called multiple times');
@@ -42,5 +41,6 @@ export function compose(
       if (i === middlewares.length) fn = handle;
       return (p: ParamsType, c: ContextType) => fn(p, c, dispatch(i + 1));
     }
+    return dispatch(0)(params, context);
   };
 }

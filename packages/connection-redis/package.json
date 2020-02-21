@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
+    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\"",
     "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts",
     "test:integration": "mocha tests/**/*.spec.ts",
     "test": "mocha src/*.spec.ts src/**/*.spec.ts"

@@ -16,7 +16,7 @@ import { Command } from '../parents/Command';
 import { CommandRegistry } from '../providers/CommandRegistry';
 import { CliTransport } from './CliTransport';
 
-describe('Cli transport', function () {
+describe('Cli transport', function() {
   @commandDecorator()
   class BasicCommand extends Command {
     static readonly signature: string = 'hello <name>';
@@ -43,11 +43,11 @@ describe('Cli transport', function () {
     readonly extensions: NewableType<ExtensionInterface>[] = [CommandExtension];
   }
 
-  after(function () {
+  after(function() {
     sinon.restore();
   });
 
-  it('should work', function (done) {
+  it('should work', function(done) {
     this.timeout(1000);
     const kernel = new BasicKernel();
     kernel.bootstrap().then(() => {

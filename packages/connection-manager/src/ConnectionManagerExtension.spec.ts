@@ -2,13 +2,7 @@
 import { expect } from 'chai';
 
 import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
-import {
-  provider,
-  serviceProvider,
-  ConfigInterfaceResolver,
-  ConnectionInterface,
-  EnvInterfaceResolver,
-} from '@ilos/common';
+import { provider, serviceProvider, ConnectionInterface, EnvInterfaceResolver } from '@ilos/common';
 import { ConfigExtension } from '@ilos/config';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';

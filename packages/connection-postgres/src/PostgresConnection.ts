@@ -10,20 +10,12 @@ export class PostgresConnection implements ConnectionInterface<Pool> {
   }
 
   async up() {
-    try {
-      await this.pool.query('SELECT NOW()');
-      return;
-    } catch (err) {
-      throw err;
-    }
+    await this.pool.query('SELECT NOW()');
+    return;
   }
 
   async down() {
-    try {
-      await this.pool.end();
-    } catch (err) {
-      throw err;
-    }
+    await this.pool.end();
   }
 
   getClient(): Pool {

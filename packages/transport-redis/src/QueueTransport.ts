@@ -1,7 +1,7 @@
 import { Queue } from 'bull';
 
 import { QueueExtension } from '@ilos/queue';
-import { TransportInterface, KernelInterface, ContainerInterface } from '@ilos/common';
+import { TransportInterface, KernelInterface } from '@ilos/common';
 
 import { bullFactory } from './helpers/bullFactory';
 
@@ -33,7 +33,7 @@ export class QueueTransport implements TransportInterface<Queue[]> {
       throw new Error('Redis connection string not configured');
     }
 
-    const container = <ContainerInterface>this.kernel.getContainer();
+    const container = this.kernel.getContainer();
     if (!container.isBound(QueueExtension.containerKey)) {
       throw new Error('No queue declared');
     }

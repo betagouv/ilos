@@ -2,17 +2,8 @@
 import { expect } from 'chai';
 
 import * as winston from 'winston';
-import {
-  injectable,
-  provider,
-  serviceProvider,
-  HasLogger,
-  LoggerInterface,
-  EnvInterfaceResolver,
-  DefaultLogger,
-} from '@ilos/common';
-import { ServiceContainer, Extensions } from '@ilos/core';
-import { ConfigExtension } from '@ilos/config';
+import { injectable, serviceProvider, HasLogger, LoggerInterface, DefaultLogger } from '@ilos/common';
+import { ServiceContainer } from '@ilos/core';
 
 import { LoggerExtension } from './LoggerExtension';
 
@@ -37,13 +28,6 @@ describe('Logger provider', () => {
     class Test extends HasLogger {
       getLogger(): LoggerInterface {
         return this.logger;
-      }
-    }
-
-    @provider()
-    class FakeEnv extends EnvInterfaceResolver {
-      get(k, fb) {
-        return fb;
       }
     }
 

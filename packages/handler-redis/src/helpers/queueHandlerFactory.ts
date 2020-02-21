@@ -3,7 +3,7 @@ import { handler, NewableType } from '@ilos/common';
 
 import { QueueHandler } from '../QueueHandler';
 
-export function queueHandlerFactory(service: string, version: string = 'latest'): NewableType<QueueHandler> {
+export function queueHandlerFactory(service: string, version = 'latest'): NewableType<QueueHandler> {
   @handler({
     service,
     version,

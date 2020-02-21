@@ -23,9 +23,9 @@ export class Providers implements RegisterHookInterface {
         container.bind(target).toSelf();
         container.bind(identifier).toService(target);
       } else {
-        const customIdentifier = <IdentifierType | IdentifierType[]>(
-          Reflect.getMetadata(Symbol.for('extension:identifier'), def)
-        );
+        const customIdentifier = Reflect.getMetadata(Symbol.for('extension:identifier'), def) as
+          | IdentifierType
+          | IdentifierType[];
         target = def;
         container.bind(target).toSelf();
         if (customIdentifier) {

@@ -1,3 +1,3 @@
 export function isCallable(fn: Function): fn is CallableFunction {
-  return (<CallableFunction>fn).apply !== undefined;
+  return (fn as CallableFunction).apply !== undefined;
 }

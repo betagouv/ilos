@@ -83,10 +83,7 @@ export function createFileLogger(opts = {}) {
   });
 }
 
-export function buildLoggerConfiguration(
-  config: LoggerConfigurationType,
-  env: string = 'default',
-): winston.LoggerOptions {
+export function buildLoggerConfiguration(config: LoggerConfigurationType, env = 'default'): winston.LoggerOptions {
   const transports = env in config.loggers ? config.loggers[env] : config.loggers.default;
   return {
     level: config.level,
