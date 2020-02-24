@@ -1,252 +1,270 @@
-import { describe } from 'mocha';
-import { expect } from 'chai';
+import anyTest, { TestInterface } from 'ava';
 import supertest from 'supertest';
-
 import { Kernel } from '@ilos/core';
 import { RPCCallType, RPCResponseType } from '@ilos/common';
 
 import { HttpTransport } from './HttpTransport';
 
-let request: supertest.SuperTest<supertest.Test>;
-let httpTransport: HttpTransport;
+interface Context {
+  request: supertest.SuperTest<supertest.Test>;
+  httpTransport: HttpTransport;
+}
 
-describe('Http transport', () => {
-  before(() => {
-    class BasicKernel extends Kernel {
-      async handle(call: RPCCallType): Promise<RPCResponseType> {
-        // generate errors from method name
-        if ('method' in call) {
-          switch (call.method) {
-            case 'test':
-              // notifications return void
-              if (call.id === undefined || call.id === null) {
-                return;
-              }
+const test = anyTest as TestInterface<Context>;
 
-              return {
-                id: 1,
-                jsonrpc: '2.0',
-                result: 'hello world',
-              };
-            case 'error':
-              return {
-                id: 1,
-                jsonrpc: '2.0',
-                error: {
-                  code: -32000,
-                  message: 'Server error',
-                },
-              };
-            case 'invalidRequest':
-              return {
-                id: 1,
-                jsonrpc: '2.0',
-                error: {
-                  code: -32600,
-                  message: 'Server error',
-                },
-              };
-          }
+test.before(async (t) => {
+  class BasicKernel extends Kernel {
+    async handle(call: RPCCallType): Promise<RPCResponseType> {
+      // generate errors from method name
+      if ('method' in call) {
+        switch (call.method) {
+          case 'test':
+            // notifications return void
+            if (call.id === undefined || call.id === null) {
+              return;
+            }
+
+            return {
+              id: 1,
+              jsonrpc: '2.0',
+              result: 'hello world',
+            };
+          case 'error':
+            return {
+              id: 1,
+              jsonrpc: '2.0',
+              error: {
+                code: -32000,
+                message: 'Server error',
+              },
+            };
+          case 'invalidRequest':
+            return {
+              id: 1,
+              jsonrpc: '2.0',
+              error: {
+                code: -32600,
+                message: 'Server error',
+              },
+            };
         }
-
-        return {
-          id: 1,
-          jsonrpc: '2.0',
-          error: {
-            code: -32601,
-            message: 'Method not found',
-          },
-        };
       }
+
+      return {
+        id: 1,
+        jsonrpc: '2.0',
+        error: {
+          code: -32601,
+          message: 'Method not found',
+        },
+      };
     }
+  }
 
-    const kernel = new BasicKernel();
+  const kernel = new BasicKernel();
 
-    httpTransport = new HttpTransport(kernel);
+  t.context.httpTransport = new HttpTransport(kernel);
 
-    httpTransport.up();
+  await t.context.httpTransport.up();
 
-    request = supertest(httpTransport.getInstance());
-  });
+  t.context.request = supertest(t.context.httpTransport.getInstance());
+});
 
-  after(() => {
-    httpTransport.down();
-  });
+test.after(async (t) => {
+  await t.context.httpTransport.down();
+});
 
-  it('returns JSON-RPC compliant success response', async () => {
-    const response = await request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'test',
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
-
-    expect(response.status).to.equal(200);
-    expect(response.body).to.deep.equal({
+test('Http transport: returns JSON-RPC compliant success response', async (t) => {
+  const response = await t.context.request
+    .post('/')
+    .send({
       id: 1,
       jsonrpc: '2.0',
-      result: 'hello world',
-    });
+      method: 'test',
+    })
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
+
+  t.is(response.status, 200);
+  t.deepEqual(response.body, {
+    id: 1,
+    jsonrpc: '2.0',
+    result: 'hello world',
   });
+});
 
-  it('returns JSON-RPC compliant error response', async () => {
-    const response = await request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'returnAnError',
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
-
-    expect(response.status).to.equal(405);
-    expect(response.body).to.deep.equal({
+test('Http transport: returns JSON-RPC compliant error response', async (t) => {
+  const response = await t.context.request
+    .post('/')
+    .send({
       id: 1,
       jsonrpc: '2.0',
-      error: {
-        code: -32601,
-        message: 'Method not found',
-      },
-    });
-  });
+      method: 'returnAnError',
+    })
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
 
-  it('regular request', async () => {
-    const response = await request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'test',
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
-    expect(response.status).equal(200);
-    expect(response.body).to.have.property('id', 1);
-    expect(response.body).to.have.property('jsonrpc', '2.0');
-    expect(response.body).to.have.property('result');
+  t.is(response.status, 405);
+  t.deepEqual(response.body, {
+    id: 1,
+    jsonrpc: '2.0',
+    error: {
+      code: -32601,
+      message: 'Method not found',
+    },
   });
+});
 
-  it('notification request', async () => {
-    const response = await request
-      .post('/')
-      .send({
-        jsonrpc: '2.0',
-        method: 'test',
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
-    expect(response.status).equal(204);
-    expect(response.body).to.equal('');
+test('Http transport: regular request', async (t) => {
+  const response = await t.context.request
+    .post('/')
+    .send({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'test',
+    })
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
+  t.is(response.status, 200);
+  t.is(response.body.id, 1);
+  t.is(response.body.jsonrpc, '2.0');
+  t.is(response.body.result, 'hello world');
+});
+
+test('Http transport: notification request', async (t) => {
+  const response = await t.context.request
+    .post('/')
+    .send({
+      jsonrpc: '2.0',
+      method: 'test',
+    })
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
+  t.is(response.status, 204);
+  t.is(response.body, '');
+});
+
+test('Http transport: should fail if missing Accept header', async (t) => {
+  const response = await t.context.request
+    .post('/')
+    .send({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'test',
+    })
+    .set('Content-Type', 'application/json');
+  t.is(response.status, 415);
+  t.is(response.body.id, 1);
+  t.is(response.body.jsonrpc, '2.0');
+  t.deepEqual(response.body.error, {
+    code: -32000,
+    message: 'Wrong Content-type header. Requires application/json'
   });
+});
 
-  it('should fail if missing Accept header', async () => {
-    const response = await request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'test',
-      })
-      .set('Content-Type', 'application/json');
-    expect(response.status).equal(415);
-    expect(response.body).to.have.property('id', 1);
-    expect(response.body).to.have.property('jsonrpc', '2.0');
-    expect(response.body).to.have.property('error');
+// Content-type is infered from Accept header
+test('Http transport: should work without Content-type header', async (t) => {
+  const response = await t.context.request
+    .post('/')
+    .send({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'test',
+    })
+    .set('Accept', 'application/json');
+  t.is(response.status, 200);
+  t.is(response.body.id, 1);
+  t.is(response.body.jsonrpc, '2.0');
+  t.is(response.body.result, 'hello world');
+});
+
+test('Http transport: should fail if http verb is not POST', async (t) => {
+  const response = await t.context.request
+    .get('/')
+    .send({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'test',
+    })
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
+  t.is(response.status, 405);
+  t.is(response.body.id, 1);
+  t.is(response.body.jsonrpc, '2.0');
+  t.deepEqual(response.body.error, {
+    code: -32601,
+    message: 'Method not allowed',
   });
+});
 
-  // Content-type is infered from Accept header
-  it('should work without Content-type header', async () => {
-    const response = await request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'test',
-      })
-      .set('Accept', 'application/json');
-    expect(response.status).equal(200);
-    expect(response.body).to.have.property('id', 1);
-    expect(response.body).to.have.property('jsonrpc', '2.0');
-    expect(response.body).to.have.property('result');
+test('Http transport: should fail if json is misformed', async (t) => {
+  const response = await t.context.request
+    .post('/')
+    .send('{ "id": 1, jsonrpc: "2.0", "method": "test"}')
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
+  t.is(response.status, 415);
+  t.is(response.body.id, 1);
+  t.is(response.body.jsonrpc, '2.0');
+  t.deepEqual(response.body.error, {
+    code: -32000,
+    message: 'Wrong content length'
   });
+});
 
-  it('should fail if http verb is not POST', async () => {
-    const response = await request
-      .get('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'test',
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
-    expect(response.status).equal(405);
-    expect(response.body).to.have.property('id', 1);
-    expect(response.body).to.have.property('jsonrpc', '2.0');
-    expect(response.body).to.have.property('error');
+test('Http transport: should fail if service reject', async (t) => {
+  const response = await t.context.request
+    .post('/')
+    .send({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'error',
+    })
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
+  t.is(response.status, 500);
+  t.is(response.body.id, 1);
+  t.is(response.body.jsonrpc, '2.0');
+  t.deepEqual(response.body.error, {
+    code: -32000,
+    message: 'Server error',
   });
+});
 
-  it('should fail if json is misformed', async () => {
-    const response = await request
-      .post('/')
-      .send('{ "id": 1, jsonrpc: "2.0", "method": "test"}')
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
-    expect(response.status).equal(415);
-    expect(response.body).to.have.property('id', 1);
-    expect(response.body).to.have.property('jsonrpc', '2.0');
-    expect(response.body).to.have.property('error');
+test('Http transport: should fail if request is invalid', async (t) => {
+  const response = await t.context.request
+    .post('/')
+    .send({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'invalidRequest',
+    })
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
+  t.is(response.status, 400);
+  t.is(response.body.id, 1);
+  t.is(response.body.jsonrpc, '2.0');
+  t.deepEqual(response.body.error, {
+    code: -32600,
+    message: 'Server error',
   });
+});
 
-  it('should fail if service reject', async () => {
-    const response = await request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'error',
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
-    expect(response.status).equal(500);
-    expect(response.body).to.have.property('id', 1);
-    expect(response.body).to.have.property('jsonrpc', '2.0');
-    expect(response.body).to.have.property('error');
-  });
-
-  it('should fail if request is invalid', async () => {
-    const response = await request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'invalidRequest',
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
-    expect(response.status).equal(400);
-    expect(response.body).to.have.property('id', 1);
-    expect(response.body).to.have.property('jsonrpc', '2.0');
-    expect(response.body).to.have.property('error');
-  });
-
-  it('should fail if method is not found', async () => {
-    const response = await request
-      .post('/')
-      .send({
-        id: 1,
-        jsonrpc: '2.0',
-        method: 'nonExistingMethod',
-      })
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
-    expect(response.status).equal(405);
-    expect(response.body).to.have.property('id', 1);
-    expect(response.body).to.have.property('jsonrpc', '2.0');
-    expect(response.body).to.have.property('error');
+test('Http transport: should fail if method is not found', async (t) => {
+  const response = await t.context.request
+    .post('/')
+    .send({
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'nonExistingMethod',
+    })
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json');
+  t.is(response.status, 405);
+  t.is(response.body.id, 1);
+  t.is(response.body.jsonrpc, '2.0');
+  t.deepEqual(response.body.error, {
+    code: -32601,
+    message: 'Method not found'
   });
 });

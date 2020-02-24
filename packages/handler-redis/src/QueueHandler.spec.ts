@@ -1,81 +1,90 @@
 // tslint:disable no-invalid-this
-import { describe } from 'mocha';
+import anyTest, { TestInterface } from 'ava';
 import sinon from 'sinon';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
 import { RedisConnection } from '@ilos/connection-redis';
 
 import * as Bull from './helpers/bullFactory';
 import { queueHandlerFactory } from './helpers/queueHandlerFactory';
 
-chai.use(chaiAsPromised);
-
-const { expect, assert } = chai;
-
-const sandbox = sinon.createSandbox();
-
-const defaultContext = {
-  channel: {
-    service: '',
-  },
-};
-
-class FakeRedis extends RedisConnection {
-  getClient() {
-    return null;
-  }
+interface Context {
+  sandbox: sinon.SinonSandbox;
 }
 
-const fakeConnection = new FakeRedis({});
+const test = anyTest as TestInterface<Context>;
 
-describe('Queue handler', () => {
-  beforeEach(() => {
-    sandbox.stub(Bull, 'bullFactory').callsFake(
+test.beforeEach(async (t) => {
+  t.context.sandbox = sinon.createSandbox();
+  t.context.sandbox.stub(Bull, 'bullFactory').callsFake(
+    // @ts-ignore
+    () => ({
       // @ts-ignore
-      () => ({
-        // @ts-ignore
-        async add(data) {
-          if (!!data.method && data.method !== 'nope') {
-            return data;
-          }
-          throw new Error('Nope');
-        },
-        async isReady() {
-          return this;
-        },
-      }),
-    );
+      async add(data) {
+        if (!!data.method && data.method !== 'nope') {
+          return data;
+        }
+        throw new Error('Nope');
+      },
+      async isReady() {
+        return this;
+      },
+    }),
+  );
+});
+
+test.afterEach((t) => {
+  t.context.sandbox.restore();
+});
+
+function setup() {
+  const defaultContext = {
+    channel: {
+      service: '',
+    },
+  };
+
+  class FakeRedis extends RedisConnection {
+    getClient() {
+      return null;
+    }
+  }
+
+  const fakeConnection = new FakeRedis({});
+  return {
+    defaultContext,
+    fakeConnection,
+  };
+}
+
+test.serial('Queue handler: works', async (t) => {
+  const { fakeConnection, defaultContext } = setup();
+  const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
+  await queueProvider.init();
+  const result = (await queueProvider.call({
+    method: 'basic@latest:method',
+    params: { add: [1, 2] },
+    context: defaultContext,
+  })) as any;
+
+  t.deepEqual(result, {
+    jsonrpc: '2.0',
+    id: null,
+    method: 'basic@latest:method',
+    params: { params: { add: [1, 2] }, _context: defaultContext },
   });
-  afterEach(() => {
-    sandbox.restore();
-  });
-  it('works', async () => {
-    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
-    await queueProvider.init();
-    const result = await queueProvider.call({
-      method: 'basic@latest:method',
+});
+
+test.serial('Queue handler: raise error if fail', async (t) => {
+  const { fakeConnection, defaultContext } = setup();
+
+  const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
+  await queueProvider.init();
+  const err = await t.throwsAsync(async () =>
+    queueProvider.call({
+      method: 'nope',
       params: { add: [1, 2] },
       context: defaultContext,
-    });
-    expect(result).to.deep.equal({
-      jsonrpc: '2.0',
-      id: null,
-      method: 'basic@latest:method',
-      params: { params: { add: [1, 2] }, _context: defaultContext },
-    });
-  });
-  it('raise error if fail', async () => {
-    const queueProvider = new (queueHandlerFactory('basic', '0.0.1'))(fakeConnection);
-    await queueProvider.init();
-    return assert.isRejected(
-      queueProvider.call({
-        method: 'nope',
-        params: { add: [1, 2] },
-        context: defaultContext,
-      }),
-      Error,
-      'An error occured',
-    );
-  });
+    }),
+  );
+
+  t.is(err.message, 'An error occured');
 });

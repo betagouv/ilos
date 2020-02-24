@@ -1,22 +1,30 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import anyTest, { TestInterface } from 'ava';
 import sinon from 'sinon';
-
 import { ConfigInterfaceResolver } from '@ilos/common';
 
 import { AjvValidator } from './AjvValidator';
 
-chai.use(chaiAsPromised);
-const { expect, assert } = chai;
+interface Context {
+  sandbox: sinon.SinonSandbox;
+  provider: AjvValidator;
+}
 
-// tslint:disable prefer-type-cast
-const fakeConfig = sinon.createStubInstance(ConfigInterfaceResolver, {
-  get() {
-    return {};
-  },
+const test = anyTest as TestInterface<Context>;
+
+test.beforeEach((t) => {
+  const fakeConfig = sinon.createStubInstance(ConfigInterfaceResolver, {
+    get() {
+      return {};
+    },
+  });
+
+  t.context.provider = new AjvValidator(fakeConfig);
+  t.context.provider.boot();
 });
 
-let provider;
+test.afterEach((t) => {
+  sinon.restore();
+});
 
 class FakeObject {
   constructor(data) {
@@ -26,112 +34,106 @@ class FakeObject {
   }
 }
 
-describe('Json Schema provider', () => {
-  beforeEach(async () => {
-    provider = new AjvValidator(fakeConfig);
-    provider.boot();
-  });
-
-  it('should work', async () => {
-    const schema = {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      $id: 'myschema',
-      type: 'object',
-      properties: {
-        hello: {
-          type: 'string',
-        },
+test('Json Schema provider: should work', async (t) => {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'myschema',
+    type: 'object',
+    properties: {
+      hello: {
+        type: 'string',
       },
-      required: ['hello'],
-    };
+    },
+    required: ['hello'],
+  };
 
-    provider.addSchema(schema, FakeObject);
-    const result = await provider.validate(new FakeObject({ hello: 'world' }));
-    expect(result).to.equal(true);
-  });
+  t.context.provider.registerValidator(schema, FakeObject);
+  const result = await t.context.provider.validate(new FakeObject({ hello: 'world' }));
+  t.true(result);
+});
 
-  it('should raise exception if data unvalid', () => {
-    const schema = {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      $id: 'myschema',
-      type: 'object',
-      properties: {
-        hello: {
-          type: 'string',
-        },
+test('Json Schema provider: should raise exception if data unvalid', async (t) => {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'myschema',
+    type: 'object',
+    properties: {
+      hello: {
+        type: 'string',
       },
-      required: ['hello'],
-    };
+    },
+    required: ['hello'],
+  };
 
-    provider.addSchema(schema, FakeObject);
-    return assert.isRejected(
-      provider.validate(new FakeObject({ hello: 1 })),
-      '[{"keyword":"type","dataPath":".hello","schemaPath":"#/properties/hello/type","params":{"type":"string"},"message":"should be string"}]',
-    );
-  });
+  t.context.provider.registerValidator(schema, FakeObject);
+  const err = await t.throwsAsync(async () => t.context.provider.validate(new FakeObject({ hello: 1 })));
+  t.is(
+    err.message,
+    '[{"keyword":"type","dataPath":".hello","schemaPath":"#/properties/hello/type","params":{"type":"string"},"message":"should be string"}]',
+  );
+});
 
-  it('should works with ref', async () => {
-    const subSchema = {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      $id: 'myschema.world',
-      type: 'object',
-      properties: {
-        world: {
-          type: 'string',
-        },
+test('Json Schema provider: should works with ref', async (t) => {
+  const subSchema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'myschema.world',
+    type: 'object',
+    properties: {
+      world: {
+        type: 'string',
       },
-      required: ['world'],
-    };
-    const schema = {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      $id: 'myschema',
-      type: 'object',
-      properties: {
-        hello: {
-          $ref: 'myschema.world',
-        },
+    },
+    required: ['world'],
+  };
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'myschema',
+    type: 'object',
+    properties: {
+      hello: {
+        $ref: 'myschema.world',
       },
-      required: ['hello'],
-    };
-    provider.addSchema(subSchema);
-    provider.addSchema(schema, FakeObject);
-    const result = await provider.validate(new FakeObject({ hello: { world: '!!!' } }));
-    expect(result).to.equal(true);
-  });
+    },
+    required: ['hello'],
+  };
+  t.context.provider.registerValidator(subSchema);
+  t.context.provider.registerValidator(schema, FakeObject);
+  const result = await t.context.provider.validate(new FakeObject({ hello: { world: '!!!' } }));
+  t.true(result);
+});
 
-  it('should work with inherance', async () => {
-    class FakeObjectExtended extends FakeObject {}
+test('Json Schema provider: should work with inherance', async (t) => {
+  class FakeObjectExtended extends FakeObject {}
 
-    const schema = {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      $id: 'myschema',
-      type: 'object',
-      properties: {
-        hello: {
-          type: 'boolean',
-        },
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'myschema',
+    type: 'object',
+    properties: {
+      hello: {
+        type: 'boolean',
       },
-      required: ['hello'],
-    };
+    },
+    required: ['hello'],
+  };
 
-    const schemaExtended = {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      $id: 'myschema.extended',
-      type: 'object',
-      properties: {
-        hello: {
-          type: 'string',
-        },
+  const schemaExtended = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'myschema.extended',
+    type: 'object',
+    properties: {
+      hello: {
+        type: 'string',
       },
-      required: ['hello'],
-    };
+    },
+    required: ['hello'],
+  };
 
-    provider.addSchema(schema, FakeObject);
-    provider.addSchema(schemaExtended, FakeObjectExtended);
+  t.context.provider.registerValidator(schema, FakeObject);
+  t.context.provider.registerValidator(schemaExtended, FakeObjectExtended);
 
-    const resultExtended = await provider.validate(new FakeObjectExtended({ hello: 'world' }));
-    expect(resultExtended).to.equal(true);
-    const result = await provider.validate(new FakeObject({ hello: true }));
-    expect(result).to.equal(true);
-  });
+  const resultExtended = await t.context.provider.validate(new FakeObjectExtended({ hello: 'world' }));
+  t.true(resultExtended);
+  const result = await t.context.provider.validate(new FakeObject({ hello: true }));
+  t.true(result);
 });
