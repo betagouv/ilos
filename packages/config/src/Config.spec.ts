@@ -1,75 +1,24 @@
-// tslint:disable no-shadowed-variable max-classes-per-file no-invalid-this
 import test from 'ava';
-import mockFs from 'mock-fs';
-import { EnvInterfaceResolver } from '@ilos/common';
 
 import { Config } from './Config';
 
-function setup() {
-  class FakeEnv extends EnvInterfaceResolver {
-    async init() {
-      return;
-    }
-  
-    get(key: string, fallback?: any): any {
-      return fallback;
-    }
-  }
-
-  return {
-    env: new FakeEnv(),
-  };
-}
-
-test('Config provider: should work with yaml', async (t) => {
-  mockFs({
-    [`${process.cwd()}/config/hello-world.yml`]: `
-      hi:\n
-          - name: 'john' \n
-      \n`,
+test('Config provider: works with simple object', async (t) => {
+  const config = new Config({
+    helloWorld: { hello: 'world' },
   });
-  const { env } = setup();
-  const config = new Config(env);
-  await config.init();
-  t.deepEqual(config.get('helloWorld'), {
-    hi: [{ name: 'john' }],
-  });
-
-  mockFs.restore();
+  t.deepEqual(config.get('helloWorld'), { hello: 'world' });
 });
 
-test('Config provider: should work with js', async (t) => {
-  mockFs({
-    [`${process.cwd()}/config/hello-world.js`]: `module.exports.hi = [
-      {
-        name: env('FAKE', 'john'),
-      },
-    ];
-    module.exports.test = false;`,
+test('Config provider: fails if not found without fallback', async (t) => {
+  const config = new Config({
+    helloWorld: { hello: 'world' },
   });
-  const { env } = setup();
-  const config = new Config(env);
-  await config.init();
-  t.deepEqual(config.get('helloWorld'), {
-    hi: [{ name: 'john' }],
-    test: false,
-  });
-
-  mockFs.restore();
+  t.throws(() => config.get('helloMissing'), { instanceOf: Error }, "Unknown config key 'helloMissing'");
 });
 
-test('Config provider: should return fallback if key not found', async (t) => {
-  mockFs({
-    [`${process.cwd()}/config/hello-world.js`]: `module.exports.hi = [
-      {
-        name: env('FAKE', 'john'),
-      },
-    ];
-    module.exports.test = false;`,
+test('Config provider: works if not found with fallback', async (t) => {
+  const config = new Config({
+    helloWorld: { hello: 'world' },
   });
-  const { env } = setup();
-  const config = new Config(env);
-  await config.init();
-  t.is(config.get('hello', 'world'), 'world');
-  mockFs.restore();
+  t.deepEqual(config.get('helloMissing', { hello: 'fallback' }), { hello: 'fallback' });
 });

@@ -36,7 +36,6 @@ function setup() {
     }
   }
 
-
   return {
     defaultContext,
     MinusMiddleware,
@@ -145,16 +144,18 @@ test('should raise an error if no handle method is defined', async (t) => {
   const { defaultContext } = setup();
   class BasicAction extends Action {}
   const action = new BasicAction();
-  const err = await t.throwsAsync(() => action.call({
-    result: {},
-    method: '',
-    params: {
+  const err = await t.throwsAsync(() =>
+    action.call({
+      result: {},
+      method: '',
       params: {
-        name: 'Sam',
+        params: {
+          name: 'Sam',
+        },
       },
-    },
-    context: defaultContext,
-  }));
+      context: defaultContext,
+    }),
+  );
   t.true(err instanceof Error);
   t.is(err.message, 'No implementation found');
 });

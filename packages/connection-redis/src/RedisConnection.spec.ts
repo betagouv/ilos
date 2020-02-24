@@ -2,7 +2,7 @@ import anyTest, { TestInterface } from 'ava';
 import { RedisConnection } from './RedisConnection';
 
 interface Context {
-	connection: RedisConnection,
+  connection: RedisConnection;
 }
 
 const test = anyTest as TestInterface<Context>;
@@ -10,7 +10,7 @@ const test = anyTest as TestInterface<Context>;
 test.before((t) => {
   t.context = {
     connection: new RedisConnection({ connectionString: 'redis://127.0.0.1:6379' }),
-  }
+  };
 });
 
 test.after(async (t) => {

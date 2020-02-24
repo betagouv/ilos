@@ -22,20 +22,14 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "ava": {
-		"typescript": {
-			"rewritePaths": {
-				"src/": "dist/"
-			}
-		}
-	},
-  "devDependencies": {
-    "mock-fs": "^4.10.4"
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      }
+    }
   },
   "dependencies": {
-    "js-yaml": "^3.13.1",
     "lodash": "^4.17.11",
-    "@ilos/common": "^0.4.1",
-    "@ilos/core": "^0.4.1",
     "@ilos/env": "^0.4.1"
   }
 }

@@ -5,7 +5,6 @@ export * from './config';
 export * from './connection';
 export * from './container';
 export * from './core';
-export * from './env';
 export * from './handler';
 export * from './hooks';
 export * from './logger';

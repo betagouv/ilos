@@ -68,5 +68,5 @@ test('Command "call": should throw exception on error', async (t) => {
   t.plan(2);
   const { command } = setup();
   const err = await t.throwsAsync<Error>(async () => command.call('nope'));
-	t.is(err.message, 'This is not working');
+  t.is(err.message, 'This is not working');
 });
