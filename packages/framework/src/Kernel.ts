@@ -1,7 +1,6 @@
 import { Kernel as BaseKernel, Extensions } from '@ilos/core';
 import { Commands, CommandExtension } from '@ilos/cli';
 import { ConfigExtension } from '@ilos/config';
-import { EnvExtension } from '@ilos/env';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { LoggerExtension } from '@ilos/logger';
 import { QueueExtension } from '@ilos/queue';
@@ -14,7 +13,6 @@ import { kernel } from '@ilos/common';
 })
 export class Kernel extends BaseKernel {
   readonly extensions = [
-    EnvExtension,
     ConfigExtension,
     LoggerExtension,
     ConnectionManagerExtension,
