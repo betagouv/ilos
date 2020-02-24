@@ -1,7 +1,7 @@
 // tslint:disable max-classes-per-file
 import test from 'ava';
 import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
-import { provider, serviceProvider, ConnectionInterface, EnvInterfaceResolver } from '@ilos/common';
+import { provider, serviceProvider, ConnectionInterface } from '@ilos/common';
 import { ConfigExtension } from '@ilos/config';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
@@ -75,17 +75,7 @@ function setup() {
     }
   }
 
-  @provider({
-    identifier: EnvInterfaceResolver,
-  })
-  class FakeEnv extends EnvInterfaceResolver {
-    get(_k, fb) {
-      return fb;
-    }
-  }
-
   @serviceProvider({
-    providers: [FakeEnv],
     config: {
       hello: {
         world: {
@@ -135,14 +125,7 @@ function setup() {
 }
 
 test('Connection manager: container should work', async (t) => {
-  const {
-    serviceProvider,
-    FakeProviderOne,
-    FakeProviderTwo,
-    FakeDriverOne,
-    FakeDriverTwo,
-    FakeDriverThree,
-  } = setup();
+  const { serviceProvider, FakeProviderOne, FakeProviderTwo, FakeDriverOne, FakeDriverTwo, FakeDriverThree } = setup();
 
   await serviceProvider.register();
   await serviceProvider.init();

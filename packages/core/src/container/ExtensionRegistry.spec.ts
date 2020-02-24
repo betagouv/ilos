@@ -25,7 +25,7 @@ function setup() {
   ): [ExtensionRegistry, ServiceContainerInterface & InitHookInterface] {
     @serviceProvider(config)
     class CustomServiceContainer extends ServiceContainer {}
-  
+
     const sp = new CustomServiceContainer();
     const er = new ExtensionRegistry(sp);
     for (const ext of extensions) {
@@ -33,7 +33,7 @@ function setup() {
     }
     return [er, sp];
   }
-  
+
   function createExtension(config): NewableType<ExtensionInterface> {
     @extension(config)
     class CustomExtension {
@@ -60,8 +60,8 @@ function setup() {
 test('Extension registry: register extension', async (t) => {
   const { createExtension, createExtensionRegistry } = setup();
   const extension1 = createExtension({
-      name: 'hello',
-    });
+    name: 'hello',
+  });
 
   const extension2 = createExtension({
     name: 'world',
@@ -185,18 +185,14 @@ test('Extension registry: get complex ordered', async (t) => {
   const extensions = extensionRegistry.get();
   t.true(Array.isArray(extensions));
   t.is(extensions.length, 6);
-  t.deepEqual(extensions.map(e => e.name), [
-    'six',
-    'five',
-    'one',
-    'two',
-    'four',
-    'three',
-  ]);
+  t.deepEqual(
+    extensions.map((e) => e.name),
+    ['six', 'five', 'one', 'two', 'four', 'three'],
+  );
 });
 
 test('Extension registry: apply extension', async (t) => {
-  const {Registry, createExtension, createExtensionRegistry } = setup();
+  const { Registry, createExtension, createExtensionRegistry } = setup();
   const extension1 = createExtension({
     name: 'hello',
   });

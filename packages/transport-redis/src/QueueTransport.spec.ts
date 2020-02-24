@@ -1,18 +1,8 @@
-// tslint:disable max-classes-per-file no-invalid-this
 import anyTest, { TestInterface } from 'ava';
 import sinon from 'sinon';
 import { Extensions, Action, ServiceProvider, Kernel } from '@ilos/core';
 import { QueueExtension as ParentQueueExtension } from '@ilos/queue';
-import {
-  handler,
-  provider,
-  serviceProvider,
-  kernel as kernelDecorator,
-  ParamsType,
-  ContextType,
-  ResultType,
-  EnvInterfaceResolver,
-} from '@ilos/common';
+import { handler, serviceProvider, kernel as kernelDecorator, ParamsType, ContextType, ResultType } from '@ilos/common';
 
 import * as Bull from './helpers/bullFactory';
 import { QueueTransport } from './QueueTransport';
@@ -100,17 +90,7 @@ test('Queue transport: works', async (t) => {
     }
   }
 
-  @provider({
-    identifier: EnvInterfaceResolver,
-  })
-  class FakeEnvProvider extends EnvInterfaceResolver {
-    get() {
-      return true;
-    }
-  }
-
   @serviceProvider({
-    providers: [[EnvInterfaceResolver, FakeEnvProvider]],
     handlers: [BasicAction, BasicTwoAction],
     queues: ['math'],
   })

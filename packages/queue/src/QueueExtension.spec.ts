@@ -1,11 +1,9 @@
-// tslint:disable max-classes-per-file
 import test from 'ava';
 import { Action, ServiceProvider, Extensions } from '@ilos/core';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { RedisConnection } from '@ilos/connection-redis';
 import { ConfigExtension } from '@ilos/config';
-import { EnvExtension } from '@ilos/env';
-import { EnvInterfaceResolver, handler, provider, serviceProvider } from '@ilos/common';
+import { handler, serviceProvider } from '@ilos/common';
 
 import { QueueExtension } from './QueueExtension';
 
@@ -22,15 +20,6 @@ class ServiceOneHandler extends Action {}
 class ServiceTwoHandler extends Action {}
 
 test('Queue extension: should register queue name in container as worker', async (t) => {
-  @provider({
-    identifier: EnvInterfaceResolver,
-  })
-  class FakeEnvProvider extends EnvInterfaceResolver {
-    get() {
-      return true;
-    }
-  }
-
   @serviceProvider({
     queues: ['serviceA', 'serviceB'],
     config: {
@@ -38,7 +27,6 @@ test('Queue extension: should register queue name in container as worker', async
     },
     handlers: [ServiceOneHandler, ServiceTwoHandler],
     connections: [[RedisConnection, 'redis']],
-    providers: [FakeEnvProvider],
   })
   class MyService extends ServiceProvider {
     extensions = [
@@ -75,7 +63,7 @@ test('should register queue name in container and handlers', async (t) => {
     connections: [[RedisConnection, 'redis']],
   })
   class MyService extends ServiceProvider {
-    extensions = [EnvExtension, ConfigExtension, ConnectionManagerExtension, Extensions.Handlers, QueueExtension];
+    extensions = [ConfigExtension, ConnectionManagerExtension, Extensions.Handlers, QueueExtension];
   }
 
   const service = new MyService();

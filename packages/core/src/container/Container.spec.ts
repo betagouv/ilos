@@ -26,7 +26,7 @@ test('Container: works', async (t) => {
   const container = new Container();
   const h = container.resolve(Test);
   t.is(h.hello.world, '!!');
-  
+
   container.setHandler(Test);
 
   const hBis = container.getHandler({

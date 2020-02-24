@@ -21,20 +21,11 @@
     "watch": "tsc -w",
     "lint": "eslint \"src/**/*.ts\""
   },
-  "devDependencies": {
-    "mock-fs": "^4.10.4"
-  },
-  "dependencies": {
-    "dotenv": "^8.0.0",
-    "@ilos/common": "^0.4.1",
-    "@ilos/core": "^0.4.1",
-    "@ilos/logger": "^0.4.1"
-  },
   "ava": {
-		"typescript": {
-			"rewritePaths": {
-				"src/": "dist/"
-			}
-		}
-	}
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      }
+    }
+  }
 }

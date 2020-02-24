@@ -1,2 +1,1 @@
-export { Env } from './Env';
-export { EnvExtension } from './EnvExtension';
+export { env } from './env';
