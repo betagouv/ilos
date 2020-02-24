@@ -1,4 +1,4 @@
-import { get, set, has } from 'lodash';
+import { get, has } from 'lodash';
 
 import { provider, ConfigInterface, ConfigInterfaceResolver } from '@ilos/common';
 
@@ -11,7 +11,7 @@ import { provider, ConfigInterface, ConfigInterfaceResolver } from '@ilos/common
   identifier: ConfigInterfaceResolver,
 })
 export class Config implements ConfigInterface {
-  protected config: object = {};
+  constructor(protected config: { [k: string]: any }) {}
 
   get(key: string, fallback?: any): any {
     if (fallback === undefined && !has(this.config, key)) {
@@ -19,13 +19,5 @@ export class Config implements ConfigInterface {
     }
 
     return get(this.config, key, fallback);
-  }
-
-  set(key: string, value: any): void {
-    if (has(this.config, key)) {
-      throw new Error(`Duplicate config key '${key}'`);
-    }
-
-    set(this.config, key, value);
   }
 }
