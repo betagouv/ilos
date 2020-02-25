@@ -87,7 +87,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
     if (!handler) {
       throw new MethodNotFoundException(`Unknown method or service ${config.signature}`);
     }
-    return handler.call(call);
+    return handler(call);
   }
 
   /**

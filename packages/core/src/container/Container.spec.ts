@@ -18,8 +18,8 @@ test('Container: works', async (t) => {
     public readonly middlewares = [];
     constructor(public hello: Hello) {}
 
-    async call(call: CallType) {
-      return;
+    async call() {
+      return this.hello.world;
     }
   }
 
@@ -29,11 +29,15 @@ test('Container: works', async (t) => {
 
   container.setHandler(Test);
 
-  const hBis = container.getHandler({
+  const hBis = await container.getHandler<null, null, string>({
     service: 'test',
     method: 'hello',
-  }) as Test;
-  t.is(hBis.hello.world, '!!');
+  })({
+    method: '',
+    params: null,
+    context: null,
+  });
+  t.is(hBis, '!!');
 });
 
 test('Container: works with provider', async (t) => {
@@ -60,8 +64,8 @@ test('Container: works with provider', async (t) => {
     public readonly middlewares = [];
     constructor(public hello: Hello) {}
 
-    async call(call: CallType) {
-      return;
+    async call() {
+      return this.hello.world;
     }
   }
 
@@ -70,11 +74,15 @@ test('Container: works with provider', async (t) => {
   t.is(h.hello.world, 'yeah');
 
   container.setHandler(Test);
-  const hbis = container.getHandler({
+  const hbis = await container.getHandler<null, null, string>({
     service: 'test',
     method: 'hello',
-  }) as Test;
-  t.is(hbis.hello.world, 'yeah');
+  })({
+    method: '',
+    params: null,
+    context: null,
+  });
+  t.is(hbis, 'yeah');
 });
 test('Container: works with no boot provider', async (t) => {
   @provider()
@@ -90,8 +98,8 @@ test('Container: works with no boot provider', async (t) => {
     public readonly middlewares = [];
     constructor(public hello: Hello) {}
 
-    async call(call: CallType) {
-      return;
+    async call() {
+      return this.hello.world;
     }
   }
 
@@ -101,9 +109,13 @@ test('Container: works with no boot provider', async (t) => {
 
   container.setHandler(Test);
 
-  const hbis = container.getHandler({
+  const hbis = await container.getHandler<null, null, string>({
     service: 'test',
     method: 'hello',
-  }) as Test;
-  t.is(hbis.hello.world, 'yeah');
+  })({
+    method: '',
+    params: null,
+    context: null,
+  });
+  t.is(hbis, 'yeah');
 });

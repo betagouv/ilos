@@ -1,5 +1,6 @@
 import * as HandlerMeta from './HandlerMeta';
 
-export { HandlerInterface } from './HandlerInterface';
+export { MiddlewareConfigType, SingleMiddlewareConfigType } from './MiddlewareConfigType';
+export { HandlerInterface, FunctionalHandlerInterface } from './HandlerInterface';
 export { HandlerConfigType } from './HandlerConfigType';
 export { HandlerMeta };

@@ -6,47 +6,77 @@ import { Container } from '.';
 import { Action } from '../foundation/Action';
 import { HandlerRegistry } from './HandlerRegistry';
 
-test('Handler registry: works', (t) => {
+const defaultCallOptions = {
+  method: '',
+  params: null,
+  context: null,
+};
+
+test('Handler registry: works', async (t) => {
   @handler({
     service: 'hello',
     method: 'world',
   })
-  class HelloLocal extends Action {}
-
-  @handler({
-    service: 'hello',
-    method: 'world',
-    queue: true,
-  })
-  class HelloLocalQueue extends Action {}
-
-  @handler({
-    service: 'hello',
-    method: '*',
-  })
-  class HelloLocalStar extends Action {}
-
-  @handler({
-    service: 'hello',
-    method: 'world',
-    local: false,
-  })
-  class HelloRemote extends Action {}
+  class HelloLocal extends Action {
+    async call() {
+      return 'HelloLocal';
+    }
+  }
 
   @handler({
     service: 'hello',
     method: 'world',
     queue: true,
+  })
+  class HelloLocalQueue extends Action {
+    async call() {
+      return 'HelloLocalQueue';
+    }
+  }
+
+  @handler({
+    service: 'hello',
+    method: '*',
+  })
+  class HelloLocalStar extends Action {
+    async call() {
+      return 'HelloLocalStar';
+    }
+  }
+
+  @handler({
+    service: 'hello',
+    method: 'world',
     local: false,
   })
-  class HelloRemoteQueue extends Action {}
+  class HelloRemote extends Action {
+    async call() {
+      return 'HelloRemote';
+    }
+  }
+
+  @handler({
+    service: 'hello',
+    method: 'world',
+    queue: true,
+    local: false,
+  })
+  class HelloRemoteQueue extends Action {
+    async call() {
+      return 'HelloRemoteQueue';
+    }
+  }
 
   @handler({
     service: 'hello',
     method: '*',
     local: false,
   })
-  class HelloRemoteStar extends Action {}
+  class HelloRemoteStar extends Action {
+    async call() {
+      return 'HelloRemoteStar';
+    }
+  }
 
   const container = new Container();
   const handlerRegistry = new HandlerRegistry(container);
@@ -59,86 +89,94 @@ test('Handler registry: works', (t) => {
   handlerRegistry.set(HelloRemoteStar);
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: true,
-    }) instanceof HelloLocal,
+    })(defaultCallOptions) === 'HelloLocal',
   );
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: true,
       queue: true,
-    }) instanceof HelloLocalQueue,
+    })(defaultCallOptions) === 'HelloLocalQueue',
   );
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: '*',
       local: true,
-    }) instanceof HelloLocalStar,
+    })(defaultCallOptions) === 'HelloLocalStar',
   );
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'notExisting',
       local: true,
-    }) instanceof HelloLocalStar,
+    })(defaultCallOptions) === 'HelloLocalStar',
   );
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: false,
-    }) instanceof HelloRemote,
+    })(defaultCallOptions) === 'HelloRemote',
   );
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: false,
       queue: true,
-    }) instanceof HelloRemote,
+    })(defaultCallOptions) === 'HelloRemote',
   );
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: '*',
       local: false,
-    }) instanceof HelloRemoteStar,
+    })(defaultCallOptions) === 'HelloRemoteStar',
   );
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'notExisting',
       local: false,
-    }) instanceof HelloRemoteStar,
+    })(defaultCallOptions) === 'HelloRemoteStar',
   );
 });
 
-test('Handler registry: fallback to remote', (t) => {
+test('Handler registry: fallback to remote', async (t) => {
   @handler({
     service: 'hello',
     method: 'world',
     local: false,
   })
-  class HelloRemote extends Action {}
+  class HelloRemote extends Action {
+    async call() {
+      return 'HelloRemote';
+    }
+  }
 
   @handler({
     service: 'hello',
     method: '*',
     local: false,
   })
-  class HelloRemoteStar extends Action {}
+  class HelloRemoteStar extends Action {
+    async call() {
+      return 'HelloRemoteStar';
+    }
+  }
 
   const container = new Container();
   const handlerRegistry = new HandlerRegistry(container);
@@ -147,35 +185,43 @@ test('Handler registry: fallback to remote', (t) => {
   handlerRegistry.set(HelloRemoteStar);
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: true,
-    }) instanceof HelloRemote,
+    })(defaultCallOptions) === 'HelloRemote',
   );
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'truc',
       local: true,
       queue: true,
-    }) instanceof HelloRemoteStar,
+    })(defaultCallOptions) === 'HelloRemoteStar',
   );
 });
-test('Handler registry: fallback to sync', (t) => {
+test('Handler registry: fallback to sync', async (t) => {
   @handler({
     service: 'hello',
     method: 'world',
   })
-  class HelloLocal extends Action {}
+  class HelloLocal extends Action {
+    async call() {
+      return 'HelloLocal';
+    }
+  }
 
   @handler({
     service: 'hello',
     method: '*',
     local: false,
   })
-  class HelloRemoteStar extends Action {}
+  class HelloRemoteStar extends Action {
+    async call() {
+      return 'HelloRemoteStar';
+    }
+  }
 
   const container = new Container();
   const handlerRegistry = new HandlerRegistry(container);
@@ -184,29 +230,29 @@ test('Handler registry: fallback to sync', (t) => {
   handlerRegistry.set(HelloRemoteStar);
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       queue: true,
       local: true,
-    }) instanceof HelloLocal,
+    })(defaultCallOptions) === 'HelloLocal',
   );
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'truc',
       queue: true,
       local: true,
-    }) instanceof HelloRemoteStar,
+    })(defaultCallOptions) === 'HelloRemoteStar',
   );
 
   t.true(
-    handlerRegistry.get({
+    await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: false,
       queue: true,
-    }) instanceof HelloRemoteStar,
+    })(defaultCallOptions) === 'HelloRemoteStar',
   );
 });

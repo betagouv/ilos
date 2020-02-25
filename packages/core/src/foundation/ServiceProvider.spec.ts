@@ -42,7 +42,11 @@ test('ServiceProvider: should register handler', async (t) => {
   await sp.init();
 
   const container = sp.getContainer();
-  t.true(container.getHandler({ service: 'test', method: 'add' }) instanceof BasicAction);
+  t.is(await container.getHandler({ service: 'test', method: 'add' })({
+    params: {},
+    context: defaultContext,
+    method: '',
+  }), 0);
 });
 
 test('ServiceProvider: should register handler with extension', async (t) => {
@@ -91,7 +95,7 @@ test('ServiceProvider: should register handler with extension', async (t) => {
 
   const container = sp.getContainer();
   const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
-  const response = await handlerInstance.call({ method: 'fake', params: { name: 'Sam' }, context: defaultContext });
+  const response = await handlerInstance({ method: 'fake', params: { name: 'Sam' }, context: defaultContext });
   t.is(response, 'Hello Sam');
 });
 
@@ -172,18 +176,18 @@ test('ServiceProvider: should register handler with alias and nested service pro
 
   const container = sp.getContainer();
   const handlerInstance = container.getHandler({ service: 'test', method: 'hi' });
-  const response = await handlerInstance.call({ method: 'fake', params: { name: 'Sam' }, context: defaultContext });
+  const response = await handlerInstance({ method: 'fake', params: { name: 'Sam' }, context: defaultContext });
   t.is(response, 'Hello Sam');
 
   const handlerTwoInstance = container.getHandler({ service: 'test', method: 'add' });
-  const responseTwo = await handlerTwoInstance.call({
+  const responseTwo = await handlerTwoInstance({
     method: 'fake',
     params: { add: [21, 21] },
     context: defaultContext,
   });
   t.is(responseTwo, 'Hello 42');
 
-  const responseTwoBis = await handlerTwoInstance.call({
+  const responseTwoBis = await handlerTwoInstance({
     method: 'fake',
     params: { add: [21, 21] },
     context: defaultContext,

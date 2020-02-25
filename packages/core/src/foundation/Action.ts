@@ -24,16 +24,7 @@ export abstract class Action implements HandlerInterface, InitHookInterface {
   public readonly middlewares: (string | [string, any])[] = [];
 
   async init(serviceContainer: ServiceContainerInterface) {
-    const container = serviceContainer.getContainer();
-    const middlewares = this.middlewares.map((value) => {
-      if (typeof value === 'string') {
-        return container.get<MiddlewareInterface>(value);
-      }
-      const [key, config] = value;
-      const middleware = container.get<MiddlewareInterface>(key);
-      return [middleware, config];
-    }) as (MiddlewareInterface | [MiddlewareInterface, any])[];
-    this.wrapper = compose(middlewares);
+    
   }
 
   protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
@@ -41,8 +32,6 @@ export abstract class Action implements HandlerInterface, InitHookInterface {
   }
 
   public async call(call: CallType): Promise<ResultType> {
-    return this.wrapper(call.params, call.context, async (params: ParamsType, context: ContextType) =>
-      this.handle(params, context),
-    );
+    return this.handle(call.params, call.context);
   }
 }

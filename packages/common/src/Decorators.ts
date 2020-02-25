@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { injectable, METADATA_KEY } from 'inversify';
 import { Metadata } from 'inversify/lib/planning/metadata';
 
-import { HandlerMeta, HandlerConfigType } from './types/handler';
+import { MiddlewareConfigType, HandlerMeta, HandlerConfigType } from './types/handler';
 import { ExtensionConfigurationType, extensionConfigurationMetadataKey } from './types/core/ExtentionInterface';
 
 type AnyConfig = { [k: string]: any };
@@ -28,10 +28,10 @@ export function provider(config: AnyConfig = {}) {
   };
 }
 
-export function handler(config: HandlerConfigType) {
+export function handler(config: HandlerConfigType & MiddlewareConfigType) {
   const { service } = config;
   // eslint-disable-next-line prefer-const
-  let { method, version, local, queue, ...other } = config;
+  let { method, version, local, queue, middlewares, ...other } = config;
 
   if (!('method' in config)) {
     method = '*';
@@ -45,12 +45,16 @@ export function handler(config: HandlerConfigType) {
   if (!('queue' in config)) {
     queue = false;
   }
+  if (!('middlewares' in config)) {
+    middlewares = [];
+  }
   return function(target) {
     Reflect.defineMetadata(HandlerMeta.SERVICE, service, target);
     Reflect.defineMetadata(HandlerMeta.METHOD, method, target);
     Reflect.defineMetadata(HandlerMeta.VERSION, version, target);
     Reflect.defineMetadata(HandlerMeta.LOCAL, local, target);
     Reflect.defineMetadata(HandlerMeta.QUEUE, queue, target);
+    Reflect.defineMetadata(HandlerMeta.MIDDLEWARES, middlewares, target);
     return injectable()(extensionTag(other)(target));
   };
 }
