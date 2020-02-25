@@ -101,13 +101,11 @@
 // // import { expect } from 'chai';
 
 // // import { Kernel, Actions, Container, Extensions } from '@ilos/core';
-// // import { ConfigExtension } from '@ilos/config';
 // // import { RedisConnection } from '@ilos/connection-redis';
 
 // // import { ConnectionManagerExtension } from '@ilos/connection-manager';
 // // import { QueueExtension } from '@ilos/queue';
 // // import { QueueTransport } from '@ilos/transport-redis';
-// // import { EnvExtension } from '@ilos/env';
 
 // // const config = {
 // //   redis: {
@@ -162,8 +160,7 @@
 // //   })
 // //   class Kernel extends Kernel {
 // //     extensions = [
-// //       EnvExtension,
-// //       ConfigExtension,
+// //       Extensions.Config,
 // //       Extensions.Providers,
 // //       ConnectionManagerExtension,
 // //       Extensions.Handlers,

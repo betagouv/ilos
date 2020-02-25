@@ -22,15 +22,14 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "ava": {
-		"typescript": {
-			"rewritePaths": {
-				"src/": "dist/"
-			}
-		}
-	},
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      }
+    }
+  },
   "dependencies": {
     "@ilos/common": "^0.4.1",
-    "@ilos/config": "^0.4.1",
     "@ilos/core": "^0.4.1"
   }
 }

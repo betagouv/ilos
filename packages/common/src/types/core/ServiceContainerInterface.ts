@@ -1,4 +1,4 @@
-import { ExtensionInterface } from './ExtentionInterface';
+import { ExtensionInterface } from './ExtensionInterface';
 import { ContainerInterface, IdentifierType } from '../container';
 import { NewableType } from '../shared';
 

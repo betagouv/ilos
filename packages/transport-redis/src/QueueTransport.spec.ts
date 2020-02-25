@@ -95,7 +95,7 @@ test('Queue transport: works', async (t) => {
     queues: ['math'],
   })
   class BasicServiceProvider extends ServiceProvider {
-    extensions = [Extensions.Providers, Extensions.Handlers, QueueExtension];
+    extensions = [Extensions.Config, Extensions.Providers, Extensions.Handlers, QueueExtension];
   }
 
   @kernelDecorator({

@@ -18,7 +18,6 @@
     "ajv": "^6.11.0",
     "ajv-keywords": "^3.4.1",
     "@ilos/common": "^0.4.1",
-    "@ilos/config": "^0.4.1",
     "@ilos/core": "^0.4.1"
   },
   "devDependencies": {

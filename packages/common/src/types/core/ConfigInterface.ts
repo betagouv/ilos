@@ -1,4 +1,4 @@
-import { ProviderInterface } from '../core';
+import { ProviderInterface } from '.';
 
 export interface ConfigInterface extends ProviderInterface {
   get(key: string, fallback?: any): any;

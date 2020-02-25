@@ -3,7 +3,7 @@ import { injectable, METADATA_KEY } from 'inversify';
 import { Metadata } from 'inversify/lib/planning/metadata';
 
 import { MiddlewareConfigType, HandlerMeta, HandlerConfigType } from './types/handler';
-import { ExtensionConfigurationType, extensionConfigurationMetadataKey } from './types/core/ExtentionInterface';
+import { ExtensionConfigurationType, extensionConfigurationMetadataKey } from './types/core/ExtensionInterface';
 
 type AnyConfig = { [k: string]: any };
 
