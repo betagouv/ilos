@@ -12,4 +12,6 @@ export interface HandlerInterface {
   call(call: CallType): Promise<ResultType>;
 }
 
-export type FunctionalHandlerInterface<P = ParamsType, C = ContextType, R = ResultType> = (call: CallType<P, C, R>) => Promise<R>;
+export type FunctionalHandlerInterface<P = ParamsType, C = ContextType, R = ResultType> = (
+  call: CallType<P, C, R>,
+) => Promise<R>;

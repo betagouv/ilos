@@ -89,69 +89,69 @@ test('Handler registry: works', async (t) => {
   handlerRegistry.set(HelloRemoteStar);
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: true,
-    })(defaultCallOptions) === 'HelloLocal',
+    })(defaultCallOptions)) === 'HelloLocal',
   );
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: true,
       queue: true,
-    })(defaultCallOptions) === 'HelloLocalQueue',
+    })(defaultCallOptions)) === 'HelloLocalQueue',
   );
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: '*',
       local: true,
-    })(defaultCallOptions) === 'HelloLocalStar',
+    })(defaultCallOptions)) === 'HelloLocalStar',
   );
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'notExisting',
       local: true,
-    })(defaultCallOptions) === 'HelloLocalStar',
+    })(defaultCallOptions)) === 'HelloLocalStar',
   );
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: false,
-    })(defaultCallOptions) === 'HelloRemote',
+    })(defaultCallOptions)) === 'HelloRemote',
   );
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: false,
       queue: true,
-    })(defaultCallOptions) === 'HelloRemote',
+    })(defaultCallOptions)) === 'HelloRemote',
   );
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: '*',
       local: false,
-    })(defaultCallOptions) === 'HelloRemoteStar',
+    })(defaultCallOptions)) === 'HelloRemoteStar',
   );
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'notExisting',
       local: false,
-    })(defaultCallOptions) === 'HelloRemoteStar',
+    })(defaultCallOptions)) === 'HelloRemoteStar',
   );
 });
 
@@ -185,20 +185,20 @@ test('Handler registry: fallback to remote', async (t) => {
   handlerRegistry.set(HelloRemoteStar);
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: true,
-    })(defaultCallOptions) === 'HelloRemote',
+    })(defaultCallOptions)) === 'HelloRemote',
   );
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'truc',
       local: true,
       queue: true,
-    })(defaultCallOptions) === 'HelloRemoteStar',
+    })(defaultCallOptions)) === 'HelloRemoteStar',
   );
 });
 test('Handler registry: fallback to sync', async (t) => {
@@ -230,29 +230,29 @@ test('Handler registry: fallback to sync', async (t) => {
   handlerRegistry.set(HelloRemoteStar);
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       queue: true,
       local: true,
-    })(defaultCallOptions) === 'HelloLocal',
+    })(defaultCallOptions)) === 'HelloLocal',
   );
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'truc',
       queue: true,
       local: true,
-    })(defaultCallOptions) === 'HelloRemoteStar',
+    })(defaultCallOptions)) === 'HelloRemoteStar',
   );
 
   t.true(
-    await handlerRegistry.get({
+    (await handlerRegistry.get({
       service: 'hello',
       method: 'world',
       local: false,
       queue: true,
-    })(defaultCallOptions) === 'HelloRemoteStar',
+    })(defaultCallOptions)) === 'HelloRemoteStar',
   );
 });
