@@ -30,5 +30,10 @@
     "bull": "^3.13.0",
     "@ilos/common": "^0.4.1",
     "@ilos/connection-redis": "^0.4.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }

@@ -7,20 +7,15 @@ import path from 'path';
 
 import { HttpTransport } from '@ilos/transport-http';
 import { QueueTransport } from '@ilos/transport-redis';
-
 import { TransportInterface, KernelInterface, serviceProvider, kernel as kernelDecorator } from '@ilos/common';
 
 import { Kernel } from '../Kernel';
-
-// keep me before the import of ServiceProvider
-process.env.APP_REDIS_URL = 'redis://127.0.0.1:6379';
-
 import { ServiceProvider as ParentStringServiceProvider } from './mock/StringService/ServiceProvider';
 
 const logPath = path.join(os.tmpdir(), 'ilos-test-' + new Date().getTime());
 process.env.APP_LOG_PATH = logPath;
 
-const redisUrl = process.env.APP_REDIS_URL;
+const redisUrl = process.env.APP_REDIS_URL || 'redis://127.0.0.1:6379';
 
 interface Context {
   stringTransport: TransportInterface;

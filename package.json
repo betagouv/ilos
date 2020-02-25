@@ -42,5 +42,10 @@
     "ts-node": "^8.6.2",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^3.7.5"
+  },
+  "ava": {
+    "files": [
+      "./packages/*/dist/**/*.spec.js"
+    ]
   }
 }

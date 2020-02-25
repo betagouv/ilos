@@ -5,10 +5,6 @@ import { HttpTransport } from '@ilos/transport-http';
 import { kernel as kernelDecorator, TransportInterface, KernelInterface } from '@ilos/common';
 
 import { Kernel } from '../Kernel';
-
-// keep me before the import of ServiceProvider
-process.env.APP_REDIS_URL = 'redis://127.0.0.1:6379';
-
 import { ServiceProvider as MathServiceProvider } from './mock/MathService/ServiceProvider';
 import { ServiceProvider as StringServiceProvider } from './mock/StringService/ServiceProvider';
 

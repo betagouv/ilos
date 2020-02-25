@@ -22,5 +22,10 @@
   },
   "devDependencies": {
     "@types/pg": "^7.11.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }

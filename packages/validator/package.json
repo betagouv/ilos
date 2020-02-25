@@ -23,5 +23,10 @@
   "devDependencies": {
     "@types/sinon": "^7.0.11",
     "sinon": "^8.1.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }
