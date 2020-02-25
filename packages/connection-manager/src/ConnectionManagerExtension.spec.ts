@@ -2,7 +2,6 @@
 import test from 'ava';
 import { ServiceProvider as BaseServiceProvider, Extensions } from '@ilos/core';
 import { provider, serviceProvider, ConnectionInterface } from '@ilos/common';
-import { ConfigExtension } from '@ilos/config';
 
 import { ConnectionManagerExtension } from './ConnectionManagerExtension';
 
@@ -111,7 +110,7 @@ function setup() {
     ],
   })
   class ServiceProvider extends BaseServiceProvider {
-    readonly extensions = [Extensions.Providers, ConfigExtension, ConnectionManagerExtension];
+    readonly extensions = [Extensions.Config, Extensions.Providers, ConnectionManagerExtension];
   }
 
   return {

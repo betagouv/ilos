@@ -28,9 +28,7 @@
   "dependencies": {
     "bull": "^3.13.0",
     "@ilos/common": "^0.4.1",
-    "@ilos/config": "^0.4.1",
     "@ilos/core": "^0.4.1",
-    "@ilos/env": "^0.4.1",
     "@ilos/queue": "^0.4.1"
   }
 }

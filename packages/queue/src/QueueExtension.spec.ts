@@ -2,7 +2,6 @@ import test from 'ava';
 import { Action, ServiceProvider, Extensions } from '@ilos/core';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { RedisConnection } from '@ilos/connection-redis';
-import { ConfigExtension } from '@ilos/config';
 import { handler, serviceProvider } from '@ilos/common';
 
 import { QueueExtension } from './QueueExtension';
@@ -30,10 +29,10 @@ test('Queue extension: should register queue name in container as worker', async
   })
   class MyService extends ServiceProvider {
     extensions = [
+      Extensions.Config,
       Extensions.Providers,
-      ConfigExtension,
-      ConnectionManagerExtension,
       Extensions.Handlers,
+      ConnectionManagerExtension,
       QueueExtension,
     ];
   }
@@ -63,7 +62,7 @@ test('should register queue name in container and handlers', async (t) => {
     connections: [[RedisConnection, 'redis']],
   })
   class MyService extends ServiceProvider {
-    extensions = [ConfigExtension, ConnectionManagerExtension, Extensions.Handlers, QueueExtension];
+    extensions = [Extensions.Config, Extensions.Handlers, QueueExtension, ConnectionManagerExtension];
   }
 
   const service = new MyService();

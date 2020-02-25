@@ -1,7 +1,6 @@
 export * from './bootstrap';
 export * from './call';
 export * from './command';
-export * from './config';
 export * from './connection';
 export * from './container';
 export * from './core';

@@ -11,11 +11,8 @@ import {
   extension,
 } from '@ilos/common';
 
-import { ConfigExtension } from '@ilos/config';
-
 @extension({
   name: 'connections',
-  require: [ConfigExtension],
 })
 export class ConnectionManagerExtension implements RegisterHookInterface, InitHookInterface, DestroyHookInterface {
   protected connectionRegistry: Map<symbol, ConnectionInterface> = new Map();

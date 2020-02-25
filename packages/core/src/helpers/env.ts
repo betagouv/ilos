@@ -1,14 +1,14 @@
 import { strict as assert } from 'assert';
-import { ConfigNotFoundException } from './ConfigNotFoundException';
+import { EnvNotFoundException } from '../exceptions';
 
 declare type SBN = string | boolean | number;
 
-function cast(str: string): SBN {
+export function cast(str: string): SBN {
   assert(typeof str === 'string');
 
   // boolean
-  if (['true', 'false'].indexOf(str.toLowerCase()) > -1) {
-    return str.toLowerCase() === 'true';
+  if (['true', 'false'].indexOf(str.toLowerCase().trim()) > -1) {
+    return str.toLowerCase().trim() === 'true';
   }
 
   // number
@@ -22,7 +22,7 @@ export function env(k: string, fallback?: SBN): SBN {
   const val: SBN = k in process.env ? cast(process.env[k]) : fallback;
 
   if (val === null || typeof val === 'undefined') {
-    throw new ConfigNotFoundException(`Config key '${k}' not found`);
+    throw new EnvNotFoundException(`Env key '${k}' not found`);
   }
 
   return val;

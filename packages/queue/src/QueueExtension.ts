@@ -8,14 +8,13 @@ import {
   QueueTargetType,
   extension,
 } from '@ilos/common';
-import { env } from '@ilos/env';
+import { env } from '@ilos/core';
 import { Extensions } from '@ilos/core';
-
 import { queueHandlerFactory } from '@ilos/handler-redis';
 
 @extension({
   name: 'queues',
-  require: [Extensions.Handlers],
+  require: [Extensions.Config, Extensions.Handlers],
 })
 export class QueueExtension implements RegisterHookInterface, InitHookInterface {
   static get containerKey() {

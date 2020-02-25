@@ -27,7 +27,6 @@
   "dependencies": {
     "axios": "^0.19.2",
     "@ilos/common": "^0.4.1",
-    "@ilos/config": "^0.4.1",
     "@ilos/core": "^0.4.1"
   }
 }
