@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Container as InversifyContainer, interfaces } from 'inversify';
 
-import { HandlerInterface, NewableType, HandlerConfigType, ContainerInterface } from '@ilos/common';
+import { FunctionalHandlerInterface, HandlerInterface, NewableType, HandlerConfigType, ContainerInterface, ParamsType, ContextType, ResultType } from '@ilos/common';
 
 import { HandlerRegistry } from './HandlerRegistry';
 
@@ -40,11 +40,11 @@ export class Container extends InversifyContainer implements ContainerInterface 
     return this.handlersRegistry.set(handler);
   }
 
-  getHandler(config: HandlerConfigType): HandlerInterface {
-    return this.handlersRegistry.get(config);
+  getHandler<P = ParamsType, C = ContextType, R = ResultType>(config: HandlerConfigType): FunctionalHandlerInterface<P, C, R> {
+    return this.handlersRegistry.get<P, C, R>(config);
   }
 
-  getHandlers(): HandlerConfigType[] {
+  getHandlers(): (HandlerConfigType & { resolver: Function })[] {
     return this.handlersRegistry.all();
   }
 }

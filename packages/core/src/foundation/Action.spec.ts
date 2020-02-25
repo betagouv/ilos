@@ -1,7 +1,19 @@
 // tslint:disable no-shadowed-variable max-classes-per-file
 import test from 'ava';
-import { MiddlewareInterface, ResultType, ParamsType, ContextType, middleware } from '@ilos/common';
+import {
+  FunctionalHandlerInterface,
+  MiddlewareInterface,
+  ResultType,
+  ParamsType,
+  ContextType,
+  middleware,
+  NewableType,
+  HandlerInterface,
+  serviceProvider,
+  handler,
+} from '@ilos/common';
 
+import { Kernel as AbstractKernel } from './Kernel';
 import { Action } from './Action';
 import { ServiceContainer } from './ServiceContainer';
 
@@ -36,16 +48,35 @@ function setup() {
     }
   }
 
+  async function build(action: NewableType<HandlerInterface>): Promise<FunctionalHandlerInterface> {
+    @serviceProvider({
+      handlers: [action],
+      middlewares: [
+        ['minus', MinusMiddleware],
+        ['hello', HelloMiddleware],
+        ['world', WorldMiddleware],
+      ],
+    })
+    class Kernel extends AbstractKernel {}
+    const kernel = new Kernel();
+    
+    await kernel.bootstrap();
+    return kernel.getContainer().getHandlers().map(h => h.resolver as FunctionalHandlerInterface).pop();
+  }
+
   return {
     defaultContext,
-    MinusMiddleware,
-    HelloMiddleware,
-    WorldMiddleware,
+    build,
   };
 }
 
 test('Action: works', async (t) => {
-  const { defaultContext } = setup();
+  const { defaultContext, build } = setup();
+  @handler({
+    service: 'action',
+    method: 'test',
+    middlewares: [],
+  })
   class BasicAction extends Action {
     protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
       let count = 0;
@@ -58,11 +89,11 @@ test('Action: works', async (t) => {
       return count;
     }
   }
-  const action = new BasicAction();
+  const action = await build(BasicAction);
 
-  const result = await action.call({
+  const result = await action({
     result: 0,
-    method: '',
+    method: 'action:test',
     params: {
       add: [1, 1],
     },
@@ -72,10 +103,13 @@ test('Action: works', async (t) => {
 });
 
 test('Action: should work with middleware', async (t) => {
-  const { defaultContext, MinusMiddleware } = setup();
-
+  const { defaultContext, build } = setup();
+  @handler({
+    service: 'action',
+    method: 'test',
+    middlewares: ['minus'],
+  })
   class BasicAction extends Action {
-    public readonly middlewares = ['minus'];
     protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
       let count = 0;
       if ('add' in params) {
@@ -87,16 +121,10 @@ test('Action: should work with middleware', async (t) => {
       return count;
     }
   }
-  const action = new BasicAction();
-  const container = new (class extends ServiceContainer {})();
-  container
-    .getContainer()
-    .bind('minus')
-    .to(MinusMiddleware);
-  await action.init(container);
-  const result = await action.call({
+  const action = await build(BasicAction);
+  const result = await action({
     result: 0,
-    method: '',
+    method: 'action:test',
     params: {
       add: [1, 1],
     },
@@ -107,9 +135,13 @@ test('Action: should work with middleware', async (t) => {
 });
 
 test('Action: should work with ordered middleware', async (t) => {
-  const { defaultContext, HelloMiddleware, WorldMiddleware } = setup();
+  const { defaultContext, build } = setup();
+  @handler({
+    service: 'action',
+    method: 'test',
+    middlewares: ['hello', 'world'],
+  })
   class BasicAction extends Action {
-    public readonly middlewares = ['hello', 'world'];
     protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
       let result = '';
       if ('name' in params) {
@@ -118,20 +150,10 @@ test('Action: should work with ordered middleware', async (t) => {
       return result;
     }
   }
-  const action = new BasicAction();
-  const container = new (class extends ServiceContainer {})();
-  container
-    .getContainer()
-    .bind('hello')
-    .to(HelloMiddleware);
-  container
-    .getContainer()
-    .bind('world')
-    .to(WorldMiddleware);
-  await action.init(container);
-  const result = await action.call({
+  const action = await build(BasicAction);
+  const result = await action({
     result: '',
-    method: '',
+    method: 'action:test',
     params: {
       name: 'Sam',
     },
@@ -141,13 +163,18 @@ test('Action: should work with ordered middleware', async (t) => {
 });
 
 test('should raise an error if no handle method is defined', async (t) => {
-  const { defaultContext } = setup();
+  const { defaultContext, build } = setup();
+  @handler({
+    service: 'action',
+    method: 'test',
+    middlewares: [],
+  })
   class BasicAction extends Action {}
-  const action = new BasicAction();
-  const err = await t.throwsAsync(() =>
-    action.call({
+  const action = await build(BasicAction);
+  const err = await t.throwsAsync(async () =>
+    action({
       result: {},
-      method: '',
+      method: 'action:test',
       params: {
         params: {
           name: 'Sam',

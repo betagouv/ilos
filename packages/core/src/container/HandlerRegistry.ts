@@ -1,6 +1,21 @@
-import { NewableType, HandlerInterface, HandlerConfigType, ContainerInterface, HandlerMeta } from '@ilos/common';
+import {
+  FunctionalHandlerInterface,
+  SingleMiddlewareConfigType,
+  FunctionMiddlewareInterface,
+  NewableType,
+  HandlerInterface,
+  HandlerConfigType,
+  ContainerInterface,
+  HandlerMeta,
+  CallType,
+  ParamsType,
+  ContextType,
+  ResultType,
+  MiddlewareInterface,
+} from '@ilos/common';
 
 import { normalizeHandlerConfig } from '../helpers/normalizeHandlerConfig';
+import { compose } from '../helpers';
 
 export class HandlerRegistry {
   static readonly key: symbol = Symbol.for('handlers');
@@ -22,6 +37,18 @@ export class HandlerRegistry {
     }
   }
 
+  protected buildHandlerMiddlewares(middlewaresConfig: SingleMiddlewareConfigType[]): FunctionMiddlewareInterface {
+    const middlewares = middlewaresConfig.map((value) => {
+      if (typeof value === 'string') {
+        return this.container.get<MiddlewareInterface>(value);
+      }
+      const [key, config] = value;
+      const middleware = this.container.get<MiddlewareInterface>(key);
+      return [middleware, config];
+    }) as (MiddlewareInterface | [MiddlewareInterface, any])[];
+    return compose(middlewares);
+  }
+
   /**
    * Set an handler
    * @param {NewableType<HandlerInterface>} handler
@@ -34,10 +61,21 @@ export class HandlerRegistry {
     const local = Reflect.getMetadata(HandlerMeta.LOCAL, handler);
     const queue = Reflect.getMetadata(HandlerMeta.QUEUE, handler);
 
+    const middlewares = Reflect.getMetadata(HandlerMeta.MIDDLEWARES, handler) || [];
     const handlerConfig = normalizeHandlerConfig({ service, method, version, local, queue });
 
     this.container.bind(handler).toSelf();
-    const resolver = () => this.container.get<HandlerInterface>(handler);
+
+    const resolver: FunctionalHandlerInterface = (call: CallType) =>
+      this.buildHandlerMiddlewares(middlewares)(
+        call.params,
+        call.context,
+        async (params: ParamsType, context: ContextType) => this.container.get<HandlerInterface>(handler).call({
+          ...call,
+          params,
+          context,
+        }),
+      );
 
     this.container.root.bind(HandlerRegistry.key).toConstantValue({
       ...handlerConfig,
@@ -60,7 +98,9 @@ export class HandlerRegistry {
    * @returns {HandlerInterface}
    * @memberof Container
    */
-  get(initialConfig: HandlerConfigType): HandlerInterface {
+  get<P = ParamsType, C = ContextType, R = ResultType>(
+    initialConfig: HandlerConfigType,
+  ): FunctionalHandlerInterface<P, C, R> {
     const config = normalizeHandlerConfig(initialConfig);
 
     // local is true by default
@@ -99,6 +139,6 @@ export class HandlerRegistry {
 
         return 0;
       });
-    return handlers.length > 0 ? handlers.shift().resolver() : undefined;
+    return handlers.length > 0 ? (handlers.shift().resolver as FunctionalHandlerInterface<P, C, R>) : undefined;
   }
 }
