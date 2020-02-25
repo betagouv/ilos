@@ -4,13 +4,7 @@ import {
   ParamsType,
   ContextType,
   HandlerInterface,
-  FunctionMiddlewareInterface,
-  MiddlewareInterface,
-  ServiceContainerInterface,
-  InitHookInterface,
 } from '@ilos/common';
-
-import { compose } from '../helpers/compose';
 
 /**
  * Action parent class, must be decorated
@@ -19,14 +13,7 @@ import { compose } from '../helpers/compose';
  * @class Action
  * @implements {HandlerInterface}
  */
-export abstract class Action implements HandlerInterface, InitHookInterface {
-  private wrapper: FunctionMiddlewareInterface = async (params, context, handle) => handle(params, context);
-  public readonly middlewares: (string | [string, any])[] = [];
-
-  async init(serviceContainer: ServiceContainerInterface) {
-    
-  }
-
+export abstract class Action implements HandlerInterface {
   protected async handle(params: ParamsType, context: ContextType): Promise<ResultType> {
     throw new Error('No implementation found');
   }
