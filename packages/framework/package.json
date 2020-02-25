@@ -34,5 +34,13 @@
     "@ilos/transport-http": "^0.4.1",
     "@ilos/transport-redis": "^0.4.1",
     "@ilos/validator": "^0.4.1"
+  },
+  "devDependencies": {
+    "get-port": "^5.1.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }

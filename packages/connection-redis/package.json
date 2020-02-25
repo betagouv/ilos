@@ -7,13 +7,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "ava": {
-		"typescript": {
-			"rewritePaths": {
-				"src/": "dist/"
-			}
-		}
-	},
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
