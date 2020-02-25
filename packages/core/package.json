@@ -26,10 +26,8 @@
     "@ilos/common": "^0.4.1"
   },
   "ava": {
-		"typescript": {
-			"rewritePaths": {
-				"src/": "dist/"
-			}
-		}
-	}
+    "files": [
+      "./**/*.spec.js"
+    ]
+  }
 }

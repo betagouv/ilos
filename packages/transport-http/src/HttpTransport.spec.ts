@@ -158,7 +158,7 @@ test('Http transport: should fail if missing Accept header', async (t) => {
   t.is(response.body.jsonrpc, '2.0');
   t.deepEqual(response.body.error, {
     code: -32000,
-    message: 'Wrong Content-type header. Requires application/json'
+    message: 'Wrong Content-type header. Requires application/json',
   });
 });
 
@@ -208,7 +208,7 @@ test('Http transport: should fail if json is misformed', async (t) => {
   t.is(response.body.jsonrpc, '2.0');
   t.deepEqual(response.body.error, {
     code: -32000,
-    message: 'Wrong content length'
+    message: 'Wrong content length',
   });
 });
 
@@ -265,6 +265,6 @@ test('Http transport: should fail if method is not found', async (t) => {
   t.is(response.body.jsonrpc, '2.0');
   t.deepEqual(response.body.error, {
     code: -32601,
-    message: 'Method not found'
+    message: 'Method not found',
   });
 });

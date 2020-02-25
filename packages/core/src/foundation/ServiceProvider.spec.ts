@@ -42,11 +42,14 @@ test('ServiceProvider: should register handler', async (t) => {
   await sp.init();
 
   const container = sp.getContainer();
-  t.is(await container.getHandler({ service: 'test', method: 'add' })({
-    params: {},
-    context: defaultContext,
-    method: '',
-  }), 0);
+  t.is(
+    await container.getHandler({ service: 'test', method: 'add' })({
+      params: {},
+      context: defaultContext,
+      method: '',
+    }),
+    0,
+  );
 });
 
 test('ServiceProvider: should register handler with extension', async (t) => {

@@ -7,13 +7,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "ava": {
-		"typescript": {
-			"rewritePaths": {
-				"src/": "dist/"
-			}
-		}
-	},
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -26,5 +19,10 @@
     "ioredis": "^4.14.0",
     "@ilos/common": "^0.4.1",
     "@ilos/connection-manager": "^0.4.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }

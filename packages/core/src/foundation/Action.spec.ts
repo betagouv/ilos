@@ -15,7 +15,6 @@ import {
 
 import { Kernel as AbstractKernel } from './Kernel';
 import { Action } from './Action';
-import { ServiceContainer } from './ServiceContainer';
 
 function setup() {
   const defaultContext = {
@@ -59,9 +58,13 @@ function setup() {
     })
     class Kernel extends AbstractKernel {}
     const kernel = new Kernel();
-    
+
     await kernel.bootstrap();
-    return kernel.getContainer().getHandlers().map(h => h.resolver as FunctionalHandlerInterface).pop();
+    return kernel
+      .getContainer()
+      .getHandlers()
+      .map((h) => h.resolver as FunctionalHandlerInterface)
+      .pop();
   }
 
   return {

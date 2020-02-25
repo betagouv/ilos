@@ -70,11 +70,12 @@ export class HandlerRegistry {
       this.buildHandlerMiddlewares(middlewares)(
         call.params,
         call.context,
-        async (params: ParamsType, context: ContextType) => this.container.get<HandlerInterface>(handler).call({
-          ...call,
-          params,
-          context,
-        }),
+        async (params: ParamsType, context: ContextType) =>
+          this.container.get<HandlerInterface>(handler).call({
+            ...call,
+            params,
+            context,
+          }),
       );
 
     this.container.root.bind(HandlerRegistry.key).toConstantValue({

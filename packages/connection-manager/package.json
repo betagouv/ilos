@@ -21,15 +21,13 @@
     "watch": "tsc -w",
     "lint": "eslint \"src/**/*.ts\""
   },
-  "ava": {
-    "typescript": {
-      "rewritePaths": {
-        "src/": "dist/"
-      }
-    }
-  },
   "dependencies": {
     "@ilos/common": "^0.4.1",
     "@ilos/core": "^0.4.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }

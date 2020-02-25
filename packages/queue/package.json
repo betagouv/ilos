@@ -27,5 +27,10 @@
     "@ilos/connection-manager": "^0.4.1",
     "@ilos/connection-redis": "^0.4.1",
     "@ilos/handler-redis": "^0.4.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }

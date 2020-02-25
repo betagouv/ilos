@@ -10,13 +10,6 @@
     "type": "git",
     "url": "https://github.com/betagouv/ilos.git"
   },
-  "ava": {
-		"typescript": {
-			"rewritePaths": {
-				"src/": "dist/"
-			}
-		}
-  },
   "scripts": {
     "copy-static": "cp -R ./src/stubs ./dist/",
     "build": "tsc && yarn copy-static",
@@ -37,5 +30,10 @@
     "commander": "^4.1.1",
     "@ilos/common": "^0.4.1",
     "@ilos/core": "^0.4.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }
