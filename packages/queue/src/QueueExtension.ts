@@ -1,5 +1,4 @@
 import {
-  EnvInterfaceResolver,
   RegisterHookInterface,
   InitHookInterface,
   ServiceContainerInterface,
@@ -9,13 +8,13 @@ import {
   QueueTargetType,
   extension,
 } from '@ilos/common';
+import { env } from '@ilos/core';
 import { Extensions } from '@ilos/core';
-
 import { queueHandlerFactory } from '@ilos/handler-redis';
 
 @extension({
   name: 'queues',
-  require: [Extensions.Handlers],
+  require: [Extensions.Config, Extensions.Handlers],
 })
 export class QueueExtension implements RegisterHookInterface, InitHookInterface {
   static get containerKey() {
@@ -36,12 +35,7 @@ export class QueueExtension implements RegisterHookInterface, InitHookInterface 
   }
 
   async init(serviceContainer: ServiceContainerInterface) {
-    const container = serviceContainer.getContainer();
-    if (container.isBound(EnvInterfaceResolver)) {
-      this.isWorker = container.get(EnvInterfaceResolver).get('APP_WORKER', false);
-    }
-
-    if (this.isWorker) {
+    if (env('APP_WORKER', false)) {
       this.isProcessable(serviceContainer);
     }
   }

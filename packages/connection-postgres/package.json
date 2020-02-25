@@ -11,36 +11,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "eslint \"src/**/*.ts\"",
-    "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts",
-    "test": "mocha src/*.spec.ts src/**/*.spec.ts"
-  },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
+    "test": "exit 0",
+    "test:integration": "exit 0"
   },
   "dependencies": {
     "pg": "^7.18.1",
@@ -49,13 +21,11 @@
     "@ilos/connection-manager": "^0.4.1"
   },
   "devDependencies": {
-    "@types/mocha": "^7.0.1",
-    "@types/mongodb": "^3.1.27",
-    "@types/pg": "^7.11.1",
-    "mocha": "^7.0.1",
-    "nock": "^12.0.0",
-    "nyc": "^15.0.0",
-    "ts-node": "^8.1.0",
-    "typescript": "^3.4.5"
+    "@types/pg": "^7.11.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }

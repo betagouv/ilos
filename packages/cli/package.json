@@ -13,10 +13,9 @@
   "scripts": {
     "copy-static": "cp -R ./src/stubs ./dist/",
     "build": "tsc && yarn copy-static",
-    "test": "mocha --config ../../.mocharc.js \"src/**/*.spec.ts\"",
-    "test:integration": "mocha tests/**/*.spec.ts",
-    "coverage-ci": "nyc --all --reporter=lcov mocha src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
-    "coverage": "nyc --all --reporter=text mocha src/*.spec.ts src/**/*.spec.ts tests/**/*.spec.ts",
+    "test": "ava",
+    "coverage-ci": "nyc --all --reporter=lcov ava ",
+    "coverage": "nyc --all --reporter=text ava",
     "watch-test": "yarn test -- --watchAll",
     "watch": "tsc -w",
     "lint": "eslint \"src/**/*.ts\""
@@ -31,5 +30,10 @@
     "commander": "^4.1.1",
     "@ilos/common": "^0.4.1",
     "@ilos/core": "^0.4.1"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }

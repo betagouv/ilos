@@ -1,15 +1,7 @@
-import { describe } from 'mocha';
-import chai from 'chai';
+import test from 'ava';
 import nock from 'nock';
-import chaiNock from 'chai-nock';
-import chaiAsPromised from 'chai-as-promised';
 
 import { httpHandlerFactory } from './helpers/httpHandlerFactory';
-
-chai.use(chaiNock);
-chai.use(chaiAsPromised);
-
-const { expect, assert } = chai;
 
 const defaultContext = {
   channel: {
@@ -17,33 +9,47 @@ const defaultContext = {
   },
 };
 
-describe('Http handler', () => {
-  it('works', () => {
-    const url = 'http://myfakeservice:8080';
-    const nockRequest = nock(url)
-      .post('/')
-      .reply(
-        200,
-        {
-          jsonrpc: '2.0',
-          id: 1,
-          result: 'hello world',
-        },
-        {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      );
+function setup(
+  replyFn = function(uri, req) {
+    return [
+      200,
+      {},
+      {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    ];
+  },
+) {
+  const url = 'http://myfakeservice:8080';
 
-    const provider = new (httpHandlerFactory('service', url))();
-    provider.init();
-    provider.call({
-      method: 'service@latest:method',
-      params: { param: true },
-      context: defaultContext,
-    });
+  const request = nock(url)
+    .post('/')
+    .reply(replyFn);
 
-    return (expect(nockRequest).to.have.been as any).requestedWith({
+  const provider = new (httpHandlerFactory('service', url))();
+  provider.init();
+
+  return {
+    request,
+    call: () =>
+      provider.call({
+        method: 'service@latest:method',
+        params: { param: true },
+        context: defaultContext,
+      }),
+  };
+}
+
+test.afterEach(() => {
+  console.log('tototo');
+  nock.cleanAll();
+});
+
+test.serial('Http handler: works', async (t) => {
+  t.plan(3);
+  const { call } = setup(function(_, req) {
+    t.deepEqual(req, {
       id: 1,
       jsonrpc: '2.0',
       method: 'service@latest:method',
@@ -54,90 +60,57 @@ describe('Http handler', () => {
         },
       },
     });
+    t.is(this.req.headers.accept, 'application/json');
+    t.is(this.req.headers['content-type'], 'application/json');
+    return [
+      200,
+      {
+        jsonrpc: '2.0',
+        id: 1,
+        result: 'hello world',
+      },
+      {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    ];
   });
 
-  it('works with correct headers', () => {
-    const url = 'http://myfakeservice:8080';
-    const nockRequest = nock(url)
-      .post('/')
-      .reply(
-        200,
-        {
-          jsonrpc: '2.0',
-          id: 1,
-          result: 'hello world',
-        },
-        {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      );
+  await call();
+});
 
-    const provider = new (httpHandlerFactory('service', url))();
-    provider.init();
-    provider.call({
-      method: 'service@latest:method',
-      params: { param: true },
-      context: defaultContext,
-    });
+test.serial('throw error on status code error', async (t) => {
+  const { call } = setup(() => [
+    500,
+    {
+      jsonrpc: '2.0',
+      id: 1,
+      result: 'hello world',
+    },
+    {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  ]);
 
-    return (expect(nockRequest).to.have.been as any).requestedWithHeadersMatch({
-      accept: 'application/json',
-      'content-type': 'application/json',
-    });
-  });
+  const err = await t.throwsAsync<Error>(async () => call());
+  t.is(err.message, 'An error occured');
+});
 
-  it('throw error on status code error', () => {
-    const url = 'http://myfakeservice:8080';
-    nock(url)
-      .post('/')
-      .reply(
-        500,
-        {
-          jsonrpc: '2.0',
-          id: 1,
-          result: 'hello world',
-        },
-        {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      );
+test.serial('throw error on object error', async (t) => {
+  const { call } = setup(() => [
+    200,
+    {
+      jsonrpc: '2.0',
+      id: 1,
+      error: { message: 'wrong!' },
+    },
+    {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  ]);
 
-    const provider = new (httpHandlerFactory('service', url))();
-    provider.init();
-    const promise = provider.call({
-      method: 'service@latest:method',
-      params: { param: true },
-      context: defaultContext,
-    });
-    return (assert as any).isRejected(promise, Error, 'An error occured');
-  });
-
-  it('throw error on status code error', () => {
-    const url = 'http://myfakeservice:8080';
-    nock(url)
-      .post('/')
-      .reply(
-        200,
-        {
-          jsonrpc: '2.0',
-          id: 1,
-          error: { message: 'wrong!' },
-        },
-        {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      );
-
-    const provider = new (httpHandlerFactory('service', url))();
-    provider.init();
-    const promise = provider.call({
-      method: 'service@latest:method',
-      params: { param: true },
-      context: defaultContext,
-    });
-    return (assert as any).isRejected(promise, Error, 'wrong!');
-  });
+  const err = await t.throwsAsync<Error>(async () => call());
+  t.is(err.message, 'wrong!');
 });

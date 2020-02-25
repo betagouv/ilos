@@ -62,7 +62,7 @@ export abstract class ServiceContainer
     }
     this.extensionRegistry.apply();
 
-    await this.registerChildren();
+    this.registerChildren();
     await this.registerHookRegistry.dispatch(this);
   }
 

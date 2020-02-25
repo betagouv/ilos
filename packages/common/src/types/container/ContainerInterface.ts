@@ -1,13 +1,14 @@
 import { interfaces } from 'inversify';
 
 import { NewableType } from '../shared';
-import { HandlerInterface, HandlerConfigType } from '../handler';
+import { HandlerInterface, HandlerConfigType, FunctionalHandlerInterface } from '../handler';
+import { ParamsType, ContextType, ResultType } from '../call';
 
 export interface ContainerInterface extends interfaces.Container {
   root: ContainerInterface;
   setHandler(handler: NewableType<HandlerInterface>): void;
-  getHandler(config: HandlerConfigType): HandlerInterface;
-  getHandlers(): HandlerConfigType[];
+  getHandler<P = ParamsType, C = ContextType, R = ResultType>(config: HandlerConfigType): FunctionalHandlerInterface;
+  getHandlers(): (HandlerConfigType & { resolver: Function })[];
   createChild(containerOptions?: interfaces.ContainerOptions): ContainerInterface;
 }
 

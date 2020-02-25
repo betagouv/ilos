@@ -1,5 +1,5 @@
 // tslint:disable max-classes-per-file
-import { expect } from 'chai';
+import test from 'ava';
 import sinon from 'sinon';
 
 import { Kernel } from '@ilos/core';
@@ -16,7 +16,7 @@ import { Command } from '../parents/Command';
 import { CommandRegistry } from '../providers/CommandRegistry';
 import { CliTransport } from './CliTransport';
 
-describe('Cli transport', function() {
+function setup() {
   @commandDecorator()
   class BasicCommand extends Command {
     static readonly signature: string = 'hello <name>';
@@ -43,24 +43,21 @@ describe('Cli transport', function() {
     readonly extensions: NewableType<ExtensionInterface>[] = [CommandExtension];
   }
 
-  after(function() {
-    sinon.restore();
-  });
+  const kernel = new BasicKernel();
+  return { kernel };
+}
 
-  it('should work', function(done) {
-    this.timeout(1000);
-    const kernel = new BasicKernel();
-    kernel.bootstrap().then(() => {
-      const cliTransport = new CliTransport(kernel);
-      const container = kernel.getContainer();
-      const commander = container.get<CommandRegistry>(CommandRegistry);
-      sinon.stub(commander, 'output').callsFake((...args: any[]) => {
-        expect(args[0]).to.equal('Hello john');
-        done();
-      });
-      container.unbind(CommandRegistry);
-      container.bind(CommandRegistry).toConstantValue(commander);
-      cliTransport.up(['', '', 'hello', 'john']);
-    });
+test('Cli transport: should work', async (t) => {
+  t.plan(1);
+  const { kernel } = setup();
+  await kernel.bootstrap();
+  const cliTransport = new CliTransport(kernel);
+  const container = kernel.getContainer();
+  const commander = container.get<CommandRegistry>(CommandRegistry);
+  sinon.stub(commander, 'output').callsFake((...args: any[]) => {
+    t.is(args[0], 'Hello john');
   });
+  container.unbind(CommandRegistry);
+  container.bind(CommandRegistry).toConstantValue(commander);
+  return cliTransport.up(['', '', 'hello', 'john']);
 });
