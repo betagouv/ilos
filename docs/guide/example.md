@@ -121,3 +121,16 @@ A core package.json is used only to link project workspaces
 ```
 
 
+#### Start action from command line
+
+Start http transport API
+
+```bash
+yarn ilos http 8080
+```
+
+#### Start action 
+
+```bash
+yarn ilos call -p {request_param: true} -c {context_option: true} service:action 
+```
