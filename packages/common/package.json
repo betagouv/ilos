@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc",
     "test": "exit 0",
-    "test:integration": "exit 0",
+    "test:integration": "echo 'No integration test'; exit 0",
     "watch": "tsc -w",
     "lint": "eslint \"src/**/*.ts\""
   },
