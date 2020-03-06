@@ -20,6 +20,7 @@
     "build:packages": "lerna run --sort build",
     "build:permissions": "chmod u+x packages/framework/dist/cli.js",
     "test": "ava",
+    "test:integration": "lerna run test:integration",
     "coverage:ci": "nyc --all --reporter=lcov ava",
     "coverage": "nyc --all --reporter=text ava",
     "watch": "lerna run --parallel watch",
