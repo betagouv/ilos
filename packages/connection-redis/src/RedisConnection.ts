@@ -9,7 +9,7 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
   protected connected = false;
 
   constructor(config: ConnectionConfigurationType) {
-    if (!!config.connectionString) {
+    if (config.connectionString) {
       const { connectionString, ...other } = config;
       this.client = new Redis(connectionString, {
         ...other,
@@ -24,25 +24,17 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
   }
 
   async up() {
-    try {
-      if (!this.connected && this.client.status === 'wait') {
-        await this.client.connect();
-        this.connected = true;
-        return;
-      }
-    } catch (err) {
-      throw err;
+    if (!this.connected && this.client.status === 'wait') {
+      await this.client.connect();
+      this.connected = true;
+      return;
     }
   }
 
   async down() {
-    try {
-      if (this.connected) {
-        await this.client.disconnect();
-        this.connected = false;
-      }
-    } catch (err) {
-      throw err;
+    if (this.connected) {
+      await this.client.disconnect();
+      this.connected = false;
     }
   }
 
@@ -50,25 +42,3 @@ export class RedisConnection implements ConnectionInterface<RedisInterface> {
     return this.client;
   }
 }
-
-// var {REDIS_URL} = process.env
-
-// var Redis = require('ioredis')
-// var client = new Redis(REDIS_URL);
-// var subscriber = new Redis(REDIS_URL);
-
-// var opts = {
-//   createClient: function (type) {
-//     switch (type) {
-//       case 'client':
-//         return client;
-//       case 'subscriber':
-//         return subscriber;
-//       default:
-//         return new Redis();
-//     }
-//   }
-// }
-
-// var queueFoo = new Queue('foobar', opts);
-// var queueQux = new Queue('quxbaz', opts);

@@ -1,5 +1,6 @@
 export { KernelInterface, KernelInterfaceResolver } from './KernelInterface';
 export { MiddlewareInterface, FunctionMiddlewareInterface } from './MiddlewareInterface';
+export { ConfigInterface, ConfigInterfaceResolver } from './ConfigInterface';
 export { ProviderInterface } from './ProviderInterface';
 export {
   ServiceContainerInterface,
@@ -7,4 +8,4 @@ export {
   ServiceContainerConstructorInterface,
 } from './ServiceContainerInterface';
 
-export * from './ExtentionInterface';
+export * from './ExtensionInterface';

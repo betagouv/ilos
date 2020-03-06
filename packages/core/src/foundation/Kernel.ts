@@ -68,7 +68,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
       throw new InvalidRequestException('jsonrpc call must have a method property');
     }
 
-    if ('id' in call && (typeof call.id !== 'string' && typeof call.id !== 'number' && call.id !== null)) {
+    if ('id' in call && typeof call.id !== 'string' && typeof call.id !== 'number' && call.id !== null) {
       throw new InvalidRequestException('id property should be either a string, a number or null');
     }
     return;
@@ -83,15 +83,11 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   protected async getHandlerAndCall(config, call) {
-    try {
-      const handler = this.getContainer().getHandler(config);
-      if (!handler) {
-        throw new MethodNotFoundException(`Unknown method or service ${config.signature}`);
-      }
-      return handler.call(call);
-    } catch (e) {
-      throw e;
+    const handler = this.getContainer().getHandler(config);
+    if (!handler) {
+      throw new MethodNotFoundException(`Unknown method or service ${config.signature}`);
     }
+    return handler(call);
   }
 
   /**
@@ -103,11 +99,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async call<P = ParamsType, R = ResultType>(method: string, params: P, context: ContextType): Promise<R> {
-    try {
-      return this.getHandlerAndCall({ signature: method }, { method, params, context });
-    } catch (e) {
-      throw e;
-    }
+    return this.getHandlerAndCall({ signature: method }, { method, params, context });
   }
 
   /**
@@ -119,11 +111,7 @@ export abstract class Kernel extends ServiceProvider implements KernelInterface 
    * @memberof Kernel
    */
   public async notify<P = ParamsType>(method: string, params: P, context: ContextType): Promise<void> {
-    try {
-      return this.getHandlerAndCall({ signature: method, queue: true }, { method, params, context });
-    } catch (e) {
-      throw e;
-    }
+    return this.getHandlerAndCall({ signature: method, queue: true }, { method, params, context });
   }
 
   /**

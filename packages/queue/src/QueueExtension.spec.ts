@@ -1,12 +1,8 @@
-// tslint:disable max-classes-per-file
-import { expect } from 'chai';
-
+import test from 'ava';
 import { Action, ServiceProvider, Extensions } from '@ilos/core';
 import { ConnectionManagerExtension } from '@ilos/connection-manager';
 import { RedisConnection } from '@ilos/connection-redis';
-import { ConfigExtension } from '@ilos/config';
-import { EnvExtension } from '@ilos/env';
-import { EnvInterfaceResolver, handler, provider, serviceProvider } from '@ilos/common';
+import { handler, serviceProvider } from '@ilos/common';
 
 import { QueueExtension } from './QueueExtension';
 
@@ -22,75 +18,62 @@ class ServiceOneHandler extends Action {}
 })
 class ServiceTwoHandler extends Action {}
 
-describe('Queue extension', () => {
-  it('should register queue name in container as worker', async () => {
-    @provider({
-      identifier: EnvInterfaceResolver,
-    })
-    class FakeEnvProvider extends EnvInterfaceResolver {
-      get() {
-        return true;
-      }
-    }
+test('Queue extension: should register queue name in container as worker', async (t) => {
+  @serviceProvider({
+    queues: ['serviceA', 'serviceB'],
+    config: {
+      redis: {},
+    },
+    handlers: [ServiceOneHandler, ServiceTwoHandler],
+    connections: [[RedisConnection, 'redis']],
+  })
+  class MyService extends ServiceProvider {
+    extensions = [
+      Extensions.Config,
+      Extensions.Providers,
+      Extensions.Handlers,
+      ConnectionManagerExtension,
+      QueueExtension,
+    ];
+  }
 
-    @serviceProvider({
-      queues: ['serviceA', 'serviceB'],
-      config: {
-        redis: {},
-      },
-      handlers: [ServiceOneHandler, ServiceTwoHandler],
-      connections: [[RedisConnection, 'redis']],
-      providers: [FakeEnvProvider],
-    })
-    class MyService extends ServiceProvider {
-      extensions = [
-        Extensions.Providers,
-        ConfigExtension,
-        ConnectionManagerExtension,
-        Extensions.Handlers,
-        QueueExtension,
-      ];
-    }
+  const service = new MyService();
+  await service.register();
 
-    const service = new MyService();
-    await service.register();
+  const container = service.getContainer();
+  const queueRegistrySymbol = QueueExtension.containerKey;
+  t.true(container.isBound(queueRegistrySymbol));
 
-    const container = service.getContainer();
-    const queueRegistrySymbol = QueueExtension.containerKey;
-    expect(container.isBound(queueRegistrySymbol)).to.eq(true);
+  const queueRegistry = container.getAll(queueRegistrySymbol);
 
-    const queueRegistry = container.getAll(queueRegistrySymbol);
+  t.true(queueRegistry.indexOf('serviceA') > -1);
+  t.true(queueRegistry.indexOf('serviceB') > -1);
+  t.is(container.getHandlers().length, 4);
+});
 
-    expect(queueRegistry).to.members(['serviceA', 'serviceB']);
+test('should register queue name in container and handlers', async (t) => {
+  @serviceProvider({
+    env: null,
+    queues: ['serviceA', 'serviceB'],
+    config: {
+      redis: {},
+    },
+    handlers: [ServiceOneHandler, ServiceTwoHandler],
+    connections: [[RedisConnection, 'redis']],
+  })
+  class MyService extends ServiceProvider {
+    extensions = [Extensions.Config, Extensions.Handlers, QueueExtension, ConnectionManagerExtension];
+  }
 
-    expect(container.getHandlers().length).to.eq(4);
-  });
+  const service = new MyService();
+  await service.register();
 
-  it('should register queue name in container and handlers', async () => {
-    @serviceProvider({
-      env: null,
-      queues: ['serviceA', 'serviceB'],
-      config: {
-        redis: {},
-      },
-      handlers: [ServiceOneHandler, ServiceTwoHandler],
-      connections: [[RedisConnection, 'redis']],
-    })
-    class MyService extends ServiceProvider {
-      extensions = [EnvExtension, ConfigExtension, ConnectionManagerExtension, Extensions.Handlers, QueueExtension];
-    }
+  const container = service.getContainer();
+  const queueRegistrySymbol = QueueExtension.containerKey;
+  t.true(container.isBound(queueRegistrySymbol));
 
-    const service = new MyService();
-    await service.register();
-
-    const container = service.getContainer();
-    const queueRegistrySymbol = QueueExtension.containerKey;
-    expect(container.isBound(queueRegistrySymbol)).to.eq(true);
-
-    const queueRegistry = container.getAll(queueRegistrySymbol);
-
-    expect(queueRegistry).to.members(['serviceA', 'serviceB']);
-
-    expect(container.getHandlers().length).to.eq(4);
-  });
+  const queueRegistry = container.getAll(queueRegistrySymbol);
+  t.true(queueRegistry.indexOf('serviceA') > -1);
+  t.true(queueRegistry.indexOf('serviceB') > -1);
+  t.is(container.getHandlers().length, 4);
 });

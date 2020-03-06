@@ -25,7 +25,7 @@ export class Middlewares implements RegisterHookInterface {
         const [id, target] = def;
         container.bind(id).to(target);
       } else {
-        const identifier = <string>Reflect.getMetadata('extension:identifier', def);
+        const identifier = Reflect.getMetadata('extension:identifier', def) as string;
         container.bind(def).toSelf();
         if (identifier) {
           container.bind(identifier).toService(def);

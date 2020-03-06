@@ -1,10 +1,8 @@
 import {
   ContainerInterface,
   ConfigInterfaceResolver,
-  ConfigInterface,
   ConnectionDeclarationType,
   ConnectionInterface,
-  ConnectionConfigurationType,
   RegisterHookInterface,
   InitHookInterface,
   DestroyHookInterface,
@@ -13,14 +11,11 @@ import {
   extension,
 } from '@ilos/common';
 
-import { ConfigExtension } from '@ilos/config';
-
 @extension({
   name: 'connections',
-  require: [ConfigExtension],
 })
 export class ConnectionManagerExtension implements RegisterHookInterface, InitHookInterface, DestroyHookInterface {
-  protected connectionRegistry: Map<Symbol, ConnectionInterface> = new Map();
+  protected connectionRegistry: Map<symbol, ConnectionInterface> = new Map();
 
   /**
    * instanceSymbolRegistry, map used for registring, associate a symbol with a config key
@@ -28,7 +23,7 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
    * @type {Map<Symbol, string>}
    * @memberof ConnectionManagerExtension
    */
-  protected instanceSymbolRegistry: Map<Symbol, string> = new Map();
+  protected instanceSymbolRegistry: Map<symbol, string> = new Map();
 
   /**
    * connectionConstructorSymbolRegistry, map used for registring, associate a Connection constructor with a Symbol
@@ -36,7 +31,7 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
    * @type {Map<NewableType<ConnectionInterface>, Symbol>}
    * @memberof ConnectionManagerExtension
    */
-  protected connectionConstructorSymbolRegistry: Map<NewableType<ConnectionInterface>, Symbol> = new Map();
+  protected connectionConstructorSymbolRegistry: Map<NewableType<ConnectionInterface>, symbol> = new Map();
 
   /**
    * mappingRegistry, Map<NewableType<ConnectionInterface>, Map<NewableType<any>, instanceSymbolRegistry>>
@@ -44,7 +39,7 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
    * @type {Map<NewableType<ConnectionInterface>, Symbol>}
    * @memberof ConnectionManagerExtension
    */
-  protected mappingRegistry: Map<NewableType<ConnectionInterface>, Map<NewableType<any>, Symbol>> = new Map();
+  protected mappingRegistry: Map<NewableType<ConnectionInterface>, Map<NewableType<any>, symbol>> = new Map();
 
   constructor(protected readonly connections: ConnectionDeclarationType[]) {}
 
@@ -80,7 +75,7 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
 
   async destroy(): Promise<void> {
     const connectionRegistry = this.connectionRegistry.entries();
-    for (const [_symbol, connection] of connectionRegistry) {
+    for (const [, connection] of connectionRegistry) {
       try {
         await connection.down();
       } catch (e) {
@@ -158,7 +153,7 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
         const requesterMapRegistry = this.mappingRegistry.get(connectionConstructor);
 
         const connectionMap = requesterMapRegistry.entries();
-        for (const [_requesterConstructor, instanceSymbol] of connectionMap) {
+        for (const [, instanceSymbol] of connectionMap) {
           connections.push(this.getConnection(instanceSymbol, connectionConstructor, configGetter));
         }
       }
@@ -171,7 +166,7 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
   }
 
   protected getConnection(
-    instanceToken: Symbol,
+    instanceToken: symbol,
     connectionConstructor: NewableType<ConnectionInterface>,
     configGetter: (k: string) => any,
   ): ConnectionInterface {
@@ -190,7 +185,7 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
   protected createConnection(
     connectionConstructor: NewableType<ConnectionInterface>,
     config: { [k: string]: any },
-    instanceToken?: Symbol,
+    instanceToken?: symbol,
   ): ConnectionInterface {
     const connection = new connectionConstructor(config);
 
@@ -201,15 +196,15 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
     return connection;
   }
 
-  protected getConnectionConstructorSymbol(connConstructor: NewableType<ConnectionInterface>): Symbol {
+  protected getConnectionConstructorSymbol(connConstructor: NewableType<ConnectionInterface>): symbol {
     if (!this.connectionConstructorSymbolRegistry.has(connConstructor)) {
       this.connectionConstructorSymbolRegistry.set(connConstructor, Symbol());
     }
     return this.connectionConstructorSymbolRegistry.get(connConstructor);
   }
 
-  protected getInstanceSymbol(configurationKey: string, fallback?: Symbol): Symbol {
-    let instanceSymbol: Symbol = Symbol();
+  protected getInstanceSymbol(configurationKey: string, fallback?: symbol): symbol {
+    let instanceSymbol = Symbol();
 
     if (fallback) {
       instanceSymbol = fallback;
@@ -224,7 +219,7 @@ export class ConnectionManagerExtension implements RegisterHookInterface, InitHo
   protected setConstructorsMapping(
     serviceConstructors: NewableType<any>[],
     connectionConstructor: NewableType<ConnectionInterface>,
-    instanceSymbol: Symbol,
+    instanceSymbol: symbol,
   ) {
     if (!this.mappingRegistry.has(connectionConstructor)) {
       this.mappingRegistry.set(connectionConstructor, new Map());

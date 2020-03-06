@@ -4,7 +4,7 @@ const regexp = new RegExp('^([a-z]*)@?([.0-9]*|latest):([a-zA-Z]*|\\*)$');
 
 export function getConfigBySignature(method: string): { service: string; method: string; version?: string } {
   try {
-    const [_expr, s, v, m] = regexp.exec(method);
+    const [, s, v, m] = regexp.exec(method);
     if (typeof s !== 'string' || typeof m !== 'string' || s.length === 0 || m.length === 0) {
       throw new Error();
     }

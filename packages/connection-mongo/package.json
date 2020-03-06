@@ -1,6 +1,6 @@
 {
   "name": "@ilos/connection-mongo",
-  "version": "0.3.1",
+  "version": "0.4.1",
   "main": "dist/index.js",
   "typings": "dist/index.d.js",
   "license": "Apache-2.0",
@@ -10,59 +10,21 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "tslint -c ../../tslint.json -p tsconfig.json",
-    "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts",
-    "test": "mocha src/*.spec.ts src/**/*.spec.ts"
-  },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "exit 0",
+    "test:integration": "echo 'No integration test'; exit 0"
   },
   "dependencies": {
-    "mongodb": "^3.2.4",
-    "saslprep": "^1.0.3"
-  },
-  "peerDependencies": {
-    "@ilos/common": "~0",
-    "@ilos/connection-manager": "~0"
+    "mongodb": "^3.5.3",
+    "@ilos/common": "^0.4.1",
+    "@ilos/connection-manager": "^0.4.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/chai-as-promised": "^7.1.0",
-    "@types/mocha": "^5.2.6",
-    "@types/mongodb": "^3.1.27",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "mocha": "^6.1.4",
-    "nock": "^11.3.5",
-    "nyc": "^14.1.1",
-    "sinon": "^7.3.2",
-    "ts-node": "^8.1.0",
-    "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+    "@types/mongodb": "^3.1.27"
+  },
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }
