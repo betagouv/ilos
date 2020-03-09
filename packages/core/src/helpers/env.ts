@@ -11,11 +11,9 @@ export function cast(str: string): SBN {
     return str.toLowerCase().trim() === 'true';
   }
 
-  // number
-  const num = parseFloat(str);
+  const isNum = /^[0-9.]+$/.test(str);
 
-  // string if not a number
-  return isNaN(num) ? str : num;
+  return isNum ? parseFloat(str) : str;
 }
 
 export function env(k: string, fallback?: SBN): SBN {

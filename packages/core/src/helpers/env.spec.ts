@@ -5,6 +5,7 @@ import { EnvNotFoundException } from '../exceptions';
 
 test.before(() => {
   process.env['TEST_HELLO'] = 'world';
+  process.env['TEST_HEXA'] = '51b67e98a';
 });
 
 test.after(() => {
@@ -29,6 +30,11 @@ test('env(): works with missing value and number fallback', (t) => {
 
 test('env(): works with missing value and boolean fallback', (t) => {
   t.is(env('TEST_MISSING', false), false);
+});
+
+test('env(): recognise hexa string as string', (t) => {
+  t.is(typeof env('TEST_HEXA'), 'string');
+  t.is(env('TEST_HEXA'), '51b67e98a');
 });
 
 test('cast(): cast to boolean', (t) => {
