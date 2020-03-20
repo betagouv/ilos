@@ -52,7 +52,11 @@ export class CallCommand extends Command {
 
       if ('context' in options) {
         call.params._context = options.context;
-        call.params._context.channel.transport = 'cli';
+        call.params._context.channel = {
+          transport: 'cli',
+          service: '',
+          ...options.context.channel,
+        };
       }
     }
 
