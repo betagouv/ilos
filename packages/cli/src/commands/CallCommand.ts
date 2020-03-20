@@ -44,7 +44,6 @@ export class CallCommand extends Command {
         },
       },
     };
-    // TODO : add channel ?
 
     if (options && ('params' in options || 'context' in options)) {
       if ('params' in options) {
@@ -52,10 +51,8 @@ export class CallCommand extends Command {
       }
 
       if ('context' in options) {
-        call.params._context = {
-          ...options.context,
-          ...call.params._context,
-        };
+        call.params._context = options.context;
+        call.params._context.channel.transport = 'cli';
       }
     }
 
