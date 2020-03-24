@@ -13,73 +13,40 @@
   ],
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "lint": "lerna run lint",
+    "lint": "eslint \"packages/**/src/**/*.ts\"",
+    "clean:dep": "rm -rf packages/*/node_modules node_modules",
     "clean": "rm -rf packages/*/dist",
-    "build": "run-s clean build:common build:core build:logger build:provider:env build:provider:config build:provider:template build:cli build:connection:manager build:connections build:providers build:handlers build:packages build:queue build:transport build:framework build:extensions build:permissions",
-    "build:common": "lerna run --scope @ilos/common build",
-    "build:logger": "lerna run --scope @ilos/logger build",
-    "build:core": "lerna run --scope @ilos/core build",
-    "build:cli": "lerna run --scope @ilos/cli build",
-    "build:queue": "lerna run --scope @ilos/queue build",
-    "build:transport": "lerna run --scope @ilos/transport* build",
-    "build:provider:env": "lerna run --scope @ilos/env build",
-    "build:provider:config": "lerna run --scope @ilos/config build",
-    "build:provider:template": "lerna run --scope @ilos/template build",
-    "build:connection:manager": "lerna run --scope @ilos/connection-manager build",
-    "build:connections": "lerna run --scope @ilos/connection-* build",
-    "build:providers": "lerna run --scope @ilos/notification --scope @ilos/repository --scope @ilos/validator build",
-    "build:handlers": "lerna run --scope @ilos/handler* build",
-    "build:packages": "lerna run --scope @ilos/package* build",
-    "build:framework": "lerna run --scope @ilos/framework build",
-    "build:extensions": "lerna run --scope @ilos/config build; lerna run --scope @ilos/env build; lerna run --scope @ilos/logger build; lerna run --scope @ilos/notification build; lerna run --scope @ilos/queue build; lerna run --scope @ilos/repository build; lerna run --scope @ilos/template build; lerna run --scope @ilos/validator build",
+    "build": "yarn clean && yarn build:packages && yarn build:permissions",
+    "build:packages": "lerna run --sort build",
     "build:permissions": "chmod u+x packages/framework/dist/cli.js",
-    "test": "mocha ./packages/*/src/*.spec.ts ./packages/*/src/**/*.spec.ts",
-    "test:integration": "mocha packages/*/tests/**/*.spec.ts",
-    "coverage:ci": "nyc --all --reporter=lcov mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
-    "coverage:unit": "nyc --all --reporter=text mocha packages/*/src/**/*.spec.ts",
-    "coverage": "nyc --all --reporter=text mocha packages/*/src/**/*.spec.ts packages/*/tests/**/*.spec.ts",
+    "test": "ava",
+    "test:integration": "lerna run test:integration",
+    "coverage:ci": "nyc --all --reporter=lcov ava",
+    "coverage": "nyc --all --reporter=text ava",
     "watch": "lerna run --parallel watch",
     "docs:dev": "vuepress dev docs",
-    "docs:api": "typedoc",
     "docs:build": "vuepress build docs",
     "changed": "lerna changed",
     "publish": "lerna publish"
   },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "packages/*/src/**/*.ts"
-    ],
-    "exclude": [
-      "packages/*/src/**/*.spec.ts",
-      "packages/*/src/interfaces/**",
-      "packages/*/src/types/**",
-      "packages/*/src/exceptions/**",
-      "packages/*/src/**/index.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
-  },
   "devDependencies": {
-    "lerna": "^3.15.0",
-    "mocha": "^6.1.4",
-    "npm-run-all": "^4.1.5",
-    "nyc": "^14.1.1",
-    "typedoc": "^0.15.0",
-    "vuepress": "^1.0.1"
+    "@types/node": "^13.7.2",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
+    "ava": "^3.3.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "lerna": "^3.20.2",
+    "nyc": "^15.0.0",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.6.2",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^3.7.5"
+  },
+  "ava": {
+    "files": [
+      "./packages/*/dist/**/*.spec.js"
+    ]
   }
 }

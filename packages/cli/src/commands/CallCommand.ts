@@ -30,40 +30,37 @@ export class CallCommand extends Command {
   }
 
   public async call(method, options?): Promise<ResultType> {
-    try {
-      const call = {
-        method,
-        jsonrpc: '2.0',
-        id: 1,
-        params: {
-          params: undefined,
-          _context: {
-            channel: {
-              service: '',
-              transport: 'cli',
-            },
+    const call = {
+      method,
+      jsonrpc: '2.0',
+      id: 1,
+      params: {
+        params: undefined,
+        _context: {
+          channel: {
+            service: '',
+            transport: 'cli',
           },
         },
-      };
-      // TODO : add channel ?
+      },
+    };
 
-      if (options && ('params' in options || 'context' in options)) {
-        if ('params' in options) {
-          call.params.params = options.params;
-        }
-
-        if ('context' in options) {
-          call.params._context = {
-            ...options.context,
-            ...call.params._context,
-          };
-        }
+    if (options && ('params' in options || 'context' in options)) {
+      if ('params' in options) {
+        call.params.params = options.params;
       }
 
-      const response = await this.kernel.handle(call);
-      return response;
-    } catch (e) {
-      throw e;
+      if ('context' in options) {
+        call.params._context = options.context;
+        call.params._context.channel = {
+          transport: 'cli',
+          service: '',
+          ...options.context.channel,
+        };
+      }
     }
+
+    const response = await this.kernel.handle(call);
+    return response;
   }
 }

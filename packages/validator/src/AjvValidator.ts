@@ -50,9 +50,9 @@ export class AjvValidator implements ValidatorInterface {
     const { name, type, definition } = def;
     switch (type) {
       case 'format':
-        return this.addFormat(name, <ajv.FormatValidator | ajv.FormatDefinition>definition);
+        return this.addFormat(name, definition as ajv.FormatValidator | ajv.FormatDefinition);
       case 'keyword':
-        return this.addKeyword(name, <ajv.KeywordDefinition>definition);
+        return this.addKeyword(name, definition as ajv.KeywordDefinition);
       default:
         return this;
     }

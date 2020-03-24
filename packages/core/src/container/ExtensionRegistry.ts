@@ -47,7 +47,7 @@ export class ExtensionRegistry {
       .filter((config: ExtensionConfigurationType) => config.autoload || isConfigured(config.decoratorKey))
       .map((config) => ({
         ...config,
-        require: config.require.map((extensionConstructor) => this.getExtentionConfig(extensionConstructor).key),
+        require: config.require.map((extensionConstructor) => this.getExtensionConfig(extensionConstructor).key),
       }))
       .forEach((cfg) => tree.add(cfg.key, cfg, cfg.require));
 
@@ -55,7 +55,7 @@ export class ExtensionRegistry {
   }
 
   register(extensionConstructor: NewableType<ExtensionInterface>) {
-    const config = this.getExtentionConfig(extensionConstructor);
+    const config = this.getExtensionConfig(extensionConstructor);
 
     if (this.container.isBound(config.key)) {
       if (!config.override) {
@@ -74,7 +74,7 @@ export class ExtensionRegistry {
     this.registry.set(config.key, config);
   }
 
-  protected getExtentionConfig(extensionConstructor: NewableType<ExtensionInterface>) {
+  protected getExtensionConfig(extensionConstructor: NewableType<ExtensionInterface>) {
     if (!Reflect.hasMetadata(extensionConfigurationMetadataKey, extensionConstructor)) {
       throw new Error(`Wrong configuration for extension ${extensionConstructor}`);
     }

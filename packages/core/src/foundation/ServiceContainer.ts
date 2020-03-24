@@ -62,7 +62,7 @@ export abstract class ServiceContainer
     }
     this.extensionRegistry.apply();
 
-    await this.registerChildren();
+    this.registerChildren();
     await this.registerHookRegistry.dispatch(this);
   }
 
@@ -117,9 +117,9 @@ export abstract class ServiceContainer
       return;
     }
 
-    const taggedIdentifier = <IdentifierType | IdentifierType[]>(
-      Reflect.getMetadata(Symbol.for('extension:identifier'), ctor)
-    );
+    const taggedIdentifier = Reflect.getMetadata(Symbol.for('extension:identifier'), ctor) as
+      | IdentifierType
+      | IdentifierType[];
     if (taggedIdentifier) {
       if (!Array.isArray(taggedIdentifier)) {
         this.container.bind(taggedIdentifier).toService(ctor);

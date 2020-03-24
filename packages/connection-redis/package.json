@@ -10,59 +10,19 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "tslint -c ../../tslint.json -p tsconfig.json",
-    "coverage": "nyc --all --reporter=text mocha src/**/*.spec.ts",
-    "test:integration": "mocha tests/**/*.spec.ts",
-    "test": "mocha src/*.spec.ts src/**/*.spec.ts"
-  },
-  "mocha": {
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ]
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/interfaces/**",
-      "src/types/**",
-      "src/exceptions/**"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
+    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "coverage": "nyc --all --reporter=text ava",
+    "test:integration": "ava",
+    "test": "exit 0"
   },
   "dependencies": {
-    "ioredis": "^4.14.0"
+    "ioredis": "^4.14.0",
+    "@ilos/common": "^0.4.1",
+    "@ilos/connection-manager": "^0.4.1"
   },
-  "peerDependencies": {
-    "@ilos/common": "^0.4.0",
-    "@ilos/connection-manager": "^0.4.0"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/chai-as-promised": "^7.1.0",
-    "@types/mocha": "^5.2.6",
-    "@types/mongodb": "^3.1.27",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "mocha": "^6.1.4",
-    "nock": "^11.3.5",
-    "nyc": "^14.1.1",
-    "sinon": "^7.3.2",
-    "ts-node": "^8.1.0",
-    "tslint": "^5.16.0",
-    "typescript": "^3.4.5"
+  "ava": {
+    "files": [
+      "./dist/**/*.spec.js"
+    ]
   }
 }

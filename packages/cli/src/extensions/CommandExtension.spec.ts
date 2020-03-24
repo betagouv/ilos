@@ -1,76 +1,71 @@
-import { describe } from 'mocha';
-import { expect } from 'chai';
+import test from 'ava';
 import sinon from 'sinon';
-
-import { ServiceProvider } from '@ilos/core';
-import { command, serviceProvider, ResultType } from '@ilos/common';
+import { ServiceProvider as AbstractServiceProvider } from '@ilos/core';
+import { command, serviceProvider as serviceProviderDecorator, ResultType } from '@ilos/common';
 
 import { CommandRegistry } from '../providers/CommandRegistry';
 import { CommandExtension } from './CommandExtension';
 import { Command } from '../parents/Command';
 
-@command()
-class BasicCommand extends Command {
-  static readonly signature: string = 'hello <name>';
-  static readonly description: string = 'toto';
-  static readonly options = [
-    {
-      signature: '-h, --hi',
-      description: 'Say hi',
-    },
-  ];
+function setup() {
+  @command()
+  class BasicCommand extends Command {
+    static readonly signature: string = 'hello <name>';
+    static readonly description: string = 'toto';
+    static readonly options = [
+      {
+        signature: '-h, --hi',
+        description: 'Say hi',
+      },
+    ];
 
-  public async call(name, options?): Promise<ResultType> {
-    if (options && 'hi' in options) {
-      return `Hi ${name}`;
+    public async call(name, options?): Promise<ResultType> {
+      if (options && 'hi' in options) {
+        return `Hi ${name}`;
+      }
+      return `Hello ${name}`;
     }
-    return `Hello ${name}`;
   }
+
+  @serviceProviderDecorator({
+    commands: [BasicCommand],
+  })
+  class ServiceProvider extends AbstractServiceProvider {
+    extensions = [CommandExtension];
+  }
+
+  const serviceProvider = new ServiceProvider();
+
+  return { serviceProvider };
 }
 
-@serviceProvider({
-  commands: [BasicCommand],
-})
-class BasicServiceProvider extends ServiceProvider {
-  extensions = [CommandExtension];
-}
+test('Command "call": should register', async (t) => {
+  const { serviceProvider } = setup();
+  await serviceProvider.register();
+  await serviceProvider.init();
 
-describe('Command extension', () => {
-  it('should register properly', async () => {
-    const basicServiceProvider = new BasicServiceProvider();
-    await basicServiceProvider.register();
-    await basicServiceProvider.init();
+  const basicCommand = serviceProvider.getContainer().get(CommandRegistry).commands[0];
+  t.is(basicCommand.name(), 'hello');
+  t.is(basicCommand.options.length, 1);
 
-    const basicCommand = basicServiceProvider.getContainer().get(CommandRegistry).commands[0];
+  const { description, flags, required, short } = basicCommand.options[0];
+  t.is(description, 'Say hi');
+  t.is(flags, '-h, --hi');
+  t.is(required, false);
+  t.is(short, '-h');
+});
 
-    expect(basicCommand.name()).to.equal('hello');
-    expect(basicCommand.options).to.have.length(1);
-    expect(basicCommand.options[0]).to.deep.include({
-      flags: '-h, --hi',
-      required: false,
-      optional: false,
-      bool: true,
-      short: '-h',
-      long: '--hi',
-      description: 'Say hi',
-    });
+test('Command "call": should work', async (t) => {
+  t.plan(1);
+  const { serviceProvider } = setup();
+  const container = serviceProvider.getContainer();
+  await serviceProvider.register();
+  await serviceProvider.init();
+  const commander = container.get<CommandRegistry>(CommandRegistry);
+  sinon.stub(commander, 'output').callsFake((...args: any[]) => {
+    t.is(args[0], 'Hello john');
   });
-
-  it('should work', (done) => {
-    const basicServiceProvider = new BasicServiceProvider();
-    const container = basicServiceProvider.getContainer();
-    basicServiceProvider.register().then(() => {
-      basicServiceProvider.init().then(() => {
-        const commander = container.get<CommandRegistry>(CommandRegistry);
-        sinon.stub(commander, 'output').callsFake((...args: any[]) => {
-          expect(args[0]).to.equal('Hello john');
-          done();
-        });
-        container.unbind(CommandRegistry);
-        container.bind(CommandRegistry).toConstantValue(commander);
-        commander.parse(['', '', 'hello', 'john']);
-        sinon.restore();
-      });
-    });
-  });
+  container.unbind(CommandRegistry);
+  container.bind(CommandRegistry).toConstantValue(commander);
+  commander.parse(['', '', 'hello', 'john']);
 });

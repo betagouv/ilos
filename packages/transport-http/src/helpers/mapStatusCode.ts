@@ -11,7 +11,7 @@ export function mapStatusCode(results: RPCResponseType): number {
   if (Array.isArray(results)) {
     if (results.length === 1) {
       // tslint:disable-next-line: no-parameter-reassignment
-      results = <RPCSingleResponseType>results[0];
+      results = results[0] as RPCSingleResponseType;
     } else {
       // TODO - spec is not very clear here
       return 200;
